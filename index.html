@@ -29,6 +29,12 @@ header .brand p{color:#aab8d0;font-size:12px;margin-top:3px}
 .fc-title{font-size:15px;font-weight:700;margin-top:9px}
 .fc-desc{font-size:12px;color:#777;margin-top:4px;line-height:1.5}
 .fc-footer{padding:10px 20px;border-top:1px solid #f0f0f0;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.staff-section{background:#1A2B4A;border-radius:14px;padding:26px;box-shadow:0 2px 16px rgba(0,0,0,.15);margin-top:28px;display:flex;align-items:center;gap:20px;text-decoration:none}
+.staff-section:hover .staff-btn{background:#d4b060}
+.staff-icon{font-size:36px;flex-shrink:0}
+.staff-text h3{color:#C4A050;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.staff-text p{color:#aab8d0;font-size:12px;margin-top:4px}
+.staff-btn{margin-left:auto;background:#C4A050;color:#0F1E3A;border:none;border-radius:9px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;transition:background .2s;white-space:nowrap;flex-shrink:0}
 .api-section{background:white;border-radius:14px;padding:26px;box-shadow:0 2px 16px rgba(0,0,0,.07);margin-top:28px}
 .api-section h3{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#1A2B4A;margin-bottom:12px}
 .api-section code{background:#E8EDF5;border-radius:8px;padding:14px 16px;display:block;font-size:12px;line-height:1.9;color:#333;font-family:monospace}
@@ -39,10 +45,10 @@ footer span{color:#C4A050}
 <body>
 <header>
   <div class="header-inner">
-    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100" fill="#0F1E3A"/><circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="2"/><rect x="82" y="75" width="36" height="82" fill="#C4A050"/><ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/><rect x="88" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="54" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="66" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="122" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="134" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="40" y="157" width="120" height="4" fill="#C4A050"/><text x="100" y="74" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#0F1E3A" text-anchor="middle">A</text><text x="100" y="174" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#C4A050" text-anchor="middle" letter-spacing="3">AIPHONE</text><text x="100" y="187" font-family="Arial,sans-serif" font-size="8" fill="#D4C4A0" text-anchor="middle" letter-spacing="2">RESIDENCE</text></svg></div>
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100" fill="#0F1E3A"/><circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="2"/><rect x="82" y="75" width="36" height="82" fill="#C4A050"/><ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/><rect x="88" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="54" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="66" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="122" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="134" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="40" y="157" width="120" height="4" fill="#C4A050"/><text x="100" y="174" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#C4A050" text-anchor="middle" letter-spacing="3">AIPHONE</text><text x="100" y="187" font-family="Arial,sans-serif" font-size="8" fill="#D4C4A0" text-anchor="middle" letter-spacing="2">RESIDENCE</text></svg></div>
     <div class="brand">
       <h1>AIPHONE RESIDENCE</h1>
-      <p>Luxury Living · Digital First · Singapore</p>
+      <p>Luxury Living &middot; Digital First &middot; Singapore</p>
     </div>
   </div>
 </header>
@@ -50,7 +56,7 @@ footer span{color:#C4A050}
   <div class="hero-inner">
     <h2>AIPHONE RESIDENCE</h2>
     <div class="hero-line"></div>
-    <p>Where Living Is An Art · Est. 2024 · Singapore</p>
+    <p>Where Living Is An Art &middot; Est. 2024 &middot; Singapore</p>
   </div>
 </div>
 <div class="section">
@@ -63,11 +69,22 @@ footer span{color:#C4A050}
     <a class="facility-card" href="book/pool.html"><div class="fc-header"><div class="fc-emoji">🏊</div><div class="fc-title">Swimming Pool</div><div class="fc-desc">Lap pool + leisure pool. 7AM–10PM daily.</div></div><div class="fc-footer" style="color:#1B8FC4">Access Info →</div></a>
     <a class="facility-card" href="book/visitor.html"><div class="fc-header"><div class="fc-emoji">👤</div><div class="fc-title">Visitor Passes</div><div class="fc-desc">Issue a digital day-pass for guests. Valid today only.</div></div><div class="fc-footer" style="color:#8B5E3C">Issue Pass →</div></a>
   </div>
+
+  <!-- Staff Scanner CTA -->
+  <a class="staff-section" href="scan.html">
+    <div class="staff-icon">📷</div>
+    <div class="staff-text">
+      <h3>Staff Pass Scanner</h3>
+      <p>Validate resident &amp; visitor passes &middot; Increment scan count &middot; Push wallet update</p>
+    </div>
+    <div class="staff-btn">Open Scanner →</div>
+  </a>
+
   <div class="api-section">
     <h3>PassQR MCP Integration — Demo Commands</h3>
     <code>"Create a resident card for Mr. Tan Wei Ming, unit #12-08 Tower A, owner"<br>"Create a contractor pass for Cool Air Services for today, unit #08-03"<br>"Book Tennis Court 1 tomorrow 7AM for Mr. Tan Wei Ming"</code>
   </div>
 </div>
-<footer>© 2026 <span>Aiphone Residence</span> · Management: <span>+65 6123 8888</span> · Powered by <span>PassQR × dasecure</span></footer>
+<footer>&copy; 2026 <span>Aiphone Residence</span> &middot; Management: <span>+65 6123 8888</span> &middot; Powered by <span>PassQR × dasecure</span></footer>
 </body>
 </html>

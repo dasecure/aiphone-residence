@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Staff Scanner — Aiphone Residence</title>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,sans-serif;background:#0a0f1a;color:#fff;min-height:100vh}
+header{background:#1A2B4A;padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #C4A050/20}
+header .logo{width:38px;height:38px;flex-shrink:0}
+header h1{color:#C4A050;font-size:13px;letter-spacing:2px;text-transform:uppercase;font-weight:700}
+header p{color:#aab8d0;font-size:10px;margin-top:1px}
+.container{max-width:480px;margin:0 auto;padding:16px}
+
+/* Scanner section */
+.scan-card{background:#111827;border:1px solid #1f2937;border-radius:16px;overflow:hidden;margin-bottom:14px}
+.scan-header{background:#1A2B4A;padding:12px 16px;display:flex;align-items:center;gap:10px}
+.scan-header .icon{font-size:20px}
+.scan-header h2{font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#C4A050}
+.scan-header p{font-size:11px;color:#aab8d0;margin-top:1px}
+
+#reader-wrap{position:relative;background:#000;aspect-ratio:1;overflow:hidden}
+#reader{width:100%!important}
+#reader video{width:100%!important;height:100%!important;object-fit:cover}
+.scan-overlay{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
+.scan-frame{width:55%;aspect-ratio:1;border-radius:6px;box-shadow:0 0 0 9999px rgba(0,0,0,0.55)}
+.scan-corners{position:absolute;width:55%;aspect-ratio:1}
+.scan-corners::before,.scan-corners::after,.scan-corners span::before,.scan-corners span::after{
+  content:'';position:absolute;width:22px;height:22px;border-color:#C4A050;border-style:solid
+}
+.scan-corners::before{top:0;left:0;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
+.scan-corners::after{top:0;right:0;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
+.scan-corners span::before{bottom:0;left:0;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
+.scan-corners span::after{bottom:0;right:0;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
+.scan-line{position:absolute;width:55%;height:2px;background:linear-gradient(90deg,transparent,#C4A050,transparent);animation:scanline 2.5s ease-in-out infinite}
+@keyframes scanline{0%,100%{top:22.5%;opacity:0}10%,90%{opacity:1}50%{top:77.5%}}
+
+.scan-controls{padding:14px 16px;display:flex;gap:8px;align-items:center}
+.gate-select{flex:1;background:#1f2937;border:1px solid #374151;border-radius:8px;color:#fff;padding:9px 11px;font-size:13px;outline:none}
+.gate-select:focus{border-color:#C4A050}
+.btn-cam{background:#1A2B4A;border:1px solid #C4A050;color:#C4A050;border-radius:8px;padding:9px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .2s}
+.btn-cam.active{background:#C4A050;color:#0a0f1a}
+.btn-cam:hover{background:#C4A050;color:#0a0f1a}
+
+/* Manual input */
+.manual{padding:0 16px 14px}
+.manual label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px}
+.manual-row{display:flex;gap:8px}
+.manual input{flex:1;background:#1f2937;border:1px solid #374151;border-radius:8px;padding:9px 12px;font-size:14px;color:#fff;font-family:monospace;outline:none;letter-spacing:1px;text-transform:uppercase}
+.manual input::placeholder{text-transform:none;font-family:sans-serif;letter-spacing:0;color:#4b5563}
+.manual input:focus{border-color:#C4A050}
+.btn-scan{background:#C4A050;color:#0a0f1a;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s}
+.btn-scan:hover{opacity:.85}
+.btn-scan:disabled{opacity:.4;cursor:default}
+
+/* Result card */
+#result{display:none;margin-bottom:14px}
+.result-card{border-radius:16px;overflow:hidden}
+.result-header{padding:16px 18px;display:flex;align-items:flex-start;gap:12px}
+.result-icon{font-size:32px;flex-shrink:0;line-height:1}
+.result-title{font-size:18px;font-weight:700}
+.result-sub{font-size:12px;margin-top:3px;opacity:.8}
+.result-body{padding:12px 18px 18px;display:grid;gap:8px;border-top:1px solid rgba(255,255,255,.08)}
+.result-row{display:flex;align-items:flex-start;gap:10px}
+.result-row .lbl{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#9ca3af;width:88px;flex-shrink:0;padding-top:1px}
+.result-row .val{font-size:13px;font-weight:600;word-break:break-word;flex:1}
+.push-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 9px;border-radius:20px;margin-top:3px;font-weight:600}
+.push-ok{background:#064e3b;color:#6ee7b7}
+.push-none{background:#1f2937;color:#6b7280}
+
+/* valid / invalid states */
+.valid .result-header{background:#064e3b}
+.valid .result-title{color:#6ee7b7}
+.valid .result-body{background:#0a1f18}
+.invalid .result-header{background:#450a0a}
+.invalid .result-title{color:#fca5a5}
+.invalid .result-body{background:#1a0808}
+.warn .result-header{background:#451a03}
+.warn .result-title{color:#fdba74}
+.warn .result-body{background:#1a0e05}
+
+/* History */
+#history-wrap{margin-top:6px}
+.history-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#4b5563;margin-bottom:8px;padding:0 2px}
+.history-item{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px;font-size:12px}
+.hi-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.hi-dot.ok{background:#22c55e}.hi-dot.fail{background:#ef4444}
+.hi-name{flex:1;font-weight:600;color:#e5e7eb}
+.hi-code{font-family:monospace;font-size:10px;color:#6b7280}
+.hi-time{font-size:10px;color:#4b5563;white-space:nowrap}
+
+/* Spinner */
+.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Footer */
+footer{text-align:center;padding:20px;font-size:11px;color:#374151}
+footer span{color:#C4A050}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100" fill="#0F1E3A"/><circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="2"/><rect x="82" y="75" width="36" height="82" fill="#C4A050"/><ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/><rect x="88" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="54" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="66" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="122" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="134" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="40" y="157" width="120" height="4" fill="#C4A050"/><text x="100" y="174" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#C4A050" text-anchor="middle" letter-spacing="3">AIPHONE</text><text x="100" y="187" font-family="Arial,sans-serif" font-size="8" fill="#D4C4A0" text-anchor="middle" letter-spacing="2">RESIDENCE</text></svg></div>
+  <div><h1>Aiphone Residence</h1><p>Staff Pass Scanner</p></div>
+</header>
+
+<div class="container">
+
+  <!-- Result -->
+  <div id="result">
+    <div class="result-card" id="result-card">
+      <div class="result-header">
+        <div class="result-icon" id="r-icon"></div>
+        <div><div class="result-title" id="r-title"></div><div class="result-sub" id="r-sub"></div></div>
+      </div>
+      <div class="result-body" id="r-body"></div>
+    </div>
+  </div>
+
+  <!-- Scanner -->
+  <div class="scan-card">
+    <div class="scan-header">
+      <div class="icon">📷</div>
+      <div><h2>QR Scanner</h2><p>Point camera at pass QR code</p></div>
+    </div>
+    <div id="reader-wrap">
+      <div id="reader"></div>
+      <div class="scan-overlay">
+        <div class="scan-frame"></div>
+        <div class="scan-corners"><span></span></div>
+        <div class="scan-line"></div>
+      </div>
+    </div>
+    <div class="scan-controls">
+      <select class="gate-select" id="gate-sel">
+        <option value="Main Gate">🏠 Main Gate</option>
+        <option value="Lobby">🚪 Lobby</option>
+        <option value="Pool Gate">🏊 Pool Gate</option>
+        <option value="Gym Entrance">🏋️ Gym Entrance</option>
+        <option value="BBQ Pit">🔥 BBQ Pit Area</option>
+        <option value="Tennis Court">🎾 Tennis Court</option>
+        <option value="KTV Room">🎤 KTV Room</option>
+        <option value="Visitor Checkpoint">👤 Visitor Checkpoint</option>
+      </select>
+      <button class="btn-cam active" id="cam-btn" onclick="toggleCam()">Stop Cam</button>
+    </div>
+    <div class="manual">
+      <label>Manual code entry</label>
+      <div class="manual-row">
+        <input type="text" id="code-input" placeholder="PASS-XXXXXXXX" maxlength="14" autocomplete="off" autocorrect="off" spellcheck="false" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')">
+        <button class="btn-scan" id="scan-btn" onclick="submitCode()">Scan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- History -->
+  <div id="history-wrap">
+    <div class="history-title">Recent Scans</div>
+    <div id="history"></div>
+  </div>
+</div>
+
+<footer>&copy; 2026 <span>Aiphone Residence</span> &middot; Staff Portal</footer>
+
+<script>
+const SCAN_URL = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-scan';
+const history = [];
+let scanner = null;
+let camRunning = false;
+let lastCode = null;
+let scanCooldown = false;
+
+// Auto-start camera on load
+window.addEventListener('DOMContentLoaded', () => startCam());
+
+async function startCam() {
+  try {
+    scanner = new Html5Qrcode('reader');
+    await scanner.start(
+      { facingMode: 'environment' },
+      { fps: 10, qrbox: { width: 220, height: 220 }, aspectRatio: 1.0 },
+      onQRDetected,
+      () => {}
+    );
+    camRunning = true;
+    document.getElementById('cam-btn').textContent = 'Stop Cam';
+    document.getElementById('cam-btn').classList.add('active');
+  } catch (e) {
+    document.getElementById('reader-wrap').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:200px;color:#4b5563;font-size:13px;text-align:center;padding:20px">Camera not available.<br>Use manual entry below.</div>';
+    document.getElementById('cam-btn').style.display = 'none';
+  }
+}
+
+async function stopCam() {
+  if (scanner && camRunning) {
+    await scanner.stop();
+    scanner = null;
+    camRunning = false;
+    document.getElementById('cam-btn').textContent = 'Start Cam';
+    document.getElementById('cam-btn').classList.remove('active');
+  }
+}
+
+async function toggleCam() {
+  if (camRunning) { await stopCam(); } else { await startCam(); }
+}
+
+async function onQRDetected(code) {
+  if (scanCooldown || code === lastCode) return;
+  if (!code.startsWith('PASS-')) return;
+  lastCode = code;
+  scanCooldown = true;
+  setTimeout(() => { scanCooldown = false; lastCode = null; }, 4000);
+  document.getElementById('code-input').value = code;
+  await submitCode(code);
+}
+
+async function submitCode(codeOverride) {
+  const code = (codeOverride || document.getElementById('code-input').value).trim().toUpperCase();
+  if (!code || !code.startsWith('PASS-')) {
+    showError('Enter a valid pass code (PASS-XXXXXXXX)');
+    return;
+  }
+  const gate = document.getElementById('gate-sel').value;
+  const btn = document.getElementById('scan-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>Checking…';
+
+  try {
+    const res = await fetch(SCAN_URL, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ code, gate }),
+    });
+    const data = await res.json();
+    showResult(code, data);
+  } catch (e) {
+    showError('Network error — ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Scan';
+  }
+}
+
+function showResult(code, data) {
+  const wrap = document.getElementById('result');
+  const card = document.getElementById('result-card');
+  const icon = document.getElementById('r-icon');
+  const title = document.getElementById('r-title');
+  const sub = document.getElementById('r-sub');
+  const body = document.getElementById('r-body');
+
+  wrap.style.display = 'block';
+  card.className = 'result-card';
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  if (data.success) {
+    card.classList.add('valid');
+    icon.textContent = '\u2705';
+    title.textContent = data.holder_name || 'Valid Pass';
+    sub.textContent = code;
+
+    const rows = [];
+    if (data.unit) rows.push(['Unit', data.unit + (data.block ? ' ' + data.block : '')]);
+    if (data.tier) rows.push(['Tier', data.tier]);
+    rows.push(['Gate', data.last_entry?.split(' \u00b7')[0] || '']);
+    rows.push(['Time', data.last_entry?.split(' \u00b7').slice(1).join(' \u00b7') || '']);
+    rows.push(['Scans', String(data.scan_sequence || 1)]);
+
+    body.innerHTML = rows.map(([l, v]) =>
+      `<div class="result-row"><span class="lbl">${l}</span><span class="val">${v}</span></div>`
+    ).join('') +
+    (data.push?.succeeded > 0
+      ? '<div class="push-badge push-ok">&nbsp;\uD83D\uDCF1 Wallet updated (' + data.push.succeeded + ' device' + (data.push.succeeded > 1 ? 's' : '') + ')</div>'
+      : '<div class="push-badge push-none">\uD83D\uDCF1 No wallet devices registered</div>');
+
+    addHistory(code, data.holder_name || 'Unknown', true, data.last_entry);
+  } else {
+    const expired = data.status === 'expired';
+    const revoked = data.status === 'revoked';
+    card.classList.add(expired || revoked ? 'invalid' : 'warn');
+    icon.textContent = expired ? '\u23F0' : revoked ? '\uD83D\uDEAB' : '\u274C';
+    title.textContent = expired ? 'Pass Expired' : revoked ? 'Pass Revoked' : (data.status === 'used' ? 'Pass Used' : 'Invalid Pass');
+    sub.textContent = code;
+    body.innerHTML = `<div class="result-row"><span class="lbl">Reason</span><span class="val">${data.error || data.status || 'Unknown'}</span></div>`;
+    if (data.holder_name) body.innerHTML += `<div class="result-row"><span class="lbl">Holder</span><span class="val">${data.holder_name}</span></div>`;
+    addHistory(code, data.holder_name || 'Unknown', false, null);
+  }
+
+  // Clear input
+  document.getElementById('code-input').value = '';
+}
+
+function showError(msg) {
+  const wrap = document.getElementById('result');
+  const card = document.getElementById('result-card');
+  wrap.style.display = 'block';
+  card.className = 'result-card invalid';
+  document.getElementById('r-icon').textContent = '\u26A0\uFE0F';
+  document.getElementById('r-title').textContent = 'Error';
+  document.getElementById('r-sub').textContent = '';
+  document.getElementById('r-body').innerHTML = `<div class="result-row"><span class="lbl">Detail</span><span class="val">${msg}</span></div>`;
+}
+
+function addHistory(code, name, ok, entry) {
+  const now = new Date().toLocaleTimeString('en-SG', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Singapore' });
+  history.unshift({ code, name, ok, entry, time: now });
+  if (history.length > 20) history.pop();
+  const el = document.getElementById('history');
+  el.innerHTML = history.map(h =>
+    `<div class="history-item">
+      <div class="hi-dot ${h.ok ? 'ok' : 'fail'}"></div>
+      <div class="hi-name">${h.name}</div>
+      <div class="hi-code">${h.code}</div>
+      <div class="hi-time">${h.time}</div>
+    </div>`
+  ).join('');
+}
+</script>
+</body>
+</html>
