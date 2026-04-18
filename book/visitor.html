@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Visitor Pass — Aiphone Residence</title><link rel="icon" href="../assets/icon.png"><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Helvetica Neue',Arial,sans-serif;background:#E8EDF5}header{background:#1A2B4A;padding:16px 24px;display:flex;align-items:center;gap:14px}header img{height:44px}header h1{color:#C4A050;font-size:13px;letter-spacing:3px;text-transform:uppercase}header p{color:#aab8d0;font-size:11px;margin-top:2px}.strip{background:#8B5E3C;padding:28px 24px}.strip .icon{font-size:36px}.strip h2{color:white;font-size:22px;margin-top:6px;font-weight:700}.strip p{color:rgba(255,255,255,.8);font-size:13px;margin-top:4px}.container{max-width:580px;margin:24px auto;padding:0 16px 60px}.notice{background:#fffbec;border:1.5px solid #C4A050;border-radius:10px;padding:12px 16px;font-size:12px;color:#7a6000;margin-bottom:16px}.card{background:white;border-radius:14px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.07);margin-bottom:16px}.card h3{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#8B5E3C;margin-bottom:16px}.field{margin-bottom:14px}.field label{display:block;font-size:11px;font-weight:600;color:#666;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}.field input{width:100%;border:1.5px solid #e0e0e0;border-radius:8px;padding:10px 12px;font-size:14px}.field input:focus{outline:none;border-color:#8B5E3C}.rules{padding-left:16px}.rules li{font-size:13px;color:#555;margin-bottom:5px;line-height:1.5}.btn{width:100%;background:#8B5E3C;color:white;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:6px}.confirm{display:none;text-align:center;padding:24px 16px}.confirm .check{font-size:52px}.confirm h3{color:#8B5E3C;margin-top:14px;font-size:18px}.confirm p{color:#666;margin-top:6px;font-size:13px}footer{text-align:center;padding:16px;font-size:11px;color:#999}</style></head><body>
+<header><img src="../assets/logo.png" alt=""><div><h1>Aiphone Residence</h1><p>Visitor Pass Issuance</p></div></header>
+<div class="strip"><div class="icon">👤</div><h2>Visitor Day Pass</h2><p>Digital pass for guests · Valid same day only</p></div>
+<div class="container">
+<div class="notice">⚠️ <strong>Demo Mode:</strong> In production this issues a PassQR visitor pass via API, delivered by SMS to the guest.</div>
+<div id="fv">
+<div class="card"><h3>Guest Details</h3>
+<div class="field"><label>Your Unit No. *</label><input type="text" placeholder="e.g. #12-08" required></div>
+<div class="field"><label>Guest Name *</label><input type="text" placeholder="e.g. Mr. James Wong" required></div>
+<div class="field"><label>Vehicle Plate No.</label><input type="text" placeholder="e.g. SKA1234Z"></div>
+<div class="field"><label>Expected Arrival</label><input type="text" placeholder="e.g. 2:00 PM"></div>
+<button class="btn" onclick="go()">Issue Visitor Pass</button></div>
+<div class="card"><h3>Rules</h3><ul class="rules"><li>Valid same day only — expires at midnight</li><li>Max 2 visitor passes per unit per day</li><li>Visitor must check in at security desk with QR</li><li>Residents responsible for guest conduct</li><li>Overnight stays require management approval</li></ul></div>
+</div>
+<div class="card confirm" id="cv"><div class="check">✅</div><h3>Visitor Pass Issued!</h3><p>The pass link has been generated.<br>Share it with your guest via WhatsApp or SMS.</p><p style="margin-top:12px;font-size:12px;color:#999">Demo only — real deployment sends pass via PassQR API.</p></div>
+</div>
+<footer>© 2026 Aiphone Residence · <a href="/" style="color:#8B5E3C">← Back to Portal</a></footer>
+<script>function go(){document.getElementById('fv').style.display='none';document.getElementById('cv').style.display='block'}</script>
+</body></html>

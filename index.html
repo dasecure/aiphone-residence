@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aiphone Residence — Resident Portal</title>
+<link rel="icon" href="assets/icon.png">
+<style>
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ font-family:'Helvetica Neue',Arial,sans-serif; background:#E8EDF5; color:#1a1a1a; }
+  header{ background:#1A2B4A; }
+  .header-inner{ max-width:1100px; margin:0 auto; padding:20px 30px; display:flex; align-items:center; gap:20px; }
+  header img{ height:56px; }
+  header .brand h1{ color:#C4A050; font-size:22px; letter-spacing:2px; }
+  header .brand p{ color:#aab8d0; font-size:13px; margin-top:3px; }
+  .hero{ background:#0F1E3A; }
+  .hero img{ width:100%; height:220px; object-fit:cover; object-position:center; display:block; opacity:.85; }
+  .section{ max-width:1100px; margin:0 auto; padding:40px 30px; }
+  .section-title{ font-size:12px; letter-spacing:3px; text-transform:uppercase; color:#999; margin-bottom:20px; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:20px; }
+  .facility-card{ background:white; border-radius:16px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,.07); transition:transform .2s,box-shadow .2s; text-decoration:none; color:inherit; display:block; }
+  .facility-card:hover{ transform:translateY(-4px); box-shadow:0 8px 32px rgba(0,0,0,.12); }
+  .fc-header{ padding:24px 22px 18px; }
+  .fc-emoji{ font-size:32px; }
+  .fc-title{ font-size:16px; font-weight:700; margin-top:10px; }
+  .fc-desc{ font-size:13px; color:#777; margin-top:4px; line-height:1.5; }
+  .fc-footer{ padding:12px 22px; border-top:1px solid #f0f0f0; font-size:12px; font-weight:600; letter-spacing:.5px; text-transform:uppercase; }
+  .api-section{ background:white; border-radius:16px; padding:28px; box-shadow:0 4px 20px rgba(0,0,0,.07); margin-top:32px; }
+  .api-section h3{ font-size:13px; letter-spacing:2px; text-transform:uppercase; color:#1A2B4A; margin-bottom:12px; }
+  .api-section code{ background:#E8EDF5; border-radius:6px; padding:12px 16px; display:block; font-size:12px; line-height:1.8; color:#333; }
+  footer{ text-align:center; padding:30px; font-size:12px; color:#aaa; background:#1A2B4A; margin-top:40px; }
+  footer span{ color:#C4A050; }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <img src="assets/logo.png" alt="Aiphone Residence Logo">
+    <div class="brand">
+      <h1>AIPHONE RESIDENCE</h1>
+      <p>Luxury Living · Digital First · Singapore</p>
+    </div>
+  </div>
+</header>
+<div class="hero">
+  <img src="assets/strip.png" alt="Aiphone Residence">
+</div>
+<div class="section">
+  <div class="section-title">Resident Facilities</div>
+  <div class="grid">
+    <a class="facility-card" href="book/tennis.html"><div class="fc-header"><div class="fc-emoji">🎾</div><div class="fc-title">Tennis Courts</div><div class="fc-desc">Court 1 &amp; 2 available daily 6AM–10PM. 1-hour slots.</div></div><div class="fc-footer" style="color:#1A2B4A">Book Now →</div></a>
+    <a class="facility-card" href="book/bbq.html"><div class="fc-header"><div class="fc-emoji">🔥</div><div class="fc-title">BBQ Pits</div><div class="fc-desc">Rooftop Pit 1 &amp; 2. Evening slots from 5PM. SGD 50 deposit.</div></div><div class="fc-footer" style="color:#C0392B">Book Now →</div></a>
+    <a class="facility-card" href="book/ktv.html"><div class="fc-header"><div class="fc-emoji">🎤</div><div class="fc-title">KTV Room</div><div class="fc-desc">Private KTV suite for up to 12 guests. Weeknight &amp; weekend.</div></div><div class="fc-footer" style="color:#7B2FBE">Book Now →</div></a>
+    <a class="facility-card" href="book/gym.html"><div class="fc-header"><div class="fc-emoji">🏋️</div><div class="fc-title">Gym</div><div class="fc-desc">Fully equipped fitness centre open 6AM–11PM. Residents only.</div></div><div class="fc-footer" style="color:#E67E22">Access Info →</div></a>
+    <a class="facility-card" href="book/pool.html"><div class="fc-header"><div class="fc-emoji">🏊</div><div class="fc-title">Swimming Pool</div><div class="fc-desc">Lap pool + leisure pool. 7AM–10PM daily.</div></div><div class="fc-footer" style="color:#1B8FC4">Access Info →</div></a>
+    <a class="facility-card" href="book/visitor.html"><div class="fc-header"><div class="fc-emoji">👤</div><div class="fc-title">Visitor Passes</div><div class="fc-desc">Issue a digital day-pass for guests. Valid today only.</div></div><div class="fc-footer" style="color:#8B5E3C">Issue Pass →</div></a>
+  </div>
+  <div class="api-section">
+    <h3>PassQR MCP Integration — Demo Commands</h3>
+    <code>"Create a resident card for Mr. Tan Wei Ming, unit #12-08 Tower A, owner"<br>"Create a contractor pass for Cool Air Services for today, unit #08-03"<br>"Book Tennis Court 1 tomorrow 7AM for Mr. Tan Wei Ming"</code>
+  </div>
+</div>
+<footer>© 2026 <span>Aiphone Residence</span> · Management: <span>+65 6123 8888</span> · Powered by <span>PassQR × dasecure</span></footer>
+</body>
+</html>
