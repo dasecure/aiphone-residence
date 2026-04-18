@@ -4,38 +4,42 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aiphone Residence — Resident Portal</title>
-<link rel="icon" href="assets/icon.png">
 <style>
-  *{ box-sizing:border-box; margin:0; padding:0; }
-  body{ font-family:'Helvetica Neue',Arial,sans-serif; background:#E8EDF5; color:#1a1a1a; }
-  header{ background:#1A2B4A; }
-  .header-inner{ max-width:1100px; margin:0 auto; padding:20px 30px; display:flex; align-items:center; gap:20px; }
-  header img{ height:56px; }
-  header .brand h1{ color:#C4A050; font-size:22px; letter-spacing:2px; }
-  header .brand p{ color:#aab8d0; font-size:13px; margin-top:3px; }
-  .hero{ background:#0F1E3A; }
-  .hero img{ width:100%; height:220px; object-fit:cover; object-position:center; display:block; opacity:.85; }
-  .section{ max-width:1100px; margin:0 auto; padding:40px 30px; }
-  .section-title{ font-size:12px; letter-spacing:3px; text-transform:uppercase; color:#999; margin-bottom:20px; }
-  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:20px; }
-  .facility-card{ background:white; border-radius:16px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,.07); transition:transform .2s,box-shadow .2s; text-decoration:none; color:inherit; display:block; }
-  .facility-card:hover{ transform:translateY(-4px); box-shadow:0 8px 32px rgba(0,0,0,.12); }
-  .fc-header{ padding:24px 22px 18px; }
-  .fc-emoji{ font-size:32px; }
-  .fc-title{ font-size:16px; font-weight:700; margin-top:10px; }
-  .fc-desc{ font-size:13px; color:#777; margin-top:4px; line-height:1.5; }
-  .fc-footer{ padding:12px 22px; border-top:1px solid #f0f0f0; font-size:12px; font-weight:600; letter-spacing:.5px; text-transform:uppercase; }
-  .api-section{ background:white; border-radius:16px; padding:28px; box-shadow:0 4px 20px rgba(0,0,0,.07); margin-top:32px; }
-  .api-section h3{ font-size:13px; letter-spacing:2px; text-transform:uppercase; color:#1A2B4A; margin-bottom:12px; }
-  .api-section code{ background:#E8EDF5; border-radius:6px; padding:12px 16px; display:block; font-size:12px; line-height:1.8; color:#333; }
-  footer{ text-align:center; padding:30px; font-size:12px; color:#aaa; background:#1A2B4A; margin-top:40px; }
-  footer span{ color:#C4A050; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,sans-serif;background:#E8EDF5;color:#1a1a1a}
+header{background:#1A2B4A}
+.header-inner{max-width:1100px;margin:0 auto;padding:20px 30px;display:flex;align-items:center;gap:20px}
+header .logo{width:52px;height:52px;flex-shrink:0}
+header .brand h1{color:#C4A050;font-size:20px;letter-spacing:2px}
+header .brand p{color:#aab8d0;font-size:12px;margin-top:3px}
+.hero{background:linear-gradient(135deg,#0F1E3A 0%,#1A2B4A 40%,#243555 60%,#1A3050 100%);padding:48px 30px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;right:-40px;top:-40px;width:320px;height:320px;border:2px solid rgba(196,160,80,.15);border-radius:50%}
+.hero::after{content:'';position:absolute;right:40px;bottom:-60px;width:200px;height:200px;border:1px solid rgba(196,160,80,.1);border-radius:50%}
+.hero-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1}
+.hero h2{color:#C4A050;font-size:34px;font-weight:700;letter-spacing:1px}
+.hero p{color:#aab8d0;margin-top:10px;font-size:15px}
+.hero-line{width:60px;height:2px;background:#C4A050;margin:14px 0}
+.section{max-width:1100px;margin:0 auto;padding:40px 30px}
+.section-title{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#999;margin-bottom:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+.facility-card{background:white;border-radius:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.07);transition:transform .2s,box-shadow .2s;text-decoration:none;color:inherit;display:block}
+.facility-card:hover{transform:translateY(-3px);box-shadow:0 6px 28px rgba(0,0,0,.11)}
+.fc-header{padding:22px 20px 16px}
+.fc-emoji{font-size:30px}
+.fc-title{font-size:15px;font-weight:700;margin-top:9px}
+.fc-desc{font-size:12px;color:#777;margin-top:4px;line-height:1.5}
+.fc-footer{padding:10px 20px;border-top:1px solid #f0f0f0;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.api-section{background:white;border-radius:14px;padding:26px;box-shadow:0 2px 16px rgba(0,0,0,.07);margin-top:28px}
+.api-section h3{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#1A2B4A;margin-bottom:12px}
+.api-section code{background:#E8EDF5;border-radius:8px;padding:14px 16px;display:block;font-size:12px;line-height:1.9;color:#333;font-family:monospace}
+footer{text-align:center;padding:28px;font-size:12px;color:#aaa;background:#1A2B4A;margin-top:40px}
+footer span{color:#C4A050}
 </style>
 </head>
 <body>
 <header>
   <div class="header-inner">
-    <img src="assets/logo.png" alt="Aiphone Residence Logo">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100" fill="#0F1E3A"/><circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="2"/><rect x="82" y="75" width="36" height="82" fill="#C4A050"/><ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/><rect x="88" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="54" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="66" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="122" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="134" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="40" y="157" width="120" height="4" fill="#C4A050"/><text x="100" y="74" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#0F1E3A" text-anchor="middle">A</text><text x="100" y="174" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#C4A050" text-anchor="middle" letter-spacing="3">AIPHONE</text><text x="100" y="187" font-family="Arial,sans-serif" font-size="8" fill="#D4C4A0" text-anchor="middle" letter-spacing="2">RESIDENCE</text></svg></div>
     <div class="brand">
       <h1>AIPHONE RESIDENCE</h1>
       <p>Luxury Living · Digital First · Singapore</p>
@@ -43,7 +47,11 @@
   </div>
 </header>
 <div class="hero">
-  <img src="assets/strip.png" alt="Aiphone Residence">
+  <div class="hero-inner">
+    <h2>AIPHONE RESIDENCE</h2>
+    <div class="hero-line"></div>
+    <p>Where Living Is An Art · Est. 2024 · Singapore</p>
+  </div>
 </div>
 <div class="section">
   <div class="section-title">Resident Facilities</div>
