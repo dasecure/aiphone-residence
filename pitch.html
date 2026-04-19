@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Aiphone Residence × dasecure — Partner Pitch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1A2B4A;
+  --navy-deep:#0d1a2e;
+  --navy-mid:#1f3460;
+  --gold:#C4A050;
+  --gold-light:#d4b46a;
+  --gold-pale:rgba(196,160,80,.12);
+  --green:#6ee7b7;
+  --white:#f8f6f1;
+  --grey:#9aabbf;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--navy-deep);color:var(--white);min-height:100vh;overflow-x:hidden}
+
+/* ── NOISE TEXTURE OVERLAY ── */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.6}
+
+/* ── HEADER ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(13,26,46,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(196,160,80,.2);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-logo{width:32px;height:32px;flex-shrink:0}
+.nav-title{font-family:'DM Serif Display',serif;font-size:14px;color:var(--gold);letter-spacing:.5px}
+.nav-sub{font-size:9px;color:var(--grey);letter-spacing:2px;text-transform:uppercase;margin-top:1px}
+.nav-pill{background:var(--gold-pale);border:1px solid rgba(196,160,80,.35);border-radius:20px;padding:5px 12px;font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+
+/* ── HERO ── */
+.hero{position:relative;padding:52px 22px 48px;text-align:center;overflow:hidden}
+.hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(196,160,80,.08) 0%,transparent 70%);pointer-events:none}
+.hero-eyebrow{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:18px;opacity:.9}
+.hero-title{font-family:'DM Serif Display',serif;font-size:clamp(28px,8vw,44px);line-height:1.12;color:var(--white);margin-bottom:16px;letter-spacing:-.5px}
+.hero-title em{color:var(--gold);font-style:normal}
+.hero-sub{font-size:14px;color:var(--grey);max-width:360px;margin:0 auto 28px;line-height:1.75;font-weight:300}
+.hero-divider{width:40px;height:2px;background:var(--gold);margin:0 auto 28px;opacity:.6}
+.hero-cta-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-gold{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;background:var(--gold);color:var(--navy-deep);letter-spacing:.2px;transition:opacity .2s,transform .15s;white-space:nowrap}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;background:transparent;border:1.5px solid rgba(196,160,80,.35);color:var(--gold);letter-spacing:.2px;transition:opacity .2s;white-space:nowrap}
+.btn-gold:hover,.btn-ghost:hover{opacity:.82;transform:translateY(-1px)}
+
+/* ── SECTIONS ── */
+section{position:relative;z-index:1;padding:40px 22px}
+.sec-label{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:10px;opacity:.8}
+.sec-title{font-family:'DM Serif Display',serif;font-size:clamp(20px,5vw,28px);color:var(--white);margin-bottom:8px;line-height:1.2}
+.sec-sub{font-size:13px;color:var(--grey);line-height:1.7;font-weight:300;max-width:400px}
+
+/* ── PROBLEM ── */
+.problem-bg{background:linear-gradient(180deg,var(--navy-deep) 0%,rgba(26,43,74,.4) 100%)}
+.pain-grid{display:grid;gap:12px;margin-top:24px}
+.pain-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px;display:flex;align-items:flex-start;gap:14px;transition:border-color .2s}
+.pain-card:hover{border-color:rgba(196,160,80,.25)}
+.pain-icon{font-size:28px;flex-shrink:0}
+.pain-title{font-size:13px;font-weight:700;color:var(--white);margin-bottom:4px}
+.pain-desc{font-size:12px;color:var(--grey);line-height:1.6}
+
+/* ── SOLUTION ── */
+.solution-bg{background:var(--navy)}
+.stack-diagram{margin-top:24px;border-radius:16px;overflow:hidden;border:1px solid rgba(196,160,80,.2)}
+.stack-row{display:flex;align-items:stretch}
+.stack-half{flex:1;padding:20px;position:relative}
+.stack-half.aiphone{background:rgba(13,26,46,.8);border-right:1px solid rgba(196,160,80,.2)}
+.stack-half.dasecure{background:rgba(26,43,74,.6)}
+.stack-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:12px;opacity:.8}
+.stack-title{font-family:'DM Serif Display',serif;font-size:16px;color:var(--white);margin-bottom:10px}
+.stack-items{list-style:none}
+.stack-items li{font-size:11px;color:var(--grey);padding:4px 0 4px 14px;position:relative;line-height:1.5}
+.stack-items li::before{content:'›';position:absolute;left:0;color:var(--gold)}
+.stack-plus{display:flex;align-items:center;justify-content:center;background:var(--navy-deep);padding:0 2px}
+.stack-plus-sign{width:28px;height:28px;border-radius:50%;background:var(--gold-pale);border:1.5px solid rgba(196,160,80,.35);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--gold);font-weight:700}
+.result-banner{background:linear-gradient(90deg,rgba(196,160,80,.15),rgba(196,160,80,.08));border-top:1px solid rgba(196,160,80,.25);padding:14px 20px;text-align:center}
+.result-text{font-size:12px;color:var(--gold);font-weight:700;letter-spacing:.5px}
+.result-sub{font-size:11px;color:var(--grey);margin-top:3px}
+
+/* ── PASS TYPES ── */
+.passes-bg{background:linear-gradient(180deg,var(--navy) 0%,var(--navy-deep) 100%)}
+.pass-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:20px}
+.pass-card{border-radius:12px;padding:14px 10px;text-align:center;border:1px solid rgba(255,255,255,.07);transition:transform .2s,border-color .2s;cursor:default}
+.pass-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.18)}
+.pass-emoji{font-size:22px;margin-bottom:6px}
+.pass-name{font-size:10px;font-weight:700;color:rgba(255,255,255,.9);line-height:1.3}
+.pass-type{font-size:9px;color:rgba(255,255,255,.45);margin-top:2px;letter-spacing:.3px}
+
+/* ── JOINT PROPOSITION ── */
+.prop-bg{background:rgba(26,43,74,.5);border-top:1px solid rgba(196,160,80,.1);border-bottom:1px solid rgba(196,160,80,.1)}
+.prop-items{margin-top:24px;display:grid;gap:14px}
+.prop-item{display:flex;align-items:flex-start;gap:14px;padding:16px;background:rgba(255,255,255,.04);border-radius:12px;border:1px solid rgba(255,255,255,.07)}
+.prop-num{width:28px;height:28px;border-radius:50%;background:var(--gold-pale);border:1.5px solid rgba(196,160,80,.4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--gold);flex-shrink:0;margin-top:1px}
+.prop-title{font-size:13px;font-weight:700;color:var(--white);margin-bottom:3px}
+.prop-desc{font-size:12px;color:var(--grey);line-height:1.6}
+
+/* ── PILOT OFFER ── */
+.pilot-bg{background:var(--navy-deep)}
+.pilot-card{background:linear-gradient(135deg,rgba(196,160,80,.12) 0%,rgba(26,43,74,.8) 60%);border:1.5px solid rgba(196,160,80,.4);border-radius:20px;padding:28px 22px;text-align:center;margin-top:24px;position:relative;overflow:hidden}
+.pilot-card::before{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(196,160,80,.15),transparent 70%);pointer-events:none}
+.pilot-eyebrow{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:12px}
+.pilot-headline{font-family:'DM Serif Display',serif;font-size:24px;color:var(--white);margin-bottom:8px;line-height:1.2}
+.pilot-sub{font-size:13px;color:var(--grey);margin-bottom:24px;line-height:1.6}
+.pilot-items{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px}
+.pilot-item{background:rgba(255,255,255,.06);border-radius:10px;padding:12px 8px;text-align:center;border:1px solid rgba(255,255,255,.1)}
+.pilot-item-num{font-family:'DM Serif Display',serif;font-size:22px;color:var(--gold);line-height:1}
+.pilot-item-label{font-size:9px;color:var(--grey);margin-top:4px;letter-spacing:.3px;text-transform:uppercase}
+.pilot-cta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+/* ── LIVE DEMO ── */
+.demo-bg{background:var(--navy)}
+.qr-section{margin-top:28px;display:flex;flex-direction:column;align-items:center;gap:20px}
+.qr-card{background:white;padding:16px;border-radius:16px;display:inline-block;box-shadow:0 8px 40px rgba(0,0,0,.4)}
+.qr-label{font-size:12px;color:var(--grey);margin-top:16px;text-align:center}
+.qr-url{font-size:10px;color:var(--gold);margin-top:4px;font-family:monospace;letter-spacing:.5px;text-align:center}
+.demo-links{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.demo-link{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:9px;font-size:12px;font-weight:700;text-decoration:none;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--white);transition:border-color .2s;white-space:nowrap}
+.demo-link:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── CONTACT ── */
+.contact-bg{background:linear-gradient(180deg,var(--navy) 0%,var(--navy-deep) 100%);border-top:1px solid rgba(196,160,80,.15)}
+.contact-grid{display:grid;gap:12px;margin-top:24px}
+.contact-row{display:flex;align-items:center;gap:12px;padding:14px;background:rgba(255,255,255,.04);border-radius:12px;border:1px solid rgba(255,255,255,.07)}
+.contact-icon{font-size:20px;flex-shrink:0;width:36px;text-align:center}
+.contact-label{font-size:10px;color:var(--grey);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}
+.contact-value{font-size:13px;color:var(--white);font-weight:600}
+.contact-value a{color:var(--gold);text-decoration:none}
+
+/* ── FOOTER ── */
+footer{background:var(--navy-deep);border-top:1px solid rgba(196,160,80,.12);padding:24px 22px;text-align:center}
+.footer-logo{font-family:'DM Serif Display',serif;font-size:18px;color:var(--gold);margin-bottom:4px}
+.footer-tag{font-size:10px;color:var(--grey);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.footer-links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
+.footer-links a{font-size:11px;color:var(--grey);text-decoration:none}
+.footer-links a:hover{color:var(--gold)}
+.footer-legal{font-size:10px;color:rgba(154,171,191,.4);margin-top:4px}
+
+/* ── REVEAL ANIMATION ── */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* ── WHATSAPP SHARE ── */
+.wa-share{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;background:#25D366;color:white;transition:opacity .2s;width:100%;margin-top:12px;max-width:280px}
+.wa-share:hover{opacity:.88}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100" fill="#0F1E3A"/><circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="2"/><rect x="82" y="75" width="36" height="82" fill="#C4A050"/><ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/><rect x="88" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="54" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="66" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="122" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="134" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="40" y="157" width="120" height="4" fill="#C4A050"/><text x="100" y="174" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#C4A050" text-anchor="middle" letter-spacing="3">AIPHONE</text><text x="100" y="187" font-family="Arial,sans-serif" font-size="8" fill="D4C4A0" text-anchor="middle" letter-spacing="2">RESIDENCE</text></svg></div>
+    <div>
+      <div class="nav-title">Aiphone Residence</div>
+      <div class="nav-sub">Partnership Proposal · dasecure.com</div>
+    </div>
+  </div>
+  <div class="nav-pill">For Aiphone SG</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow reveal">Singapore · 2026</div>
+  <h1 class="hero-title reveal">The Digital Layer<br>Your Hardware<br><em>Deserves</em></h1>
+  <div class="hero-divider reveal"></div>
+  <p class="hero-sub reveal">Aiphone installs the most trusted access hardware in Singapore's premium residences. We add the digital identity layer that turns every panel into a smart building experience.</p>
+  <div class="hero-cta-row reveal">
+    <a href="demo.html" class="btn-gold">🎯 Live Demo</a>
+    <a href="#pilot" class="btn-ghost">📋 Pilot Offer</a>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section class="problem-bg">
+  <div class="sec-label reveal">The Problem</div>
+  <h2 class="sec-title reveal">Buildings are still running on paper</h2>
+  <p class="sec-sub reveal">Even with Aiphone hardware at every door, management teams are drowning in manual processes.</p>
+  <div class="pain-grid">
+    <div class="pain-card reveal">
+      <div class="pain-icon">💳</div>
+      <div>
+        <div class="pain-title">Physical Access Cards</div>
+        <div class="pain-desc">Lost, cloned, impossible to revoke. Management spends hours processing card requests. Zero audit trail.</div>
+      </div>
+    </div>
+    <div class="pain-card reveal">
+      <div class="pain-icon">📒</div>
+      <div>
+        <div class="pain-title">Paper Visitor Logs</div>
+        <div class="pain-desc">Lobby books that nobody reads. No alerts, no history, no way to know who is in the building right now.</div>
+      </div>
+    </div>
+    <div class="pain-card reveal">
+      <div class="pain-icon">📵</div>
+      <div>
+        <div class="pain-title">Zero Data</div>
+        <div class="pain-desc">Which facilities are overbooked? Who are the most active residents? Management is flying blind — every day.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section class="solution-bg">
+  <div class="sec-label reveal">The Solution</div>
+  <h2 class="sec-title reveal">Hardware trust + Digital intelligence</h2>
+  <p class="sec-sub reveal">Aiphone owns the physical layer. We own the digital layer. Together, a complete smart building stack.</p>
+  <div class="stack-diagram reveal">
+    <div class="stack-row">
+      <div class="stack-half aiphone">
+        <div class="stack-label">Aiphone</div>
+        <div class="stack-title">Hardware Layer</div>
+        <ul class="stack-items">
+          <li>Door panels &amp; intercoms</li>
+          <li>Physical access control</li>
+          <li>Trusted installer network</li>
+          <li>Building management relationships</li>
+        </ul>
+      </div>
+      <div class="stack-plus"><div class="stack-plus-sign">+</div></div>
+      <div class="stack-half dasecure">
+        <div class="stack-label">dasecure</div>
+        <div class="stack-title">Digital Layer</div>
+        <ul class="stack-items">
+          <li>Digital passes &amp; Wallet cards</li>
+          <li>Real-time scan analytics</li>
+          <li>Facility booking system</li>
+          <li>AI-powered management</li>
+        </ul>
+      </div>
+    </div>
+    <div class="result-banner">
+      <div class="result-text">🏆 Together: Singapore's most complete smart residence platform</div>
+      <div class="result-sub">No competitor can match this combination</div>
+    </div>
+  </div>
+</section>
+
+<!-- PASS TYPES -->
+<section class="passes-bg">
+  <div class="sec-label reveal">9 Pass Types, One Platform</div>
+  <h2 class="sec-title reveal">Every identity use case covered</h2>
+  <p class="sec-sub reveal">From resident cards to contractor access — all managed digitally, all scannable at Aiphone panels.</p>
+  <div class="pass-grid reveal">
+    <div class="pass-card" style="background:rgba(26,43,74,.7);">
+      <div class="pass-emoji">🏠</div>
+      <div class="pass-name">Resident Owner</div>
+      <div class="pass-type">Permanent</div>
+    </div>
+    <div class="pass-card" style="background:rgba(45,106,79,.5);">
+      <div class="pass-emoji">🏠</div>
+      <div class="pass-name">Resident Tenant</div>
+      <div class="pass-type">Expiry date</div>
+    </div>
+    <div class="pass-card" style="background:rgba(139,94,60,.5);">
+      <div class="pass-emoji">👤</div>
+      <div class="pass-name">Visitor Pass</div>
+      <div class="pass-type">Day pass</div>
+    </div>
+    <div class="pass-card" style="background:rgba(90,90,90,.45);">
+      <div class="pass-emoji">🔧</div>
+      <div class="pass-name">Contractor</div>
+      <div class="pass-type">Project period</div>
+    </div>
+    <div class="pass-card" style="background:rgba(200,169,81,.25);">
+      <div class="pass-emoji">🎾</div>
+      <div class="pass-name">Tennis Court</div>
+      <div class="pass-type">1-hour slot</div>
+    </div>
+    <div class="pass-card" style="background:rgba(192,57,43,.4);">
+      <div class="pass-emoji">🔥</div>
+      <div class="pass-name">BBQ Pit</div>
+      <div class="pass-type">Evening slot</div>
+    </div>
+    <div class="pass-card" style="background:rgba(123,47,190,.4);">
+      <div class="pass-emoji">🎤</div>
+      <div class="pass-name">KTV Room</div>
+      <div class="pass-type">2-hour block</div>
+    </div>
+    <div class="pass-card" style="background:rgba(230,126,34,.35);">
+      <div class="pass-emoji">🏋️</div>
+      <div class="pass-name">Gym Access</div>
+      <div class="pass-type">Time-limited</div>
+    </div>
+    <div class="pass-card" style="background:rgba(27,143,196,.4);">
+      <div class="pass-emoji">🏊</div>
+      <div class="pass-name">Swimming Pool</div>
+      <div class="pass-type">Time-limited</div>
+    </div>
+  </div>
+</section>
+
+<!-- JOINT PROPOSITION -->
+<section class="prop-bg">
+  <div class="sec-label reveal">Why Partner</div>
+  <h2 class="sec-title reveal">The joint value proposition</h2>
+  <p class="sec-sub reveal">For Aiphone, this means more margin per installation, stronger retention, and a genuine moat versus Suprema, HID, and Hikvision.</p>
+  <div class="prop-items">
+    <div class="prop-item reveal">
+      <div class="prop-num">1</div>
+      <div>
+        <div class="prop-title">Differentiate from hardware competitors</div>
+        <div class="prop-desc">Panels are commoditising. The software layer becomes the reason developers and MCSTs choose Aiphone over anyone else.</div>
+      </div>
+    </div>
+    <div class="prop-item reveal">
+      <div class="prop-num">2</div>
+      <div>
+        <div class="prop-title">Increase revenue per installation</div>
+        <div class="prop-desc">Add recurring SaaS revenue on top of hardware margin. Every building you install becomes a permanent software customer.</div>
+      </div>
+    </div>
+    <div class="prop-item reveal">
+      <div class="prop-num">3</div>
+      <div>
+        <div class="prop-title">Your reps already have the relationships</div>
+        <div class="prop-desc">No new sales motion needed. Reps add one conversation to existing calls. We handle fulfilment, onboarding, and support.</div>
+      </div>
+    </div>
+    <div class="prop-item reveal">
+      <div class="prop-num">4</div>
+      <div>
+        <div class="prop-title">Works on hardware you've already installed</div>
+        <div class="prop-desc">The scanner runs on any smartphone or tablet placed at the intercom station — no panel replacements, no retrofitting.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PILOT OFFER -->
+<section class="pilot-bg" id="pilot">
+  <div class="sec-label reveal">The Ask</div>
+  <h2 class="sec-title reveal">Pilot proposal</h2>
+  <p class="sec-sub reveal">Two buildings from your existing install base. We run everything. You own the case study.</p>
+  <div class="pilot-card reveal">
+    <div class="pilot-eyebrow">Pilot Terms</div>
+    <div class="pilot-headline">2 Buildings · 90 Days · Zero Cost</div>
+    <p class="pilot-sub">We set up, configure, and operate the platform for two properties from your install base at no cost to Aiphone or the building. Full case study and ROI report delivered at day 90.</p>
+    <div class="pilot-items">
+      <div class="pilot-item">
+        <div class="pilot-item-num">2</div>
+        <div class="pilot-item-label">Buildings</div>
+      </div>
+      <div class="pilot-item">
+        <div class="pilot-item-num">90</div>
+        <div class="pilot-item-label">Days free</div>
+      </div>
+      <div class="pilot-item">
+        <div class="pilot-item-num">0</div>
+        <div class="pilot-item-label">Cost to you</div>
+      </div>
+    </div>
+    <div class="pilot-cta">
+      <a href="demo.html" class="btn-gold">🎯 See Live Demo First</a>
+    </div>
+    <a href="https://wa.me/+6500000000?text=Hi%2C%20I%27d%20like%20to%20discuss%20the%20Aiphone%20%C3%97%20dasecure%20pilot%20proposal" class="wa-share" id="wa-contact">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Discuss the Pilot
+    </a>
+  </div>
+</section>
+
+<!-- LIVE DEMO -->
+<section class="demo-bg">
+  <div class="sec-label reveal">Live System</div>
+  <h2 class="sec-title reveal">This is not a mockup</h2>
+  <p class="sec-sub reveal">Everything you see is live. Real passes. Real scans. Real wallet cards. Scan the QR or tap below to explore.</p>
+  <div class="qr-section reveal">
+    <div class="qr-card">
+      <div id="demo-qr"></div>
+    </div>
+    <div class="qr-label">Scan to open the demo on your phone</div>
+    <div class="qr-url">dasecure.github.io/aiphone-residence/demo.html</div>
+    <div class="demo-links">
+      <a href="demo.html" class="demo-link">🎯 Demo Script</a>
+      <a href="dashboard.html" class="demo-link">📊 Dashboard</a>
+      <a href="scan.html" class="demo-link">📷 Scanner</a>
+      <a href="./" class="demo-link">🏠 Portal</a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-bg">
+  <div class="sec-label reveal">Get in Touch</div>
+  <h2 class="sec-title reveal">Let's build this together</h2>
+  <div class="contact-grid">
+    <div class="contact-row reveal">
+      <div class="contact-icon">🌐</div>
+      <div>
+        <div class="contact-label">Company</div>
+        <div class="contact-value"><a href="https://dasecure.com" target="_blank">dasecure.com</a></div>
+      </div>
+    </div>
+    <div class="contact-row reveal">
+      <div class="contact-icon">📍</div>
+      <div>
+        <div class="contact-label">Location</div>
+        <div class="contact-value">Singapore</div>
+      </div>
+    </div>
+    <div class="contact-row reveal">
+      <div class="contact-icon">🔒</div>
+      <div>
+        <div class="contact-label">Specialisation</div>
+        <div class="contact-value">Digital Identity · PropTech · AI</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">dasecure</div>
+  <div class="footer-tag">Luxury Living · Digital First · Singapore</div>
+  <div class="footer-links">
+    <a href="./">Resident Portal</a>
+    <a href="demo.html">Demo</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="architecture.html">Architecture</a>
+    <a href="https://dasecure.com" target="_blank">dasecure.com</a>
+  </div>
+  <div class="footer-legal">© 2026 dasecure.com · Powered by PassQR</div>
+</footer>
+
+<script>
+// Generate demo QR
+if (window.QRCode) {
+  new QRCode(document.getElementById('demo-qr'), {
+    text: 'https://dasecure.github.io/aiphone-residence/demo.html',
+    width: 160,
+    height: 160,
+    colorDark: '#1A2B4A',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+}
+
+// Reveal animation
+const observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+
+// Immediately reveal hero elements
+document.querySelectorAll('.hero .reveal').forEach(function(el, i) {
+  setTimeout(function() { el.classList.add('visible'); }, i * 120);
+});
+</script>
+</body>
+</html>

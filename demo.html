@@ -72,6 +72,34 @@ header{background:#1A2B4A;padding:14px 18px;display:flex;align-items:center;just
 .tip-title{font-size:11px;font-weight:700;color:#C4A050;letter-spacing:.5px;margin-bottom:6px;text-transform:uppercase}
 .tip-body{font-size:12px;color:#9ca3af;line-height:1.65}
 .tip-body li{margin-left:16px;margin-top:4px}
+
+/* AI CONCIERGE */
+.ai-section{background:#0d1a30;border:1.5px solid rgba(110,231,183,.25);border-radius:18px;padding:18px;margin-top:4px;margin-bottom:12px}
+.ai-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.ai-dot{width:10px;height:10px;border-radius:50%;background:#6ee7b7;animation:aipulse 2s ease-in-out infinite;flex-shrink:0}
+@keyframes aipulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(110,231,183,.4)}50%{opacity:.7;box-shadow:0 0 0 6px rgba(110,231,183,0)}}
+.ai-title{font-size:13px;font-weight:700;color:#6ee7b7}
+.ai-sub{font-size:11px;color:#4b5563;margin-top:1px}
+.ai-chat{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;margin-bottom:12px;padding-right:2px}
+.ai-msg{display:flex;gap:8px;align-items:flex-start;animation:msgIn .3s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ai-avatar{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:1px}
+.ai-avatar.user{background:rgba(196,160,80,.18);border:1px solid rgba(196,160,80,.3);color:#C4A050}
+.ai-avatar.bot{background:rgba(110,231,183,.15);border:1px solid rgba(110,231,183,.25);color:#6ee7b7}
+.ai-bubble{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.6;color:#e5e7eb;flex:1;min-width:0}
+.ai-bubble.user-bubble{background:rgba(196,160,80,.08);border-color:rgba(196,160,80,.2);color:#e5e7eb}
+.ai-bubble.thinking{color:#4b5563;font-style:italic}
+.ai-input-row{display:flex;gap:8px}
+.ai-input{flex:1;background:#111827;border:1.5px solid #1f2937;border-radius:10px;padding:10px 12px;font-size:13px;color:#e5e7eb;outline:none;font-family:inherit;transition:border-color .2s}
+.ai-input:focus{border-color:rgba(110,231,183,.4)}
+.ai-input::placeholder{color:#374151}
+.ai-send{background:#064e3b;border:1px solid #065f46;color:#6ee7b7;border-radius:9px;padding:10px 14px;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s;flex-shrink:0;display:flex;align-items:center;gap:5px}
+.ai-send:hover{opacity:.85}
+.ai-send:disabled{opacity:.4;cursor:default}
+.ai-suggestions{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.ai-chip{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:5px 11px;font-size:11px;color:#9ca3af;cursor:pointer;transition:border-color .2s,color .2s;white-space:nowrap}
+.ai-chip:hover{border-color:rgba(110,231,183,.4);color:#6ee7b7}
+
 footer{text-align:center;padding:24px;font-size:11px;color:#374151;border-top:1px solid #111827}
 footer a{color:#C4A050;text-decoration:none}
 footer span{color:#C4A050}
@@ -98,7 +126,7 @@ footer span{color:#C4A050}
     <a href="./" class="hero-btn primary">🏠 Open Portal</a>
     <a href="dashboard.html" class="hero-btn secondary">📊 Dashboard</a>
     <a href="scan.html" class="hero-btn secondary">📷 Scanner</a>
-    <a href="architecture.html" class="hero-btn secondary">🗁️ Architecture</a>
+    <a href="pitch.html" class="hero-btn secondary">📋 Pitch</a>
   </div>
 </div>
 
@@ -226,18 +254,53 @@ footer span{color:#C4A050}
 
   <div class="step" id="step6">
     <div class="step-header" onclick="toggleStep('step6')">
-      <div class="step-num">6</div><div class="step-icon">👛</div>
+      <div class="step-num">6</div><div class="step-icon">🤖</div>
+      <div class="step-title-wrap"><div class="step-title">AI Building Concierge</div><div class="step-desc">Ask anything about residents, passes, and activity</div></div>
+      <div class="step-chevron">›</div>
+    </div>
+    <div class="step-body">
+      <div class="talk-track"><strong>Say:</strong> "This is where it gets interesting. Management can ask the AI anything about the building — who is currently active, look up a specific pass, get a summary of today's activity. The AI has live access to the system and responds in natural language. No spreadsheets, no queries."</div>
+
+      <div class="ai-section">
+        <div class="ai-header">
+          <div class="ai-dot"></div>
+          <div>
+            <div class="ai-title">AI Building Concierge</div>
+            <div class="ai-sub">Live access to passes, scans &amp; residents</div>
+          </div>
+        </div>
+        <div class="ai-suggestions" id="ai-suggestions">
+          <span class="ai-chip" onclick="askAI('Who are the active residents right now?')">Who's active now?</span>
+          <span class="ai-chip" onclick="askAI('Look up pass PASS-2MM95YKC')">Lookup Vincent Ooi</span>
+          <span class="ai-chip" onclick="askAI('How many scans happened today?')">Today\'s scans</span>
+          <span class="ai-chip" onclick="askAI('List all contractor passes')">Contractor passes</span>
+          <span class="ai-chip" onclick="askAI('Summarise building activity for today')">Daily summary</span>
+        </div>
+        <div class="ai-chat" id="ai-chat"></div>
+        <div class="ai-input-row">
+          <input class="ai-input" id="ai-input" type="text" placeholder="Ask about passes, residents, activity…" onkeydown="if(event.key==='Enter')sendAI()">
+          <button class="ai-send" id="ai-send" onclick="sendAI()">Send ›</button>
+        </div>
+      </div>
+
+      <div class="done-toggle"><input type="checkbox" id="done6" onchange="markDone('step6','done6')"><label for="done6">Mark complete</label></div>
+    </div>
+  </div>
+
+  <div class="step" id="step7">
+    <div class="step-header" onclick="toggleStep('step7')">
+      <div class="step-num">7</div><div class="step-icon">👛</div>
       <div class="step-title-wrap"><div class="step-title">Apple &amp; Google Wallet</div><div class="step-desc">Add Vincent Ooi's pass to your Wallet now</div></div>
       <div class="step-chevron">›</div>
     </div>
     <div class="step-body">
-      <div class="talk-track"><strong>Say:</strong> "Every pass in the system — resident cards, facility bookings, visitor passes — can be added to Apple Wallet or Google Wallet with one tap. The QR code is always there, even offline. When the resident updates their pass details, the Wallet card updates automatically in the background."</div>
+      <div class="talk-track"><strong>Say:</strong> "Every pass in the system — resident cards, facility bookings, visitor passes — can be added to Apple Wallet or Google Wallet with one tap. The QR code is always there, even offline. When management updates pass details, the Wallet card updates automatically."</div>
       <div class="action-row">
         <a href="https://www.passqr.com/api/wallet/apple?code=PASS-2MM95YKC" class="action-btn primary" target="_blank">🍎 Add to Apple Wallet</a>
         <a href="https://www.passqr.com/api/wallet/google?code=PASS-2MM95YKC" class="action-btn navy" target="_blank">🤖 Google Wallet</a>
       </div>
-      <div class="talk-track" style="margin-top:12px"><strong>Close:</strong> "What you've just seen replaces the plastic card, the paper visitor book, the facility booking register, and the management spreadsheet — all in one system, running on phones your team already owns."</div>
-      <div class="done-toggle"><input type="checkbox" id="done6" onchange="markDone('step6','done6')"><label for="done6">Mark complete</label></div>
+      <div class="talk-track" style="margin-top:12px"><strong>Close:</strong> "What you've just seen replaces the plastic card, the paper visitor book, the facility booking register, and the management spreadsheet — all in one system, running on phones your team already owns. And because it runs on Aiphone hardware, there's nothing new to install."</div>
+      <div class="done-toggle"><input type="checkbox" id="done7" onchange="markDone('step7','done7')"><label for="done7">Mark complete</label></div>
     </div>
   </div>
 
@@ -249,7 +312,8 @@ footer span{color:#C4A050}
       <li>Step 3 (tennis booking): 2 min — show the booking flow end-to-end</li>
       <li>Step 4 (visitor pass): 2 min — show WhatsApp share live</li>
       <li>Step 5 (dashboard): 2 min — scan live while dashboard is on screen</li>
-      <li>Step 6 (wallet): 1 min — add to Wallet, close strong</li>
+      <li>Step 6 (AI concierge): 1 min — ask "who's active now?" — land the wow</li>
+      <li>Step 7 (wallet): 1 min — close strong</li>
     </ul></div>
   </div>
   <div class="tip-card">
@@ -262,15 +326,16 @@ footer span{color:#C4A050}
       <li><strong style="color:#e5e7eb">No internet at the gate?</strong> — Passes are validated client-side; scan history syncs when connection returns.</li>
       <li><strong style="color:#e5e7eb">What about elderly residents?</strong> — Management office can print QR code stickers. The system never forces digital-only.</li>
       <li><strong style="color:#e5e7eb">Integration with existing Aiphone hardware?</strong> — The scan page runs on any phone or tablet already deployed at the intercom station.</li>
+      <li><strong style="color:#e5e7eb">Is this cloud-dependent?</strong> — Pass validation works offline. The dashboard and bookings require connectivity, same as any cloud SaaS.</li>
     </ul></div>
   </div>
 </div>
 
 <footer>
   <a href="./">← Resident Portal</a> &nbsp;·&nbsp;
+  <a href="pitch.html">📋 Pitch</a> &nbsp;·&nbsp;
   <a href="dashboard.html">Dashboard</a> &nbsp;·&nbsp;
   <a href="scan.html">Scanner</a> &nbsp;·&nbsp;
-  <a href="architecture.html">Architecture</a> &nbsp;·&nbsp;
   &copy; 2026 <span>dasecure.com</span> × <span>PassQR</span>
 </footer>
 
@@ -305,13 +370,97 @@ function copyCode(code, elOrId) {
   var el = typeof elOrId === 'string' ? document.getElementById(elOrId) : elOrId;
   if (!el) return;
   var orig = el.textContent;
-  el.textContent = '\u2705 Copied!';
+  el.textContent = '✅ Copied!';
   if (el.classList) el.classList.add('copied');
   setTimeout(function() { el.textContent = orig; if (el.classList) el.classList.remove('copied'); }, 2000);
 }
 window.addEventListener('DOMContentLoaded', function() {
   document.getElementById('step1').classList.add('open','active');
 });
+
+// ── AI CONCIERGE ──
+var aiHistory = [];
+var AI_SYSTEM = 'You are the AI concierge for Aiphone Residence, a luxury residential building in Singapore. You have live access to the building\'s pass management system via the Aiphone PassQR MCP tools. Use these tools to look up real pass data, scan history, and resident information to answer questions accurately. Always be concise, professional, and helpful. Format responses clearly with key facts highlighted. Refer to residents by name when you have the data.';
+
+function appendMsg(role, text) {
+  var chat = document.getElementById('ai-chat');
+  var div = document.createElement('div');
+  div.className = 'ai-msg';
+  var isUser = role === 'user';
+  div.innerHTML = '<div class="ai-avatar ' + (isUser ? 'user' : 'bot') + '">' + (isUser ? '👤' : '🤖') + '</div>' +
+    '<div class="ai-bubble' + (isUser ? ' user-bubble' : '') + '">' + text.replace(/\n/g,'<br>') + '</div>';
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
+}
+
+function setThinking(show) {
+  var existing = document.getElementById('ai-thinking');
+  if (show && !existing) {
+    var div = appendMsg('bot', '<span style="color:#4b5563;font-style:italic">Querying building systems…</span>');
+    div.id = 'ai-thinking';
+  } else if (!show && existing) {
+    existing.remove();
+  }
+}
+
+async function askAI(text) {
+  document.getElementById('ai-input').value = text;
+  sendAI();
+}
+
+async function sendAI() {
+  var input = document.getElementById('ai-input');
+  var text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  var sendBtn = document.getElementById('ai-send');
+  sendBtn.disabled = true;
+
+  appendMsg('user', text);
+  aiHistory.push({ role: 'user', content: text });
+
+  setThinking(true);
+
+  try {
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: AI_SYSTEM,
+        messages: aiHistory,
+        mcp_servers: [{
+          type: 'url',
+          url: 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-mcp',
+          name: 'aiphone-passqr'
+        }]
+      })
+    });
+
+    var data = await res.json();
+    setThinking(false);
+
+    // Extract final text from response (may contain tool use blocks)
+    var reply = '';
+    if (data.content && Array.isArray(data.content)) {
+      data.content.forEach(function(block) {
+        if (block.type === 'text') reply += block.text;
+      });
+    }
+    if (!reply) reply = 'I wasn\'t able to retrieve that information right now. Please try again.';
+
+    aiHistory.push({ role: 'assistant', content: data.content || reply });
+    appendMsg('bot', reply);
+  } catch(e) {
+    setThinking(false);
+    appendMsg('bot', '⚠️ Connection issue — please check your internet and try again.');
+  }
+
+  sendBtn.disabled = false;
+}
 </script>
 </body>
 </html>
