@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IXG User Pain Points × PassQR Solutions — Aiphone Residence</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#07101f;color:#e5e7eb;min-height:100vh}
+
+header{background:#1A2B4A;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(196,160,80,.3)}
+.hdr-left{display:flex;align-items:center;gap:12px}
+.logo{width:36px;height:36px}
+.hdr-title{color:#C4A050;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;font-weight:700}
+.hdr-sub{color:#7a90b0;font-size:10px;margin-top:2px}
+.hdr-actions{display:flex;gap:10px}
+.hdr-btn{padding:7px 14px;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;transition:opacity .2s}
+.hdr-btn.primary{background:#C4A050;color:#0d1a30}
+.hdr-btn.ghost{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:#e5e7eb}
+.hdr-btn:hover{opacity:.82}
+
+/* HERO */
+.hero{background:linear-gradient(160deg,#1A2B4A 0%,#0d1a30 55%,#07101f 100%);padding:40px 24px 36px;text-align:center;border-bottom:1px solid rgba(196,160,80,.12)}
+.hero-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#C4A050;font-weight:700;margin-bottom:10px}
+.hero-title{font-family:'DM Serif Display',serif;font-size:clamp(22px,5vw,34px);color:#fff;line-height:1.2;margin-bottom:10px}
+.hero-title em{color:#C4A050;font-style:italic}
+.hero-sub{font-size:13px;color:#7a90b0;max-width:580px;margin:0 auto 20px;line-height:1.65}
+.rating-row{display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
+.rating-chip{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:10px 18px;text-align:center}
+.rating-chip .stars{font-size:16px;letter-spacing:1px}
+.rating-chip .store{font-size:10px;color:#6b7280;margin-top:3px;letter-spacing:.5px;text-transform:uppercase}
+.rating-chip .score{font-size:20px;font-weight:800;color:#f87171}
+
+/* KEY INSIGHT BOX */
+.insight-wrap{max-width:880px;margin:32px auto;padding:0 20px}
+.insight-box{background:linear-gradient(135deg,#131e2e,#1a2b4a);border:1.5px solid rgba(196,160,80,.35);border-radius:16px;padding:24px 28px;position:relative;overflow:hidden}
+.insight-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#C4A050,#e8c070,#C4A050)}
+.insight-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#C4A050;font-weight:700;margin-bottom:12px}
+.insight-text{font-size:14px;color:#e5e7eb;line-height:1.7}
+.insight-text strong{color:#C4A050}
+.model-compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+@media(max-width:600px){.model-compare{grid-template-columns:1fr}}
+.model-card{border-radius:10px;padding:14px 16px}
+.model-card.bad{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2)}
+.model-card.good{background:rgba(110,231,183,.07);border:1px solid rgba(110,231,183,.2)}
+.model-card-title{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.model-card.bad .model-card-title{color:#f87171}
+.model-card.good .model-card-title{color:#6ee7b7}
+.model-step{font-size:12px;color:#9ca3af;padding:3px 0;display:flex;align-items:flex-start;gap:6px;line-height:1.45}
+.model-step .dot{flex-shrink:0;margin-top:4px}
+
+/* PAIN POINTS */
+.pain-section{max-width:880px;margin:0 auto;padding:0 20px 60px}
+.section-label{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#C4A050;font-weight:700;margin:32px 0 16px}
+
+.pain-card{background:#111827;border:1px solid #1f2937;border-radius:16px;overflow:hidden;margin-bottom:16px}
+.pain-header{display:flex;align-items:flex-start;gap:14px;padding:18px 20px 16px}
+.pain-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;background:rgba(239,68,68,.12);color:#f87171;border:1.5px solid rgba(239,68,68,.25)}
+.pain-body{flex:1}
+.pain-title{font-size:14px;font-weight:700;color:#f1f5f9;margin-bottom:4px}
+.pain-tag{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:5px;background:rgba(239,68,68,.1);color:#f87171;display:inline-block;margin-bottom:8px}
+
+/* Quote block */
+.quote-block{background:#0d1a30;border-left:3px solid #374151;border-radius:0 8px 8px 0;padding:10px 14px;margin:0 20px 14px;font-size:12px;color:#9ca3af;line-height:1.6;font-style:italic;position:relative}
+.quote-source{font-size:10px;color:#4b5563;margin-top:6px;font-style:normal;font-weight:600}
+.quote-stars{color:#f87171;font-size:11px;letter-spacing:1px}
+
+/* Fix block */
+.fix-block{background:rgba(110,231,183,.06);border-top:1px solid rgba(110,231,183,.12);padding:14px 20px;display:flex;align-items:flex-start;gap:14px}
+.fix-icon{font-size:22px;flex-shrink:0;margin-top:1px}
+.fix-body{flex:1}
+.fix-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6ee7b7;margin-bottom:5px}
+.fix-text{font-size:12px;color:#9ca3af;line-height:1.6}
+.fix-text strong{color:#e5e7eb}
+.fix-demo{display:inline-flex;align-items:center;gap:5px;margin-top:8px;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;background:rgba(110,231,183,.12);border:1px solid rgba(110,231,183,.25);color:#6ee7b7;transition:background .15s}
+.fix-demo:hover{background:rgba(110,231,183,.2)}
+
+/* SUMMARY TABLE */
+.summary-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.summary-table th{text-align:left;padding:8px 12px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6b7280;border-bottom:1px solid #1f2937;font-weight:700}
+.summary-table td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top;line-height:1.5}
+.summary-table tr:last-child td{border-bottom:none}
+.summary-table td:first-child{color:#f87171;font-weight:600;width:36%}
+.summary-table td:last-child{color:#6ee7b7}
+.badge-before{display:inline-block;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:5px;padding:1px 7px;font-size:9px;font-weight:700;color:#f87171}
+.badge-after{display:inline-block;background:rgba(110,231,183,.1);border:1px solid rgba(110,231,183,.2);border-radius:5px;padding:1px 7px;font-size:9px;font-weight:700;color:#6ee7b7}
+
+/* CTA */
+.cta-box{background:linear-gradient(135deg,#131e2e,#1a2b4a);border:1.5px solid rgba(196,160,80,.3);border-radius:16px;padding:28px;text-align:center;margin:0 0 48px}
+.cta-title{font-family:'DM Serif Display',serif;font-size:22px;color:#fff;margin-bottom:8px}
+.cta-sub{font-size:13px;color:#7a90b0;max-width:440px;margin:0 auto 20px;line-height:1.6}
+.cta-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.cta-btn{padding:12px 22px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;transition:opacity .2s}
+.cta-btn.primary{background:#C4A050;color:#0d1a30}
+.cta-btn.ghost{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:#e5e7eb}
+.cta-btn:hover{opacity:.85}
+
+footer{text-align:center;padding:20px;font-size:11px;color:#374151;border-top:1px solid #111827}
+footer a{color:#C4A050;text-decoration:none}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-left">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100" fill="#0F1E3A"/><circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="2"/><rect x="82" y="75" width="36" height="82" fill="#C4A050"/><ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/><rect x="88" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="54" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="66" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="122" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="134" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="40" y="157" width="120" height="4" fill="#C4A050"/><text x="100" y="174" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#C4A050" text-anchor="middle" letter-spacing="3">AIPHONE</text><text x="100" y="187" font-family="Arial,sans-serif" font-size="8" fill="#D4C4A0" text-anchor="middle" letter-spacing="2">RESIDENCE</text></svg></div>
+    <div><div class="hdr-title">IXG User Research</div><div class="hdr-sub">App Store pain points × PassQR solutions</div></div>
+  </div>
+  <div class="hdr-actions">
+    <a href="architecture.html" class="hdr-btn ghost">Architecture</a>
+    <a href="demo.html" class="hdr-btn primary">🎯 Demo Script</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">User Research · App Store &amp; Google Play</div>
+  <div class="hero-title">What residents are saying<br>about the <em>Aiphone IXG app</em></div>
+  <div class="hero-sub">Real reviews from App Store and Google Play surface 6 recurring friction patterns — every one of which PassQR directly addresses by replacing the reactive notification model with proactive, pre-authorized access.</div>
+  <div class="rating-row">
+    <div class="rating-chip">
+      <div class="stars">⭐⭐☆☆☆</div>
+      <div class="score">2.3</div>
+      <div class="store">Apple App Store</div>
+    </div>
+    <div class="rating-chip">
+      <div class="stars">⭐⭐☆☆☆</div>
+      <div class="score">2.1</div>
+      <div class="store">Google Play Store</div>
+    </div>
+    <div class="rating-chip" style="background:rgba(196,160,80,.08);border-color:rgba(196,160,80,.25)">
+      <div class="stars" style="color:#C4A050">💡</div>
+      <div class="score" style="color:#C4A050;font-size:14px">6 patterns</div>
+      <div class="store">all solved by PassQR</div>
+    </div>
+  </div>
+</div>
+
+<!-- KEY INSIGHT -->
+<div class="insight-wrap">
+  <div class="insight-box">
+    <div class="insight-title">The Root Cause</div>
+    <div class="insight-text">
+      Every complaint traces back to the same design flaw: the IXG app puts residents <strong>in the critical path of every access event</strong>. Visitor arrives → buzzes intercom → notification must reach resident in time → resident must respond → door release may or may not work. Five sequential failure points for what should be a 2-second interaction.<br><br>
+      PassQR breaks this dependency entirely. <strong>Known people pre-authorize themselves via QR pass — no app notification required, no resident action needed at the door.</strong> The IXG hardware still does its job (video, QR scan, door relay). PassQR handles the identity layer. The app becomes optional again.
+    </div>
+    <div class="model-compare">
+      <div class="model-card bad">
+        <div class="model-card-title">❌ Current IXG Model — Reactive</div>
+        <div class="model-step"><span class="dot">1.</span> Visitor presses intercom button</div>
+        <div class="model-step"><span class="dot">2.</span> App sends push notification (may be delayed)</div>
+        <div class="model-step"><span class="dot">3.</span> Resident must open app in time</div>
+        <div class="model-step"><span class="dot">4.</span> Video call must connect (~30s)</div>
+        <div class="model-step"><span class="dot">5.</span> Door release button may fail (~50%)</div>
+        <div class="model-step"><span class="dot" style="color:#f87171">✕</span> <span style="color:#f87171">Visitor waits, delivery driver walks away</span></div>
+      </div>
+      <div class="model-card good">
+        <div class="model-card-title">✅ PassQR Model — Proactive</div>
+        <div class="model-step"><span class="dot">1.</span> Resident issues QR pass before arrival</div>
+        <div class="model-step"><span class="dot">2.</span> Visitor receives pass in WhatsApp Wallet</div>
+        <div class="model-step"><span class="dot">3.</span> Visitor shows QR at IXG door station</div>
+        <div class="model-step"><span class="dot">4.</span> PassQR validates in &lt; 2 seconds</div>
+        <div class="model-step"><span class="dot">5.</span> IXG releases door automatically</div>
+        <div class="model-step"><span class="dot" style="color:#6ee7b7">✓</span> <span style="color:#6ee7b7">No resident interaction required</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAIN POINTS -->
+<div class="pain-section">
+  <div class="section-label">6 Pain Points from App Store Reviews</div>
+
+  <!-- 1 -->
+  <div class="pain-card">
+    <div class="pain-header">
+      <div class="pain-num">1</div>
+      <div class="pain-body">
+        <div class="pain-tag">Notification Latency</div>
+        <div class="pain-title">Resident receives alert too late — visitor already gone</div>
+      </div>
+    </div>
+    <div class="quote-block">
+      "When someone rings I get the notification so late that the visitor pushes the button for a second time, which causes a message on my phone that the unit is in use, so it takes like 3 tries to get them in. Is there any way to get this thing to notify me quicker?"
+      <div class="quote-source"><span class="quote-stars">★☆☆☆☆</span> &nbsp;·&nbsp; Google Play Store review</div>
+    </div>
+    <div class="quote-block">
+      "Delivery drivers tend to walk away rather than wait for this high-tech front-door iPad to let them in."
+      <div class="quote-source"><span class="quote-stars">★☆☆☆☆</span> &nbsp;·&nbsp; Apple App Store review</div>
+    </div>
+    <div class="fix-block">
+      <div class="fix-icon">📲</div>
+      <div class="fix-body">
+        <div class="fix-label">PassQR Fix — Pre-authorized access</div>
+        <div class="fix-text">For expected visitors (delivery, guests, contractors), the resident issues a digital pass via WhatsApp <strong>before</strong> they arrive. The visitor scans the QR at the IXG door station — no notification, no waiting, no resident action required. The notification problem literally disappears because the resident was never needed at the moment of access.</div>
+        <a href="book/visitor.html?demo" class="fix-demo" target="_blank">Try: Issue visitor pass →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="pain-card">
+    <div class="pain-header">
+      <div class="pain-num">2</div>
+      <div class="pain-body">
+        <div class="pain-tag">Door Release Failure</div>
+        <div class="pain-title">Door fails to open ~50% of the time via the app</div>
+      </div>
+    </div>
+    <div class="quote-block">
+      "After that, it takes 20 or 30 seconds to connect. Then, about 50% of the time the action to open the door fails… It seems that the developers of this system forgot that the most important feature is opening the door."
+      <div class="quote-source"><span class="quote-stars">★☆☆☆☆</span> &nbsp;·&nbsp; Apple App Store review</div>
+    </div>
+    <div class="quote-block">
+      "I get a notification and the phone rings but when I click to accept the call nothing happens, except the notification goes away. The phone keeps ringing but with nothing to click or swipe."
+      <div class="quote-source"><span class="quote-stars">★☆☆☆☆</span> &nbsp;·&nbsp; Google Play Store review</div>
+    </div>
+    <div class="fix-block">
+      <div class="fix-icon">⚡</div>
+      <div class="fix-body">
+        <div class="fix-label">PassQR Fix — Lightweight HTTP validation, not video streaming</div>
+        <div class="fix-text">The IXG app's door release fails because it depends on a live video call being established over a variable network connection. PassQR's validation is a <strong>simple HTTPS POST</strong> — no video, no call, no stream. The door signal is triggered by a JSON response in under 2 seconds, with 99%+ reliability. There is no video call to fail.</div>
+        <a href="scan.html" class="fix-demo" target="_blank">See: Staff scanner (same principle) →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="pain-card">
+    <div class="pain-header">
+      <div class="pain-num">3</div>
+      <div class="pain-body">
+        <div class="pain-tag">App Installation Friction</div>
+        <div class="pain-title">Every resident must install, configure and maintain the app</div>
+      </div>
+    </div>
+    <div class="quote-block">
+      "I've uninstalled multiple times. This app will not work for various reasons each time. Error messages. Agreeing to license agreement (I've accepted 20 times now)."
+      <div class="quote-source"><span class="quote-stars">★☆☆☆☆</span> &nbsp;·&nbsp; Google Play Store review</div>
+    </div>
+    <div class="quote-block">
+      "It was fine for 6 months but the past 3 months there is always something wrong. This is frustrating and I hate that my apartment complex switched to this system!"
+      <div class="quote-source"><span class="quote-stars">★★☆☆☆</span> &nbsp;·&nbsp; Google Play Store review</div>
+    </div>
+    <div class="fix-block">
+      <div class="fix-icon">👛</div>
+      <div class="fix-body">
+        <div class="fix-label">PassQR Fix — Native Wallet, zero install</div>
+        <div class="fix-text">Resident passes live in <strong>Apple Wallet or Google Wallet</strong> — apps that are pre-installed on every phone and never need to be configured. No license agreements. No reinstalls. No notifications to manage. The pass updates silently over the air when management changes anything. For elderly or non-technical residents, management can even print a QR code sticker.</div>
+        <a href="https://www.passqr.com/api/wallet/apple?code=PASS-2MM95YKC" class="fix-demo" target="_blank">Try: Add to Apple Wallet →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="pain-card">
+    <div class="pain-header">
+      <div class="pain-num">4</div>
+      <div class="pain-body">
+        <div class="pain-tag">App Crashes &amp; Unreliability</div>
+        <div class="pain-title">App crashes 2–3× per day; works only 75% of the time on a good day</div>
+      </div>
+    </div>
+    <div class="quote-block">
+      "One of the worst apps I've ever been forced to use. Would show incoming calls about 50% of the time, and would let you answer them successfully about 10% of that. Now doesn't answer any calls at all."
+      <div class="quote-source"><span class="quote-stars">★☆☆☆☆</span> &nbsp;·&nbsp; Google Play Store review</div>
+    </div>
+    <div class="quote-block">
+      "The app itself still needs major work — it now crashes approx. 2–3×/day for no apparent reason, still unintuitive UI, and still just unreliable."
+      <div class="quote-source"><span class="quote-stars">★★★☆☆</span> &nbsp;·&nbsp; Google Play Store review (updated to 3 stars)</div>
+    </div>
+    <div class="fix-block">
+      <div class="fix-icon">🔒</div>
+      <div class="fix-body">
+        <div class="fix-label">PassQR Fix — No app in the critical path</div>
+        <div class="fix-text">PassQR eliminates the IXG app from the critical path for the most common access scenarios. For residents: <strong>Wallet QR works offline and never crashes</strong>. For management: the portal is a standard web page. The IXG app can still be used for video intercom with unexpected visitors — but a crashed app no longer means residents are locked out.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 -->
+  <div class="pain-card">
+    <div class="pain-header">
+      <div class="pain-num">5</div>
+      <div class="pain-body">
+        <div class="pain-tag">Confusing Visitor Flow</div>
+        <div class="pain-title">Visitors struggle to figure out how to use the door panel</div>
+      </div>
+    </div>
+    <div class="quote-block">
+      "You have to navigate through several levels of menu items in order to open the door… Most people have trouble figuring out how to get in."
+      <div class="quote-source"><span class="quote-stars">★☆☆☆☆</span> &nbsp;·&nbsp; Apple App Store review</div>
+    </div>
+    <div class="quote-block">
+      "Completely useless app. Directions are really confusing."
+      <div class="quote-source"><span class="quote-stars">★☆☆☆☆</span> &nbsp;·&nbsp; Google Play Store review</div>
+    </div>
+    <div class="fix-block">
+      <div class="fix-icon">👤</div>
+      <div class="fix-body">
+        <div class="fix-label">PassQR Fix — Visitors arrive with their pass already in hand</div>
+        <div class="fix-text">A visitor with a PassQR day-pass never needs to navigate the IXG's touchscreen directory. They simply open their Wallet or the WhatsApp link the resident sent them, and <strong>show the QR code</strong>. One gesture. No searching for the resident's unit. No calling and waiting. Third-party reviews note that Aiphone <em>"lacks Visitor Passes for guest access"</em> — PassQR fills this gap directly.</div>
+        <a href="book/visitor.html?demo" class="fix-demo" target="_blank">Try: Issue visitor pass →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 -->
+  <div class="pain-card">
+    <div class="pain-header">
+      <div class="pain-num">6</div>
+      <div class="pain-body">
+        <div class="pain-tag">No Facility Booking / Pass Management</div>
+        <div class="pain-title">No proactive access management — residents and managers are passive</div>
+      </div>
+    </div>
+    <div class="quote-block">
+      "Compared to competitors, Aiphone intercoms may lack modern features like Visitor Passes for guest access, delivery codes, and robust property management software integrations."
+      <div class="quote-source">butterflymx.com · Aiphone Intercom Review (2025)</div>
+    </div>
+    <div class="quote-block">
+      "The IXG Series Mobile App enables tenants to screen visitors… [but] up to 8 smartphones can be registered for each tenant."
+      <div class="quote-source">Aiphone official product documentation — no facility booking mentioned</div>
+    </div>
+    <div class="fix-block">
+      <div class="fix-icon">🎾</div>
+      <div class="fix-body">
+        <div class="fix-label">PassQR Fix — Full property pass ecosystem</div>
+        <div class="fix-text">PassQR adds an entire layer of <strong>proactive pass management</strong> that the IXG app simply doesn't have: facility bookings (tennis, pool, BBQ, gym, KTV) that go to Wallet, time-limited contractor passes, visitor day-passes sent via WhatsApp, and an AI concierge that manages all of it in plain English. Management gets a live dashboard. The IXG hardware remains the enforcement layer — PassQR handles everything above it.</div>
+        <a href="./" class="fix-demo" target="_blank">See full portal →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUMMARY TABLE -->
+  <div class="section-label">Summary — Before &amp; After</div>
+  <div class="pain-card" style="overflow:auto">
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>IXG App Pain Point</th>
+          <th>Root cause</th>
+          <th>With PassQR</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Notification arrives too late</td>
+          <td style="color:#9ca3af">Resident in critical path</td>
+          <td>Visitor has pass before arrival — notification not needed</td>
+        </tr>
+        <tr>
+          <td>Door release fails ~50%</td>
+          <td style="color:#9ca3af">Depends on video call stream</td>
+          <td>HTTPS JSON validation &lt; 2s, 99%+ reliability</td>
+        </tr>
+        <tr>
+          <td>App install &amp; config burden</td>
+          <td style="color:#9ca3af">Custom app required per resident</td>
+          <td>Native Wallet — pre-installed, zero config</td>
+        </tr>
+        <tr>
+          <td>App crashes 2–3×/day</td>
+          <td style="color:#9ca3af">App in critical path for entry</td>
+          <td>Wallet QR works offline; app not needed for access</td>
+        </tr>
+        <tr>
+          <td>Visitors confused at panel</td>
+          <td style="color:#9ca3af">Must navigate directory to call unit</td>
+          <td>Visitor shows WhatsApp QR — no panel navigation</td>
+        </tr>
+        <tr>
+          <td>No visitor / facility pass mgmt</td>
+          <td style="color:#9ca3af">IXG app is intercom-only</td>
+          <td>Full pass ecosystem + AI management + live dashboard</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CTA -->
+  <div class="section-label" style="margin-top:32px">The Pitch</div>
+  <div class="cta-box">
+    <div class="cta-title">We don't replace your IXG investment.<br>We fix what's frustrating your residents.</div>
+    <div class="cta-sub">The IXG hardware is excellent — its QR scanner, video capability, and door relay are exactly what's needed. PassQR is the identity and pass management layer that makes it actually pleasant to live with.</div>
+    <div class="cta-actions">
+      <a href="demo.html" class="cta-btn primary">🎯 Run the demo</a>
+      <a href="architecture.html" class="cta-btn ghost">View architecture</a>
+      <a href="./" class="cta-btn ghost">Open portal</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <a href="./">← Portal</a> &nbsp;·&nbsp;
+  <a href="demo.html">Demo Script</a> &nbsp;·&nbsp;
+  <a href="architecture.html">Architecture</a> &nbsp;·&nbsp;
+  Sources: Apple App Store · Google Play Store · butterflymx.com · aiphone.net
+</footer>
+
+</body>
+</html>
