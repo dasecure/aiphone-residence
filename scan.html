@@ -42,19 +42,21 @@ header p{color:#aab8d0;font-size:10px;margin-top:1px}
 .lock-banner p{font-size:13px;color:#aab8d0;letter-spacing:.5px}
 
 .scan-controls{padding:14px 16px;display:flex;gap:8px;align-items:center}
-.gate-select{flex:1;background:#1f2937;border:1px solid #374151;border-radius:8px;color:#fff;padding:9px 11px;font-size:13px;outline:none}
+/* 16px font prevents iOS zoom-on-focus */
+.gate-select{flex:1;background:#1f2937;border:1px solid #374151;border-radius:8px;color:#fff;padding:0 11px;font-size:16px;outline:none;min-height:46px;-webkit-appearance:none;appearance:none}
 .gate-select:focus{border-color:#C4A050}
-.btn-cam{background:#1A2B4A;border:1px solid #C4A050;color:#C4A050;border-radius:8px;padding:9px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .2s}
+.btn-cam{background:#1A2B4A;border:1px solid #C4A050;color:#C4A050;border-radius:8px;padding:0 16px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .2s;min-height:46px}
 .btn-cam.active{background:#C4A050;color:#0a0f1a}
 .btn-cam:hover{background:#C4A050;color:#0a0f1a}
 
 .manual{padding:0 16px 14px}
 .manual label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px}
 .manual-row{display:flex;gap:8px}
-.manual input{flex:1;background:#1f2937;border:1px solid #374151;border-radius:8px;padding:9px 12px;font-size:14px;color:#fff;font-family:monospace;outline:none;letter-spacing:1px;text-transform:uppercase}
-.manual input::placeholder{text-transform:none;font-family:sans-serif;letter-spacing:0;color:#4b5563}
+/* 16px font prevents iOS zoom-on-focus */
+.manual input{flex:1;background:#1f2937;border:1px solid #374151;border-radius:8px;padding:0 12px;font-size:16px;color:#fff;font-family:monospace;outline:none;letter-spacing:1px;text-transform:uppercase;min-height:46px}
+.manual input::placeholder{text-transform:none;font-family:sans-serif;letter-spacing:0;color:#4b5563;font-size:14px}
 .manual input:focus{border-color:#C4A050}
-.btn-scan{background:#C4A050;color:#0a0f1a;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s}
+.btn-scan{background:#C4A050;color:#0a0f1a;border:none;border-radius:8px;padding:0 20px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;min-height:46px;white-space:nowrap}
 .btn-scan:hover{opacity:.85}
 .btn-scan:disabled{opacity:.4;cursor:default}
 
@@ -76,7 +78,7 @@ header p{color:#aab8d0;font-size:10px;margin-top:1px}
 .push-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:5px 12px;border-radius:20px;font-weight:700;margin:6px 22px 0}
 .push-ok{background:#064e3b;color:#6ee7b7}
 .push-none{background:#1f2937;color:#6b7280}
-.modal-dismiss{margin:16px 22px 22px;width:calc(100% - 44px);padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.5px;transition:opacity .2s}
+.modal-dismiss{margin:16px 22px 22px;width:calc(100% - 44px);padding:16px;border:none;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:.5px;transition:opacity .2s;min-height:54px}
 .modal-dismiss:hover{opacity:.88}
 
 /* Resident (green) */
@@ -165,8 +167,9 @@ footer span{color:#C4A050}
     <div class="manual">
       <label>Manual code entry</label>
       <div class="manual-row">
-        <input type="text" id="code-input" placeholder="PASS-XXXXXXXX" maxlength="14"
-          autocomplete="off" autocorrect="off" spellcheck="false"
+        <input type="text" id="code-input" placeholder="PASS-XXXXXXXX" maxlength="16"
+          autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"
+          inputmode="text"
           oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')">
         <button class="btn-scan" id="scan-btn" onclick="submitCode()">Scan</button>
       </div>
@@ -179,7 +182,7 @@ footer span{color:#C4A050}
   </div>
 </div>
 
-<footer>&copy; 2026 <span>Aiphone Residence</span> &middot; <a href="./" style="color:#C4A050">Portal</a> &middot; <a href="dashboard.html" style="color:#C4A050">Dashboard</a></footer>
+<footer>&copy; 2026 <span>Aiphone Residence</span> &middot; <a href="./" style="color:#C4A050">Portal</a> &middot; <a href="dashboard.html" style="color:#C4A050">Dashboard</a> &middot; <a href="architecture.html" style="color:#C4A050">Architecture</a></footer>
 
 <script>
 const SCAN_URL = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-scan';
@@ -189,7 +192,13 @@ let camRunning = false;
 let modalOpen  = false;
 let processing = false;
 
-window.addEventListener('DOMContentLoaded', () => startCam());
+window.addEventListener('DOMContentLoaded', function() {
+  startCam();
+  // Enter key on manual input
+  document.getElementById('code-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); submitCode(); }
+  });
+});
 
 async function startCam() {
   try {
@@ -197,12 +206,12 @@ async function startCam() {
     await scanner.start(
       { facingMode: 'environment' },
       { fps: 10, qrbox: { width: 220, height: 220 }, aspectRatio: 1.0 },
-      onQRDetected, () => {}
+      onQRDetected, function() {}
     );
     camRunning = true;
     document.getElementById('cam-btn').textContent = 'Stop Cam';
     document.getElementById('cam-btn').classList.add('active');
-  } catch {
+  } catch(e) {
     document.getElementById('reader-wrap').innerHTML =
       '<div style="display:flex;align-items:center;justify-content:center;height:200px;color:#4b5563;font-size:13px;text-align:center;padding:20px">Camera not available.<br>Use manual entry below.</div>';
     document.getElementById('cam-btn').style.display = 'none';
@@ -244,27 +253,28 @@ async function submitCode(codeOverride) {
   }
 }
 
-// Format YYYY-MM-DD → "20 Apr 2026"
 function fmtDate(d) {
   if (!d) return d;
   try {
     const [y, m, day] = d.split('-');
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    return `${parseInt(day)} ${months[parseInt(m)-1]} ${y}`;
+    return parseInt(day) + ' ' + months[parseInt(m)-1] + ' ' + y;
   } catch { return d; }
 }
 
 function buildModal(code, data) {
   if (data.success) {
+    // Haptic feedback on valid scan
+    if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
+
     const timeParts = (data.last_entry || '').split(' · ');
     const gate      = timeParts[0] || '';
     const time      = timeParts.slice(1).join(' · ');
-    const pushHtml  = data.push?.succeeded > 0
-      ? `<div class="push-badge push-ok">📱 Wallet updated · ${data.push.succeeded} device${data.push.succeeded > 1 ? 's' : ''}</div>`
-      : `<div class="push-badge push-none">📱 No wallet devices</div>`;
+    const pushHtml  = data.push && data.push.succeeded > 0
+      ? '<div class="push-badge push-ok">📱 Wallet updated · ' + data.push.succeeded + ' device' + (data.push.succeeded > 1 ? 's' : '') + '</div>'
+      : '<div class="push-badge push-none">📱 No wallet devices</div>';
 
     if (data.is_visitor) {
-      // ── Visitor: blue theme ──────────────────────────────────────────
       const rows = [];
       if (data.host_unit)     rows.push(['Visiting', data.host_unit]);
       if (data.purpose)       rows.push(['Purpose',  data.purpose]);
@@ -275,83 +285,66 @@ function buildModal(code, data) {
       if (data.valid_date) rows.push(['Valid', data.valid_date + ' only']);
       openModal('visitor', '👤', data.holder_name || 'Visitor', 'VISITOR PASS', code, rows, pushHtml, true);
       addHistory(code, data.holder_name || 'Visitor', 'visitor', data.last_entry);
-
     } else {
-      // ── Facility / resident: green theme — use pass_type for context ──
       const pt   = data.pass_type || 'resident';
       const rows = [];
       let icon     = '✅';
       let subtitle = '';
-
       switch (pt) {
         case 'tennis':
-          icon     = '🎾';
-          subtitle = 'Tennis Court Booking';
+          icon = '🎾'; subtitle = 'Tennis Court Booking';
           if (data.court)     rows.push(['Court',   data.court]);
           if (data.date)      rows.push(['Date',    fmtDate(data.date)]);
           if (data.time_slot) rows.push(['Slot',    data.time_slot]);
           if (data.unit)      rows.push(['Unit',    data.unit]);
           if (data.guests)    rows.push(['Players', String(data.guests)]);
           break;
-
         case 'bbq':
-          icon     = '🔥';
-          subtitle = 'BBQ Pit Booking';
+          icon = '🔥'; subtitle = 'BBQ Pit Booking';
           if (data.pit_number) rows.push(['Pit',    data.pit_number]);
           if (data.date)       rows.push(['Date',   fmtDate(data.date)]);
           if (data.time_slot)  rows.push(['Slot',   data.time_slot]);
           if (data.pax)        rows.push(['Guests', String(data.pax) + ' pax']);
           break;
-
         case 'ktv':
-          icon     = '🎤';
-          subtitle = 'KTV Room Booking';
+          icon = '🎤'; subtitle = 'KTV Room Booking';
           if (data.room)      rows.push(['Room',   data.room]);
           if (data.date)      rows.push(['Date',   fmtDate(data.date)]);
           if (data.time_slot) rows.push(['Slot',   data.time_slot]);
           if (data.pax)       rows.push(['Guests', String(data.pax) + ' pax']);
           break;
-
         case 'gym':
-          icon     = '🏋️';
-          subtitle = 'Gym Access';
-          if (data.unit)            rows.push(['Unit',       data.unit + (data.block ? ' · ' + data.block : '')]);
+          icon = '🏋️'; subtitle = 'Gym Access';
+          if (data.unit) rows.push(['Unit', data.unit + (data.block ? ' · ' + data.block : '')]);
           if (data.membership_type) rows.push(['Membership', data.membership_type]);
-          if (data.gym_hours)       rows.push(['Hours',      data.gym_hours]);
+          if (data.gym_hours) rows.push(['Hours', data.gym_hours]);
           break;
-
         case 'pool':
-          icon     = '🏊';
-          subtitle = 'Swimming Pool Access';
-          if (data.unit)       rows.push(['Unit',  data.unit + (data.block ? ' · ' + data.block : '')]);
+          icon = '🏊'; subtitle = 'Swimming Pool Access';
+          if (data.unit) rows.push(['Unit', data.unit + (data.block ? ' · ' + data.block : '')]);
           if (data.pool_hours) rows.push(['Hours', data.pool_hours]);
           break;
-
         case 'contractor':
-          icon     = '🔧';
-          subtitle = 'Contractor / Service Pass';
+          icon = '🔧'; subtitle = 'Contractor / Service Pass';
           if (data.company_name)    rows.push(['Company', data.company_name]);
           if (data.authorized_unit) rows.push(['Unit',    data.authorized_unit]);
           if (data.work_scope)      rows.push(['Scope',   data.work_scope]);
           if (data.valid_until)     rows.push(['Until',   data.valid_until]);
           break;
-
-        default: // resident
-          icon     = '✅';
-          subtitle = data.tier ? data.tier + ' — Resident Card' : 'Resident Card';
+        default:
+          icon = '✅'; subtitle = data.tier ? data.tier + ' — Resident Card' : 'Resident Card';
           if (data.unit) rows.push(['Unit', data.unit + (data.block ? ' · ' + data.block : '')]);
           if (data.tier) rows.push(['Tier', data.tier]);
       }
-
-      // Always append gate, time, scan count
       if (gate) rows.push(['Gate',  gate]);
       if (time) rows.push(['Time',  time]);
       rows.push(['Scans', String(data.scan_sequence || 1)]);
-
       openModal('valid', icon, data.holder_name || 'Valid Pass', subtitle, code, rows, pushHtml, false);
       addHistory(code, data.holder_name || 'Unknown', 'ok', data.last_entry, pt);
     }
   } else {
+    // Single short vibrate for deny
+    if (navigator.vibrate) navigator.vibrate(300);
     const expired = data.status === 'expired';
     const revoked = data.status === 'revoked';
     const theme   = (expired || revoked) ? 'invalid' : 'warn';
@@ -364,7 +357,9 @@ function buildModal(code, data) {
   }
 }
 
-function openModal(theme, icon, title, subtitle, code, rows, extraHtml = '', isVisitor = false) {
+function openModal(theme, icon, title, subtitle, code, rows, extraHtml, isVisitor) {
+  if (extraHtml === undefined) extraHtml = '';
+  if (isVisitor === undefined) isVisitor = false;
   document.getElementById('modal').className      = 'modal ' + theme;
   document.getElementById('m-icon').textContent   = icon;
   document.getElementById('m-title').textContent  = title;
@@ -372,13 +367,13 @@ function openModal(theme, icon, title, subtitle, code, rows, extraHtml = '', isV
   document.getElementById('m-code').textContent   = code;
   document.getElementById('m-visitor-badge').style.display = isVisitor ? 'block' : 'none';
   document.getElementById('m-body').innerHTML =
-    rows.map(([l, v]) => `<div class="modal-row"><span class="lbl">${l}</span><span class="val">${v}</span></div>`).join('');
+    rows.map(function(r) { return '<div class="modal-row"><span class="lbl">' + r[0] + '</span><span class="val">' + r[1] + '</span></div>'; }).join('');
   document.getElementById('m-push').innerHTML = extraHtml;
   document.getElementById('modal-backdrop').classList.add('open');
   modalOpen = true;
   showLockBanner(true);
   document.getElementById('code-input').value = '';
-  setTimeout(() => document.getElementById('m-dismiss').focus(), 50);
+  setTimeout(function() { document.getElementById('m-dismiss').focus(); }, 50);
 }
 
 function dismissModal() {
@@ -386,9 +381,11 @@ function dismissModal() {
   modalOpen = false; showLockBanner(false); lockUI(false);
 }
 document.getElementById('modal-backdrop').addEventListener('click', function(e) { if (e.target === this) dismissModal(); });
+// Keyboard: Escape to dismiss
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && modalOpen) dismissModal(); });
 
 function lockUI(lock) {
-  const btn = document.getElementById('scan-btn');
+  var btn = document.getElementById('scan-btn');
   btn.disabled = lock; btn.textContent = lock ? 'Scanning…' : 'Scan';
   document.getElementById('code-input').disabled = lock;
   document.getElementById('gate-sel').disabled   = lock;
@@ -399,19 +396,19 @@ function showLockBanner(show) {
 }
 
 function addHistory(code, name, type, entry, passType) {
-  const now = new Date().toLocaleTimeString('en-SG', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Singapore' });
-  const icons = { tennis:'🎾', bbq:'🔥', ktv:'🎤', gym:'🏋️', pool:'🏊', contractor:'🔧', visitor:'👤' };
-  const ptIcon = icons[passType] || '';
-  scanHistory.unshift({ code, name, type, entry, time: now, ptIcon });
+  var now = new Date().toLocaleTimeString('en-SG', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Singapore' });
+  var icons = { tennis:'🎾', bbq:'🔥', ktv:'🎤', gym:'🏋️', pool:'🏊', contractor:'🔧', visitor:'👤' };
+  var ptIcon = icons[passType] || '';
+  scanHistory.unshift({ code: code, name: name, type: type, entry: entry, time: now, ptIcon: ptIcon });
   if (scanHistory.length > 20) scanHistory.pop();
-  document.getElementById('history').innerHTML = scanHistory.map(h =>
-    `<div class="history-item">
-      <div class="hi-dot ${h.type}"></div>
-      <div class="hi-name">${h.ptIcon ? h.ptIcon + ' ' : ''}${h.name}</div>
-      <div class="hi-code">${h.code}</div>
-      <div class="hi-time">${h.time}</div>
-    </div>`
-  ).join('');
+  document.getElementById('history').innerHTML = scanHistory.map(function(h) {
+    return '<div class="history-item">' +
+      '<div class="hi-dot ' + h.type + '"></div>' +
+      '<div class="hi-name">' + (h.ptIcon ? h.ptIcon + ' ' : '') + h.name + '</div>' +
+      '<div class="hi-code">' + h.code + '</div>' +
+      '<div class="hi-time">' + h.time + '</div>' +
+    '</div>';
+  }).join('');
 }
 </script>
 </body>

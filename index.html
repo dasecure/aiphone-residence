@@ -103,7 +103,6 @@ header .logo{width:40px;height:40px;flex-shrink:0}
 .staff-arrow{margin-left:auto;background:rgba(255,255,255,.06);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--silver);font-size:16px;flex-shrink:0}
 .staff-card.scanner .staff-arrow{background:var(--gold-dim);color:var(--gold)}
 .staff-card.dashboard .staff-arrow{background:rgba(110,231,183,.1);color:var(--green)}
-
 /* ── AI CARD ── */
 .ai-card{background:var(--surface);border-radius:var(--radius-card);padding:24px;box-shadow:var(--shadow);margin-top:32px}
 .ai-hd{display:flex;align-items:center;gap:12px;margin-bottom:16px}
@@ -111,7 +110,8 @@ header .logo{width:40px;height:40px;flex-shrink:0}
 .ai-hd-txt h3{font-size:14px;font-weight:700;color:var(--navy-mid)}
 .ai-hd-txt p{font-size:11px;color:#888;margin-top:1px}
 .ai-badge{margin-left:auto;background:var(--gold-dim);border:1px solid rgba(196,160,80,.25);border-radius:20px;padding:4px 10px;font-size:9px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;flex-shrink:0}
-
+.ai-clear-btn{background:none;border:1px solid #e2e8f0;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:700;color:#94a3b8;cursor:pointer;letter-spacing:.5px;transition:all .15s;margin-left:6px;flex-shrink:0}
+.ai-clear-btn:hover{border-color:var(--gold);color:var(--gold)}
 /* ── AI CHAT ── */
 .ai-prompts{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .ai-prompt-chip{background:var(--gold-dim);border:1px solid rgba(196,160,80,.25);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--navy-mid);font-weight:600;cursor:pointer;transition:background .15s,transform .1s;white-space:nowrap;user-select:none}
@@ -141,12 +141,11 @@ header .logo{width:40px;height:40px;flex-shrink:0}
 .ai-send:hover{background:var(--navy-light)}
 .ai-send:active{transform:scale(.93)}
 .ai-send:disabled{opacity:.35;cursor:default}
-
 footer{background:#080f1e;padding:24px 20px 80px;margin-top:48px}
 .footer-inner{max-width:1100px;margin:0 auto}
 .footer-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.05)}
 .footer-brand{color:#C4A050;font-size:13px;font-weight:700;letter-spacing:1px}
-.footer-links{display:flex;gap:18px}
+.footer-links{display:flex;gap:18px;flex-wrap:wrap}
 .footer-links a{color:#3a5070;font-size:11px;text-decoration:none;transition:color .2s}
 .footer-links a:hover{color:var(--gold)}
 .footer-bottom{margin-top:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
@@ -205,7 +204,7 @@ footer{background:#080f1e;padding:24px 20px 80px;margin-top:48px}
     <p class="hero-body">Resident cards, facility bookings, visitor passes — all managed through a live digital pass that updates silently in Apple &amp; Google Wallet.</p>
     <div class="hero-line"></div>
     <div class="hiw-row">
-      <div class="hiw-chip"><span class="ico">🪪</span><span class="n">01</span><span class="lbl">Issue a pass</span></div>
+      <div class="hiw-chip"><span class="ico">🪹</span><span class="n">01</span><span class="lbl">Issue a pass</span></div>
       <div class="hiw-chip"><span class="ico">📲</span><span class="n">02</span><span class="lbl">Add to wallet</span></div>
       <div class="hiw-chip"><span class="ico">📷</span><span class="n">03</span><span class="lbl">Scan at gate</span></div>
       <div class="hiw-chip"><span class="ico">📊</span><span class="n">04</span><span class="lbl">Live dashboard</span></div>
@@ -290,7 +289,7 @@ footer{background:#080f1e;padding:24px 20px 80px;margin-top:48px}
     </a>
   </div>
 
-  <!-- AI SECTION — live PassQR MCP -->
+  <!-- AI SECTION -->
   <div class="ai-card">
     <div class="ai-hd">
       <div class="ai-ico">🤖</div>
@@ -299,17 +298,14 @@ footer{background:#080f1e;padding:24px 20px 80px;margin-top:48px}
         <p>Ask anything — powered by Claude + PassQR MCP</p>
       </div>
       <div class="ai-badge">Live MCP</div>
+      <button class="ai-clear-btn" onclick="clearChat()" title="Clear conversation">↺ Clear</button>
     </div>
-
-    <!-- Suggested prompts -->
     <div class="ai-prompts">
-      <button class="ai-prompt-chip" onclick="aiSend('How many scans happened today?')">📊 Scans today</button>
+      <button class="ai-prompt-chip" onclick="aiSend('How many scans happened today?'">📊 Scans today</button>
       <button class="ai-prompt-chip" onclick="aiSend('Look up pass PASS-2MM95YKC')">🔍 Look up Vincent Ooi</button>
       <button class="ai-prompt-chip" onclick="aiSend('Book Tennis Court 1 today at 7PM for Tan Wei Ming unit #12-08')">🎾 Book tennis</button>
       <button class="ai-prompt-chip" onclick="aiSend('Issue a visitor pass for James Lim visiting unit #12-08 today, purpose: dinner')">👤 Visitor pass</button>
     </div>
-
-    <!-- Chat window -->
     <div class="ai-chat-wrap">
       <div class="ai-messages" id="ai-messages">
         <div class="ai-msg system">Connected to PassQR MCP · Ask me anything about this residence</div>
@@ -347,6 +343,7 @@ footer{background:#080f1e;padding:24px 20px 80px;margin-top:48px}
         <a href="scan.html">Scanner</a>
         <a href="dashboard.html">Dashboard</a>
         <a href="demo.html">Demo Script</a>
+        <a href="architecture.html">Architecture</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -362,7 +359,6 @@ const SUPABASE   = 'https://gyllfnsnniuqaarsulsk.supabase.co';
 const ANON_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd5bGxmbnNubml1cWFhcnN1bHNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUwMTk1MzAsImV4cCI6MjA2MDU5NTUzMH0.v-Rcc9UNJRD7rWfFMvOAIhF6_zFnlEcD6f33KiCuwpM';
 const AI_URL     = SUPABASE + '/functions/v1/aiphone-ai';
 
-// ── Scan count ──
 async function refreshScanCount() {
   try {
     const r = await fetch(
@@ -376,7 +372,6 @@ async function refreshScanCount() {
 }
 refreshScanCount();
 
-// ── QR code ──
 new QRCode(document.getElementById('qrcode'), {
   text: 'https://www.passqr.com/api/wallet/apple?code=' + PASS_CODE,
   width: 140, height: 140,
@@ -384,7 +379,6 @@ new QRCode(document.getElementById('qrcode'), {
   correctLevel: QRCode.CorrectLevel.M
 });
 
-// ── Platform detection ──
 (function(){
   var ua = navigator.userAgent;
   var iOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
@@ -393,7 +387,6 @@ new QRCode(document.getElementById('qrcode'), {
   else if (And) ['btn-apple','sticky-apple'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.opacity='0.45'; });
 })();
 
-// ── Sticky wallet ──
 (function(){
   var sticky = document.getElementById('sticky-wallet');
   var ws = document.querySelector('.wallet-section');
@@ -411,6 +404,13 @@ new QRCode(document.getElementById('qrcode'), {
 // ── AI Chat ──
 var chatHistory = [];
 
+function clearChat() {
+  chatHistory = [];
+  var msgs = document.getElementById('ai-messages');
+  msgs.innerHTML = '<div class="ai-msg system">Connected to PassQR MCP · Ask me anything about this residence</div>';
+  document.getElementById('ai-input').focus();
+}
+
 function appendMsg(role, html) {
   var msgs = document.getElementById('ai-messages');
   var el = document.createElement('div');
@@ -422,7 +422,6 @@ function appendMsg(role, html) {
 }
 
 function renderText(raw) {
-  // Minimal markdown: **bold**, `code`, newlines
   return raw
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
@@ -435,20 +434,15 @@ async function aiSend(presetMsg) {
   var sendBtn = document.getElementById('ai-send');
   var msg = presetMsg || inputEl.value.trim();
   if (!msg) return;
-
   inputEl.value = '';
   sendBtn.disabled = true;
-
   appendMsg('user', renderText(msg));
-
-  // Typing indicator
   var typingWrap = document.createElement('div');
   typingWrap.className = 'ai-typing-wrap';
   typingWrap.innerHTML = '<div class="ai-typing"><span></span><span></span><span></span></div>';
   var msgs = document.getElementById('ai-messages');
   msgs.appendChild(typingWrap);
   msgs.scrollTop = msgs.scrollHeight;
-
   try {
     var res = await fetch(AI_URL, {
       method: 'POST',
@@ -457,7 +451,6 @@ async function aiSend(presetMsg) {
     });
     var data = await res.json();
     typingWrap.remove();
-
     if (data.error) {
       appendMsg('assistant', '⚠️ ' + renderText(data.error));
     } else {
@@ -468,7 +461,6 @@ async function aiSend(presetMsg) {
     typingWrap.remove();
     appendMsg('assistant', '⚠️ Could not reach AI — check connection.');
   }
-
   sendBtn.disabled = false;
   msgs = document.getElementById('ai-messages');
   msgs.scrollTop = msgs.scrollHeight;
@@ -478,10 +470,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var input = document.getElementById('ai-input');
   if (input) {
     input.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        aiSend();
-      }
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); aiSend(); }
     });
   }
 });
