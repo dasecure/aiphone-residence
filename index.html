@@ -180,17 +180,16 @@ footer{background:#0f1e3a;padding:28px 30px;margin-top:50px}
 <div class="try-banner">
   <div class="try-inner">
 
-    <!-- QR + wallet buttons stacked -->
     <div class="try-qr-block">
       <div class="qr-label">iPhone — scan to add</div>
       <div class="try-qr">
         <div id="qrcode"></div>
       </div>
       <div class="wallet-btns">
-        <a class="wallet-btn apple" href="https://www.passqr.com/api/wallet/apple?code=PASS-FNEBCPT9" target="_blank">
+        <a class="wallet-btn apple" href="https://www.passqr.com/api/wallet/apple?code=PASS-2MM95YKC" target="_blank">
           🍎 Add to Apple Wallet
         </a>
-        <a class="wallet-btn google" href="https://www.passqr.com/api/wallet/google?code=PASS-FNEBCPT9" target="_blank">
+        <a class="wallet-btn google" href="https://www.passqr.com/api/wallet/google?code=PASS-2MM95YKC" target="_blank">
           🤖 Save to Google Wallet
         </a>
       </div>
@@ -199,7 +198,7 @@ footer{background:#0f1e3a;padding:28px 30px;margin-top:50px}
     <div class="try-text">
       <div class="eyebrow">Try it now — live pass</div>
       <h3>Add a real resident pass<br>to your wallet</h3>
-      <p>This is a live resident card for <strong style="color:white">Mr. David Tan</strong>, Owner Unit 12-08. On iPhone, scan the QR — it triggers Add to Apple Wallet directly. On Android, tap the Google Wallet button.</p>
+      <p>This is a live resident card for <strong style="color:white">Vincent Ooi</strong>, Owner Unit #08-08 Tower A. On iPhone, scan the QR — it triggers Add to Apple Wallet directly. On Android, tap the Google Wallet button.</p>
       <div class="try-steps">
         <div class="try-step"><span class="try-step-num">1</span> iPhone: scan QR · Android: tap Google Wallet button</div>
         <div class="try-step"><span class="try-step-num">2</span> Add the pass to your wallet</div>
@@ -212,23 +211,23 @@ footer{background:#0f1e3a;padding:28px 30px;margin-top:50px}
       <div class="pi-label">Live Pass Details</div>
       <div class="pi-row">
         <div class="pi-key">Holder</div>
-        <div class="pi-val">Mr. David Tan</div>
+        <div class="pi-val">Vincent Ooi</div>
       </div>
       <div class="pi-row">
         <div class="pi-key">Unit</div>
-        <div class="pi-val">12-08 Tower A</div>
+        <div class="pi-val">#08-08 Tower A</div>
       </div>
       <div class="pi-row">
         <div class="pi-key">Type</div>
         <div class="pi-val">Owner — Resident Card</div>
       </div>
       <div class="pi-row">
-        <div class="pi-key">Pass Code</div>
-        <div class="pi-val">PASS-FNEBCPT9</div>
+        <div class="pi-key">Carpark</div>
+        <div class="pi-val">Lot A-888</div>
       </div>
       <div class="pi-row">
         <div class="pi-key">Scans</div>
-        <div class="pi-val">59 entries logged</div>
+        <div class="pi-val">7 entries logged</div>
       </div>
       <div class="pi-row">
         <div class="pi-key">Status</div>
@@ -314,19 +313,19 @@ footer{background:#0f1e3a;padding:28px 30px;margin-top:50px}
       </div>
       <div class="chat-bubble" style="margin-top:6px">
         <div class="chat-avatar">👤</div>
-        <div class="chat-msg">"Book Tennis Court 1 tomorrow 7AM for Mr. Tan Wei Ming"</div>
+        <div class="chat-msg">"Book Tennis Court 1 tomorrow 7AM for Vincent Ooi #08-08"</div>
       </div>
       <div class="chat-bubble">
         <div style="width:30px;flex-shrink:0"></div>
-        <div class="chat-result">✓ Tennis Court booking confirmed — <strong>tomorrow 7:00–8:00AM</strong> · Booking pass issued &amp; pushed to Mr. Tan's wallet</div>
+        <div class="chat-result">✓ Tennis Court booking confirmed — <strong>PASS-7D7X6T75</strong> · Court 1, 8:00–9:00AM · Pass pushed to Vincent's wallet</div>
       </div>
       <div class="chat-bubble" style="margin-top:6px">
         <div class="chat-avatar">👤</div>
-        <div class="chat-msg">"Create a contractor pass for Cool Air Services for today, unit #08-03"</div>
+        <div class="chat-msg">"Create a contractor pass for Cool Air Services for today, unit #12-08"</div>
       </div>
       <div class="chat-bubble">
         <div style="width:30px;flex-shrink:0"></div>
-        <div class="chat-result">✓ Contractor pass issued — <strong>Cool Air Services</strong> · Unit #08-03 · Valid today only · Security notified</div>
+        <div class="chat-result">✓ Contractor pass issued — <strong>PASS-YY7R4QRY</strong> · Cool Air Services · Unit #12-08 · Valid today 9AM–5PM</div>
       </div>
     </div>
   </div>
@@ -342,9 +341,9 @@ footer{background:#0f1e3a;padding:28px 30px;margin-top:50px}
 </footer>
 
 <script>
-  // QR points directly to Apple Wallet download — triggers native Add to Wallet sheet on iOS
+  // QR → Apple Wallet direct for PASS-2MM95YKC (Vincent Ooi, Owner #08-08, Aiphone Residence org)
   new QRCode(document.getElementById("qrcode"), {
-    text: "https://www.passqr.com/api/wallet/apple?code=PASS-FNEBCPT9",
+    text: "https://www.passqr.com/api/wallet/apple?code=PASS-2MM95YKC",
     width: 148,
     height: 148,
     colorDark: "#0F1E3A",
