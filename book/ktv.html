@@ -64,13 +64,13 @@
 <footer>© 2026 <span>Aiphone Residence</span> &middot; <a href="../">← Back to Portal</a></footer>
 <script src="../book.js"></script>
 <script>
-const DEMO_VALUES = {
+var DEMO_VALUES = {
   'f-name':   'Tan Wei Ming',
   'f-unit':   '#12-08',
   'f-slot':   '7:00 PM – 10:00 PM',
   'f-guests': '6',
 };
-const FACILITY = 'ktv';
+var FACILITY = 'ktv';
 function getPayload() {
   return { facility: FACILITY, holder_name: val('f-name'), unit: val('f-unit'), date: val('f-date'), slot: val('f-slot'), guests: val('f-guests') };
 }
@@ -81,7 +81,7 @@ function validate() {
   return null;
 }
 function setSuccess(data) {
-  id('s-sub').textContent = `KTV Room · ${data.data.date} · ${data.data.time_slot}`;
+  id('s-sub').textContent = 'KTV Room · ' + data.data.date + ' · ' + data.data.time_slot;
   id('s-expiry').textContent = 'Valid today only · Max 2 scans';
 }
 </script>

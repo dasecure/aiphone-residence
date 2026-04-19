@@ -12,13 +12,11 @@
   <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100" fill="#0F1E3A"/><circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="2"/><rect x="82" y="75" width="36" height="82" fill="#C4A050"/><ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/><rect x="88" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="54" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="66" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="122" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="134" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="40" y="157" width="120" height="4" fill="#C4A050"/><text x="100" y="174" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#C4A050" text-anchor="middle" letter-spacing="3">AIPHONE</text><text x="100" y="187" font-family="Arial,sans-serif" font-size="8" fill="#D4C4A0" text-anchor="middle" letter-spacing="2">RESIDENCE</text></svg></div>
   <div><div class="brand">Aiphone Residence</div><div class="sub">Facility Booking</div></div>
 </header>
-
 <div class="strip" style="background:#C0392B">
   <div class="strip-icon">🔥</div>
   <div class="strip-title">BBQ Pit Booking</div>
   <div class="strip-sub">Rooftop Pits 1 &amp; 2 &middot; Evening slots from 5PM</div>
 </div>
-
 <div class="container">
   <div id="form-view">
     <div class="card">
@@ -69,14 +67,14 @@
 <footer>© 2026 <span>Aiphone Residence</span> &middot; <a href="../">← Back to Portal</a></footer>
 <script src="../book.js"></script>
 <script>
-const DEMO_VALUES = {
+var DEMO_VALUES = {
   'f-name':   'Tan Wei Ming',
   'f-unit':   '#12-08',
   'f-pit':    'BBQ Pit 1 (Rooftop)',
   'f-slot':   '5:00 PM – 8:00 PM',
   'f-guests': '10',
 };
-const FACILITY = 'bbq';
+var FACILITY = 'bbq';
 function getPayload() {
   return { facility: FACILITY, holder_name: val('f-name'), unit: val('f-unit'), pit: val('f-pit'), date: val('f-date'), slot: val('f-slot'), guests: val('f-guests') };
 }
@@ -87,8 +85,8 @@ function validate() {
   return null;
 }
 function setSuccess(data) {
-  id('s-sub').textContent = `${data.data.pit} · ${data.data.date} · ${data.data.time_slot}`;
-  id('s-expiry').textContent = `Valid today only · Up to ${data.max_uses} gate scans`;
+  id('s-sub').textContent = data.data.pit + ' · ' + data.data.date + ' · ' + data.data.time_slot;
+  id('s-expiry').textContent = 'Valid today only · Up to ' + data.max_uses + ' gate scans';
 }
 </script>
 </body></html>

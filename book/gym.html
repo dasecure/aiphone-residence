@@ -57,11 +57,11 @@
 <footer>© 2026 <span>Aiphone Residence</span> &middot; <a href="../">← Back to Portal</a></footer>
 <script src="../book.js"></script>
 <script>
-const DEMO_VALUES = {
+var DEMO_VALUES = {
   'f-name': 'Tan Wei Ming',
   'f-unit': '#12-08',
 };
-const FACILITY = 'gym';
+var FACILITY = 'gym';
 function getPayload() {
   return { facility: FACILITY, holder_name: val('f-name'), unit: val('f-unit'), date: val('f-date') };
 }
@@ -72,7 +72,7 @@ function validate() {
   return null;
 }
 function setSuccess(data) {
-  id('s-sub').textContent = `Gym · ${data.data.date}`;
+  id('s-sub').textContent = 'Gym · ' + data.data.date;
   id('s-expiry').textContent = 'Valid today only · Up to 3 entries';
 }
 </script>
