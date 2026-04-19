@@ -21,7 +21,9 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   // Demo mode: append ?demo to any booking URL to pre-fill the form
-  if (new URLSearchParams(window.location.search).has('demo') && window.DEMO_VALUES) {
+  // Note: use typeof check — const declarations don't attach to window
+  if (new URLSearchParams(window.location.search).has('demo') &&
+      typeof DEMO_VALUES !== 'undefined' && DEMO_VALUES) {
     _injectDemoBanner();
     _fillDemoValues();
   }
@@ -36,7 +38,8 @@ function _injectDemoBanner() {
 }
 
 function _fillDemoValues() {
-  const values = window.DEMO_VALUES;
+  // typeof guard — const in inline scripts is not a window property
+  const values = (typeof DEMO_VALUES !== 'undefined') ? DEMO_VALUES : null;
   if (!values) return;
   Object.entries(values).forEach(([fieldId, value]) => {
     const el = document.getElementById(fieldId);
@@ -129,8 +132,8 @@ function showSuccess(data) {
     `${holderLine}Pass: ${data.code}`,
     details,
     '',
-    `\uD83C\uDF4E Apple Wallet:\n${data.apple_url}`,
-    `\uD83E\uDD16 Google Wallet:\n${data.google_url}`,
+    `🍎 Apple Wallet:\n${data.apple_url}`,
+    `🤖 Google Wallet:\n${data.google_url}`,
   ].filter(Boolean).join('\n');
   const waHref = 'https://wa.me/?text=' + encodeURIComponent(waText);
 
