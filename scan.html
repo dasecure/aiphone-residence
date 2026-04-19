@@ -14,14 +14,12 @@ header h1{color:#C4A050;font-size:13px;letter-spacing:2px;text-transform:upperca
 header p{color:#aab8d0;font-size:10px;margin-top:1px}
 .container{max-width:480px;margin:0 auto;padding:16px}
 
-/* Scanner card */
 .scan-card{background:#111827;border:1px solid #1f2937;border-radius:16px;overflow:hidden;margin-bottom:14px}
 .scan-header{background:#1A2B4A;padding:12px 16px;display:flex;align-items:center;gap:10px}
 .scan-header .icon{font-size:20px}
 .scan-header h2{font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#C4A050}
 .scan-header p{font-size:11px;color:#aab8d0;margin-top:1px}
 
-/* Camera viewport */
 #reader-wrap{position:relative;background:#000;aspect-ratio:1;overflow:hidden;transition:opacity .3s}
 #reader-wrap.locked{opacity:.35;pointer-events:none}
 #reader{width:100%!important}
@@ -38,7 +36,6 @@ header p{color:#aab8d0;font-size:10px;margin-top:1px}
 .scan-line{position:absolute;width:55%;height:2px;background:linear-gradient(90deg,transparent,#C4A050,transparent);animation:scanline 2.5s ease-in-out infinite}
 @keyframes scanline{0%,100%{top:22.5%;opacity:0}10%,90%{opacity:1}50%{top:77.5%}}
 
-/* Lock banner shown over camera while modal is open */
 .lock-banner{display:none;position:absolute;inset:0;background:rgba(0,0,0,.72);flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:2}
 .lock-banner.show{display:flex}
 .lock-banner span{font-size:28px}
@@ -51,7 +48,6 @@ header p{color:#aab8d0;font-size:10px;margin-top:1px}
 .btn-cam.active{background:#C4A050;color:#0a0f1a}
 .btn-cam:hover{background:#C4A050;color:#0a0f1a}
 
-/* Manual input */
 .manual{padding:0 16px 14px}
 .manual label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px}
 .manual-row{display:flex;gap:8px}
@@ -62,71 +58,56 @@ header p{color:#aab8d0;font-size:10px;margin-top:1px}
 .btn-scan:hover{opacity:.85}
 .btn-scan:disabled{opacity:.4;cursor:default}
 
-/* ── MODAL ────────────────────────────────────────────────────────── */
-.modal-backdrop{
-  display:none;position:fixed;inset:0;
-  background:rgba(0,0,0,.75);
-  backdrop-filter:blur(4px);
-  z-index:100;
-  align-items:center;justify-content:center;
-  padding:20px;
-}
+/* ── MODAL ── */
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;padding:20px}
 .modal-backdrop.open{display:flex}
-
-.modal{
-  width:100%;max-width:420px;
-  border-radius:20px;overflow:hidden;
-  box-shadow:0 24px 80px rgba(0,0,0,.8);
-  animation:modal-in .22s cubic-bezier(.34,1.56,.64,1);
-}
+.modal{width:100%;max-width:420px;border-radius:20px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.8);animation:modal-in .22s cubic-bezier(.34,1.56,.64,1)}
 @keyframes modal-in{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
-
 .modal-header{padding:22px 22px 18px;display:flex;align-items:flex-start;gap:14px}
 .modal-icon{font-size:44px;line-height:1;flex-shrink:0;margin-top:2px}
 .modal-title{font-size:22px;font-weight:800;line-height:1.1}
 .modal-code{font-family:monospace;font-size:12px;opacity:.7;margin-top:5px;letter-spacing:1px}
-
+.visitor-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-top:6px;background:rgba(255,255,255,.15);color:rgba(255,255,255,.9)}
 .modal-body{padding:0 22px 6px;display:grid;gap:10px}
 .modal-row{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:rgba(255,255,255,.05);border-radius:10px}
 .modal-row .lbl{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#9ca3af;width:72px;flex-shrink:0;padding-top:2px}
 .modal-row .val{font-size:14px;font-weight:700;word-break:break-word;flex:1}
-
 .push-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:5px 12px;border-radius:20px;font-weight:700;margin:6px 22px 0}
 .push-ok{background:#064e3b;color:#6ee7b7}
 .push-none{background:#1f2937;color:#6b7280}
-
 .modal-dismiss{margin:16px 22px 22px;width:calc(100% - 44px);padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.5px;transition:opacity .2s}
 .modal-dismiss:hover{opacity:.88}
 
-/* modal colour themes */
-.modal.valid   .modal-header{background:#064e3b}.modal.valid   .modal-title{color:#6ee7b7}
-.modal.valid   .modal-body{background:#071a11}.modal.valid   .modal-dismiss{background:#6ee7b7;color:#022c22}
+/* Resident (green) */
+.modal.valid .modal-header{background:#064e3b}.modal.valid .modal-title{color:#6ee7b7}
+.modal.valid .modal-body{background:#071a11}.modal.valid .modal-dismiss{background:#6ee7b7;color:#022c22}
+/* Invalid (red) */
 .modal.invalid .modal-header{background:#450a0a}.modal.invalid .modal-title{color:#fca5a5}
 .modal.invalid .modal-body{background:#1a0808}.modal.invalid .modal-dismiss{background:#fca5a5;color:#450a0a}
-.modal.warn    .modal-header{background:#451a03}.modal.warn    .modal-title{color:#fdba74}
-.modal.warn    .modal-body{background:#1a0e05}.modal.warn    .modal-dismiss{background:#fdba74;color:#451a03}
+/* Warning (amber) */
+.modal.warn .modal-header{background:#451a03}.modal.warn .modal-title{color:#fdba74}
+.modal.warn .modal-body{background:#1a0e05}.modal.warn .modal-dismiss{background:#fdba74;color:#451a03}
+/* Visitor (blue) */
+.modal.visitor .modal-header{background:#1e3a5f}.modal.visitor .modal-title{color:#93c5fd}
+.modal.visitor .modal-body{background:#0a1929}.modal.visitor .modal-dismiss{background:#93c5fd;color:#0a1929}
 
-/* History */
 #history-wrap{margin-top:6px}
 .history-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#4b5563;margin-bottom:8px;padding:0 2px}
 .history-item{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px;font-size:12px}
 .hi-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.hi-dot.ok{background:#22c55e}.hi-dot.fail{background:#ef4444}
+.hi-dot.ok{background:#22c55e}.hi-dot.visitor{background:#60a5fa}.hi-dot.fail{background:#ef4444}
 .hi-name{flex:1;font-weight:600;color:#e5e7eb}
 .hi-code{font-family:monospace;font-size:10px;color:#6b7280}
 .hi-time{font-size:10px;color:#4b5563;white-space:nowrap}
 
-/* Spinner */
 .spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
-
 footer{text-align:center;padding:20px;font-size:11px;color:#374151}
 footer span{color:#C4A050}
 </style>
 </head>
 <body>
 
-<!-- ── RESULT MODAL ─────────────────────────────────────────────────── -->
 <div class="modal-backdrop" id="modal-backdrop">
   <div class="modal" id="modal">
     <div class="modal-header">
@@ -134,6 +115,7 @@ footer span{color:#C4A050}
       <div>
         <div class="modal-title" id="m-title"></div>
         <div class="modal-code"  id="m-code"></div>
+        <div id="m-visitor-badge" style="display:none"><span class="visitor-badge">👤 VISITOR PASS</span></div>
       </div>
     </div>
     <div class="modal-body" id="m-body"></div>
@@ -148,8 +130,6 @@ footer span{color:#C4A050}
 </header>
 
 <div class="container">
-
-  <!-- Scanner card -->
   <div class="scan-card">
     <div class="scan-header">
       <div class="icon">📷</div>
@@ -162,7 +142,6 @@ footer span{color:#C4A050}
         <div class="scan-corners"><span></span></div>
         <div class="scan-line"></div>
       </div>
-      <!-- lock overlay shown while modal is open -->
       <div class="lock-banner" id="lock-banner">
         <span>🔒</span>
         <p>Dismiss result to scan next pass</p>
@@ -171,13 +150,13 @@ footer span{color:#C4A050}
     <div class="scan-controls">
       <select class="gate-select" id="gate-sel">
         <option value="Main Gate">🏠 Main Gate</option>
+        <option value="Visitor Checkpoint">👤 Visitor Checkpoint</option>
         <option value="Lobby">🚪 Lobby</option>
         <option value="Pool Gate">🏊 Pool Gate</option>
         <option value="Gym Entrance">🏋️ Gym Entrance</option>
         <option value="BBQ Pit">🔥 BBQ Pit Area</option>
         <option value="Tennis Court">🎾 Tennis Court</option>
         <option value="KTV Room">🎤 KTV Room</option>
-        <option value="Visitor Checkpoint">👤 Visitor Checkpoint</option>
       </select>
       <button class="btn-cam active" id="cam-btn" onclick="toggleCam()">Stop Cam</button>
     </div>
@@ -192,34 +171,31 @@ footer span{color:#C4A050}
     </div>
   </div>
 
-  <!-- History -->
   <div id="history-wrap">
     <div class="history-title">Recent Scans</div>
     <div id="history"></div>
   </div>
 </div>
 
-<footer>&copy; 2026 <span>Aiphone Residence</span> &middot; Staff Portal</footer>
+<footer>&copy; 2026 <span>Aiphone Residence</span> &middot; <a href="./" style="color:#C4A050">Portal</a> &middot; <a href="dashboard.html" style="color:#C4A050">Dashboard</a></footer>
 
 <script>
 const SCAN_URL = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-scan';
 const scanHistory = [];
-let scanner     = null;
-let camRunning  = false;
-let modalOpen   = false;   // true while result modal is visible — BLOCKS all scans
-let processing  = false;   // true while a scan API call is in-flight
+let scanner    = null;
+let camRunning = false;
+let modalOpen  = false;
+let processing = false;
 
 window.addEventListener('DOMContentLoaded', () => startCam());
 
-// ── Camera ──────────────────────────────────────────────────────────────────
 async function startCam() {
   try {
     scanner = new Html5Qrcode('reader');
     await scanner.start(
       { facingMode: 'environment' },
       { fps: 10, qrbox: { width: 220, height: 220 }, aspectRatio: 1.0 },
-      onQRDetected,
-      () => {}
+      onQRDetected, () => {}
     );
     camRunning = true;
     document.getElementById('cam-btn').textContent = 'Stop Cam';
@@ -230,147 +206,131 @@ async function startCam() {
     document.getElementById('cam-btn').style.display = 'none';
   }
 }
-
 async function stopCam() {
   if (scanner && camRunning) {
-    await scanner.stop();
-    scanner = null;
-    camRunning = false;
+    await scanner.stop(); scanner = null; camRunning = false;
     document.getElementById('cam-btn').textContent = 'Start Cam';
     document.getElementById('cam-btn').classList.remove('active');
   }
 }
+async function toggleCam() { if (camRunning) { await stopCam(); } else { await startCam(); } }
 
-async function toggleCam() {
-  if (camRunning) { await stopCam(); } else { await startCam(); }
-}
-
-// ── QR detected by camera ───────────────────────────────────────────────────
 async function onQRDetected(code) {
-  if (modalOpen || processing) return;        // hard gate: one scan at a time
+  if (modalOpen || processing) return;
   if (!code.startsWith('PASS-')) return;
   document.getElementById('code-input').value = code;
   await submitCode(code);
 }
 
-// ── Manual / programmatic submit ────────────────────────────────────────────
 async function submitCode(codeOverride) {
-  if (modalOpen || processing) return;        // hard gate
-
+  if (modalOpen || processing) return;
   const code = (codeOverride || document.getElementById('code-input').value).trim().toUpperCase();
   if (!code || !code.startsWith('PASS-')) {
-    openModal('error', '⚠️', 'Invalid Code', code || '—',
-      [['Detail', 'Enter a valid pass code (PASS-XXXXXXXX)']]);
+    openModal('warn', '⚠️', 'Invalid Code', code || '—', [['Detail', 'Enter a valid pass code (PASS-XXXXXXXX)']]);
     return;
   }
-
-  processing = true;
-  lockUI(true);
-
+  processing = true; lockUI(true);
   const gate = document.getElementById('gate-sel').value;
   try {
-    const res = await fetch(SCAN_URL, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ code, gate }),
-    });
+    const res  = await fetch(SCAN_URL, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ code, gate }) });
     const data = await res.json();
     buildModal(code, data);
   } catch (e) {
-    openModal('error', '⚠️', 'Network Error', code,
-      [['Detail', e.message || 'Could not reach scanner service']]);
+    openModal('warn', '⚠️', 'Network Error', code, [['Detail', e.message || 'Could not reach scanner']]);
   } finally {
     processing = false;
-    // UI stays locked (modal open) — unlocks only on dismissModal()
   }
 }
 
-// ── Build and open the result modal ─────────────────────────────────────────
 function buildModal(code, data) {
   if (data.success) {
-    const rows = [];
-    if (data.unit)  rows.push(['Unit',  data.unit + (data.block ? ' · ' + data.block : '')]);
-    if (data.tier)  rows.push(['Tier',  data.tier]);
-    const parts = (data.last_entry || '').split(' · ');
-    if (parts[0]) rows.push(['Gate',  parts[0]]);
-    if (parts[1]) rows.push(['Time',  parts.slice(1).join(' · ')]);
-    rows.push(['Scans', String(data.scan_sequence || 1)]);
+    const timeParts = (data.last_entry || '').split(' · ');
+    const gate      = timeParts[0] || '';
+    const time      = timeParts.slice(1).join(' · ');
 
-    const pushHtml = data.push?.succeeded > 0
-      ? `<div class="push-badge push-ok">📱 Wallet updated · ${data.push.succeeded} device${data.push.succeeded > 1 ? 's' : ''}</div>`
-      : `<div class="push-badge push-none">📱 No wallet devices registered</div>`;
-
-    openModal('valid', '✅', data.holder_name || 'Valid Pass', code, rows, pushHtml);
-    addHistory(code, data.holder_name || 'Unknown', true, data.last_entry);
+    if (data.is_visitor) {
+      // ── Visitor mode: blue theme, distinct fields ──
+      const rows = [];
+      if (data.host_unit) rows.push(['Visiting',  data.host_unit]);
+      if (data.purpose)   rows.push(['Purpose',   data.purpose]);
+      if (data.visitor_phone) rows.push(['Phone', data.visitor_phone]);
+      if (gate) rows.push(['Gate',  gate]);
+      if (time) rows.push(['Time',  time]);
+      rows.push(['Scans', String(data.scan_sequence || 1) + ' / 3']);
+      if (data.valid_date) rows.push(['Valid',  data.valid_date + ' only']);
+      const pushHtml = data.push?.succeeded > 0
+        ? `<div class="push-badge push-ok">📱 Pass updated · ${data.push.succeeded} device${data.push.succeeded > 1 ? 's' : ''}</div>`
+        : `<div class="push-badge push-none">📱 No wallet devices</div>`;
+      openModal('visitor', '👤', data.holder_name || 'Visitor', code, rows, pushHtml, true);
+      addHistory(code, data.holder_name || 'Visitor', 'visitor', data.last_entry);
+    } else {
+      // ── Resident / facility mode: green theme ──
+      const rows = [];
+      if (data.unit) rows.push(['Unit', data.unit + (data.block ? ' · ' + data.block : '')]);
+      if (data.tier) rows.push(['Tier', data.tier]);
+      if (gate) rows.push(['Gate', gate]);
+      if (time) rows.push(['Time', time]);
+      rows.push(['Scans', String(data.scan_sequence || 1)]);
+      const pushHtml = data.push?.succeeded > 0
+        ? `<div class="push-badge push-ok">📱 Wallet updated · ${data.push.succeeded} device${data.push.succeeded > 1 ? 's' : ''}</div>`
+        : `<div class="push-badge push-none">📱 No wallet devices</div>`;
+      openModal('valid', '✅', data.holder_name || 'Valid Pass', code, rows, pushHtml, false);
+      addHistory(code, data.holder_name || 'Unknown', 'ok', data.last_entry);
+    }
   } else {
     const expired = data.status === 'expired';
     const revoked = data.status === 'revoked';
-    const used    = data.status === 'used';
     const theme   = (expired || revoked) ? 'invalid' : 'warn';
-    const icon    = expired ? '⏰' : revoked ? '🚫' : used ? '🔒' : '❌';
-    const heading = expired ? 'Pass Expired' : revoked ? 'Pass Revoked'
-                  : used    ? 'Pass Used'    : 'Invalid Pass';
-    const rows = [['Reason', data.error || data.status || 'Unknown']];
+    const icon    = expired ? '⏰' : revoked ? '🚫' : data.status === 'used' ? '🔒' : '❌';
+    const heading = expired ? 'Pass Expired' : revoked ? 'Pass Revoked' : data.status === 'used' ? 'Pass Used' : 'Invalid Pass';
+    const rows    = [['Reason', data.error || data.status || 'Unknown']];
     if (data.holder_name) rows.push(['Holder', data.holder_name]);
-    openModal(theme, icon, heading, code, rows);
-    addHistory(code, data.holder_name || 'Unknown', false, null);
+    openModal(theme, icon, heading, code, rows, '', false);
+    addHistory(code, data.holder_name || 'Unknown', 'fail', null);
   }
 }
 
-function openModal(theme, icon, title, code, rows, extraHtml = '') {
-  document.getElementById('modal').className    = 'modal ' + theme;
-  document.getElementById('m-icon').textContent = icon;
+function openModal(theme, icon, title, code, rows, extraHtml = '', isVisitor = false) {
+  document.getElementById('modal').className     = 'modal ' + theme;
+  document.getElementById('m-icon').textContent  = icon;
   document.getElementById('m-title').textContent = title;
   document.getElementById('m-code').textContent  = code;
+  document.getElementById('m-visitor-badge').style.display = isVisitor ? 'block' : 'none';
   document.getElementById('m-body').innerHTML =
-    rows.map(([l, v]) =>
-      `<div class="modal-row"><span class="lbl">${l}</span><span class="val">${v}</span></div>`
-    ).join('');
+    rows.map(([l, v]) => `<div class="modal-row"><span class="lbl">${l}</span><span class="val">${v}</span></div>`).join('');
   document.getElementById('m-push').innerHTML = extraHtml;
   document.getElementById('modal-backdrop').classList.add('open');
   modalOpen = true;
   showLockBanner(true);
   document.getElementById('code-input').value = '';
-  // Focus dismiss button so Enter/Space can close the modal on desktop
   setTimeout(() => document.getElementById('m-dismiss').focus(), 50);
 }
 
 function dismissModal() {
   document.getElementById('modal-backdrop').classList.remove('open');
-  modalOpen = false;
-  showLockBanner(false);
-  lockUI(false);
+  modalOpen = false; showLockBanner(false); lockUI(false);
 }
+document.getElementById('modal-backdrop').addEventListener('click', function(e) { if (e.target === this) dismissModal(); });
 
-// Close on backdrop click (outside modal box)
-document.getElementById('modal-backdrop').addEventListener('click', function(e) {
-  if (e.target === this) dismissModal();
-});
-
-// ── UI helpers ───────────────────────────────────────────────────────────────
 function lockUI(lock) {
   const btn = document.getElementById('scan-btn');
-  btn.disabled = lock;
-  btn.textContent = lock ? 'Scanning…' : 'Scan';
+  btn.disabled = lock; btn.textContent = lock ? 'Scanning…' : 'Scan';
   document.getElementById('code-input').disabled = lock;
   document.getElementById('gate-sel').disabled   = lock;
 }
-
 function showLockBanner(show) {
   document.getElementById('lock-banner').classList.toggle('show', show);
   document.getElementById('reader-wrap').classList.toggle('locked', show);
 }
 
-// ── Scan history ─────────────────────────────────────────────────────────────
-function addHistory(code, name, ok, entry) {
-  const now = new Date().toLocaleTimeString('en-SG',
-    { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Singapore' });
-  scanHistory.unshift({ code, name, ok, entry, time: now });
+function addHistory(code, name, type, entry) {
+  const now = new Date().toLocaleTimeString('en-SG', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Singapore' });
+  scanHistory.unshift({ code, name, type, entry, time: now });
   if (scanHistory.length > 20) scanHistory.pop();
   document.getElementById('history').innerHTML = scanHistory.map(h =>
     `<div class="history-item">
-      <div class="hi-dot ${h.ok ? 'ok' : 'fail'}"></div>
-      <div class="hi-name">${h.name}</div>
+      <div class="hi-dot ${h.type}"></div>
+      <div class="hi-name">${h.name}${h.type === 'visitor' ? ' <span style="font-size:9px;color:#60a5fa;font-weight:700">VISITOR</span>' : ''}</div>
       <div class="hi-code">${h.code}</div>
       <div class="hi-time">${h.time}</div>
     </div>`
