@@ -67,6 +67,7 @@ header p{color:#aab8d0;font-size:10px;margin-top:1px}
 .modal-icon{font-size:44px;line-height:1;flex-shrink:0;margin-top:2px}
 .modal-title{font-size:22px;font-weight:800;line-height:1.1}
 .modal-code{font-family:monospace;font-size:12px;opacity:.7;margin-top:5px;letter-spacing:1px}
+.modal-subtitle{font-size:11px;opacity:.6;margin-top:3px;letter-spacing:.5px}
 .visitor-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-top:6px;background:rgba(255,255,255,.15);color:rgba(255,255,255,.9)}
 .modal-body{padding:0 22px 6px;display:grid;gap:10px}
 .modal-row{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:rgba(255,255,255,.05);border-radius:10px}
@@ -114,6 +115,7 @@ footer span{color:#C4A050}
       <div class="modal-icon" id="m-icon"></div>
       <div>
         <div class="modal-title" id="m-title"></div>
+        <div class="modal-subtitle" id="m-subtitle"></div>
         <div class="modal-code"  id="m-code"></div>
         <div id="m-visitor-badge" style="display:none"><span class="visitor-badge">👤 VISITOR PASS</span></div>
       </div>
@@ -226,7 +228,7 @@ async function submitCode(codeOverride) {
   if (modalOpen || processing) return;
   const code = (codeOverride || document.getElementById('code-input').value).trim().toUpperCase();
   if (!code || !code.startsWith('PASS-')) {
-    openModal('warn', '⚠️', 'Invalid Code', code || '—', [['Detail', 'Enter a valid pass code (PASS-XXXXXXXX)']]);
+    openModal('warn', '⚠️', 'Invalid Code', '', code || '—', [['Detail', 'Enter a valid pass code (PASS-XXXXXXXX)']]);
     return;
   }
   processing = true; lockUI(true);
@@ -236,10 +238,20 @@ async function submitCode(codeOverride) {
     const data = await res.json();
     buildModal(code, data);
   } catch (e) {
-    openModal('warn', '⚠️', 'Network Error', code, [['Detail', e.message || 'Could not reach scanner']]);
+    openModal('warn', '⚠️', 'Network Error', '', code, [['Detail', e.message || 'Could not reach scanner']]);
   } finally {
     processing = false;
   }
+}
+
+// Format YYYY-MM-DD → "20 Apr 2026"
+function fmtDate(d) {
+  if (!d) return d;
+  try {
+    const [y, m, day] = d.split('-');
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${parseInt(day)} ${months[parseInt(m)-1]} ${y}`;
+  } catch { return d; }
 }
 
 function buildModal(code, data) {
@@ -247,35 +259,97 @@ function buildModal(code, data) {
     const timeParts = (data.last_entry || '').split(' · ');
     const gate      = timeParts[0] || '';
     const time      = timeParts.slice(1).join(' · ');
+    const pushHtml  = data.push?.succeeded > 0
+      ? `<div class="push-badge push-ok">📱 Wallet updated · ${data.push.succeeded} device${data.push.succeeded > 1 ? 's' : ''}</div>`
+      : `<div class="push-badge push-none">📱 No wallet devices</div>`;
 
     if (data.is_visitor) {
-      // ── Visitor mode: blue theme, distinct fields ──
+      // ── Visitor: blue theme ──────────────────────────────────────────
       const rows = [];
-      if (data.host_unit) rows.push(['Visiting',  data.host_unit]);
-      if (data.purpose)   rows.push(['Purpose',   data.purpose]);
-      if (data.visitor_phone) rows.push(['Phone', data.visitor_phone]);
-      if (gate) rows.push(['Gate',  gate]);
-      if (time) rows.push(['Time',  time]);
-      rows.push(['Scans', String(data.scan_sequence || 1) + ' / 3']);
-      if (data.valid_date) rows.push(['Valid',  data.valid_date + ' only']);
-      const pushHtml = data.push?.succeeded > 0
-        ? `<div class="push-badge push-ok">📱 Pass updated · ${data.push.succeeded} device${data.push.succeeded > 1 ? 's' : ''}</div>`
-        : `<div class="push-badge push-none">📱 No wallet devices</div>`;
-      openModal('visitor', '👤', data.holder_name || 'Visitor', code, rows, pushHtml, true);
-      addHistory(code, data.holder_name || 'Visitor', 'visitor', data.last_entry);
-    } else {
-      // ── Resident / facility mode: green theme ──
-      const rows = [];
-      if (data.unit) rows.push(['Unit', data.unit + (data.block ? ' · ' + data.block : '')]);
-      if (data.tier) rows.push(['Tier', data.tier]);
+      if (data.host_unit)     rows.push(['Visiting', data.host_unit]);
+      if (data.purpose)       rows.push(['Purpose',  data.purpose]);
+      if (data.visitor_phone) rows.push(['Phone',    data.visitor_phone]);
       if (gate) rows.push(['Gate', gate]);
       if (time) rows.push(['Time', time]);
+      rows.push(['Scans', String(data.scan_sequence || 1) + ' / 3']);
+      if (data.valid_date) rows.push(['Valid', data.valid_date + ' only']);
+      openModal('visitor', '👤', data.holder_name || 'Visitor', 'VISITOR PASS', code, rows, pushHtml, true);
+      addHistory(code, data.holder_name || 'Visitor', 'visitor', data.last_entry);
+
+    } else {
+      // ── Facility / resident: green theme — use pass_type for context ──
+      const pt   = data.pass_type || 'resident';
+      const rows = [];
+      let icon     = '✅';
+      let subtitle = '';
+
+      switch (pt) {
+        case 'tennis':
+          icon     = '🎾';
+          subtitle = 'Tennis Court Booking';
+          if (data.court)     rows.push(['Court',   data.court]);
+          if (data.date)      rows.push(['Date',    fmtDate(data.date)]);
+          if (data.time_slot) rows.push(['Slot',    data.time_slot]);
+          if (data.unit)      rows.push(['Unit',    data.unit]);
+          if (data.guests)    rows.push(['Players', String(data.guests)]);
+          break;
+
+        case 'bbq':
+          icon     = '🔥';
+          subtitle = 'BBQ Pit Booking';
+          if (data.pit_number) rows.push(['Pit',    data.pit_number]);
+          if (data.date)       rows.push(['Date',   fmtDate(data.date)]);
+          if (data.time_slot)  rows.push(['Slot',   data.time_slot]);
+          if (data.pax)        rows.push(['Guests', String(data.pax) + ' pax']);
+          break;
+
+        case 'ktv':
+          icon     = '🎤';
+          subtitle = 'KTV Room Booking';
+          if (data.room)      rows.push(['Room',   data.room]);
+          if (data.date)      rows.push(['Date',   fmtDate(data.date)]);
+          if (data.time_slot) rows.push(['Slot',   data.time_slot]);
+          if (data.pax)       rows.push(['Guests', String(data.pax) + ' pax']);
+          break;
+
+        case 'gym':
+          icon     = '🏋️';
+          subtitle = 'Gym Access';
+          if (data.unit)            rows.push(['Unit',       data.unit + (data.block ? ' · ' + data.block : '')]);
+          if (data.membership_type) rows.push(['Membership', data.membership_type]);
+          if (data.gym_hours)       rows.push(['Hours',      data.gym_hours]);
+          break;
+
+        case 'pool':
+          icon     = '🏊';
+          subtitle = 'Swimming Pool Access';
+          if (data.unit)       rows.push(['Unit',  data.unit + (data.block ? ' · ' + data.block : '')]);
+          if (data.pool_hours) rows.push(['Hours', data.pool_hours]);
+          break;
+
+        case 'contractor':
+          icon     = '🔧';
+          subtitle = 'Contractor / Service Pass';
+          if (data.company_name)    rows.push(['Company', data.company_name]);
+          if (data.authorized_unit) rows.push(['Unit',    data.authorized_unit]);
+          if (data.work_scope)      rows.push(['Scope',   data.work_scope]);
+          if (data.valid_until)     rows.push(['Until',   data.valid_until]);
+          break;
+
+        default: // resident
+          icon     = '✅';
+          subtitle = data.tier ? data.tier + ' — Resident Card' : 'Resident Card';
+          if (data.unit) rows.push(['Unit', data.unit + (data.block ? ' · ' + data.block : '')]);
+          if (data.tier) rows.push(['Tier', data.tier]);
+      }
+
+      // Always append gate, time, scan count
+      if (gate) rows.push(['Gate',  gate]);
+      if (time) rows.push(['Time',  time]);
       rows.push(['Scans', String(data.scan_sequence || 1)]);
-      const pushHtml = data.push?.succeeded > 0
-        ? `<div class="push-badge push-ok">📱 Wallet updated · ${data.push.succeeded} device${data.push.succeeded > 1 ? 's' : ''}</div>`
-        : `<div class="push-badge push-none">📱 No wallet devices</div>`;
-      openModal('valid', '✅', data.holder_name || 'Valid Pass', code, rows, pushHtml, false);
-      addHistory(code, data.holder_name || 'Unknown', 'ok', data.last_entry);
+
+      openModal('valid', icon, data.holder_name || 'Valid Pass', subtitle, code, rows, pushHtml, false);
+      addHistory(code, data.holder_name || 'Unknown', 'ok', data.last_entry, pt);
     }
   } else {
     const expired = data.status === 'expired';
@@ -285,16 +359,17 @@ function buildModal(code, data) {
     const heading = expired ? 'Pass Expired' : revoked ? 'Pass Revoked' : data.status === 'used' ? 'Pass Used' : 'Invalid Pass';
     const rows    = [['Reason', data.error || data.status || 'Unknown']];
     if (data.holder_name) rows.push(['Holder', data.holder_name]);
-    openModal(theme, icon, heading, code, rows, '', false);
-    addHistory(code, data.holder_name || 'Unknown', 'fail', null);
+    openModal(theme, icon, heading, '', code, rows, '', false);
+    addHistory(code, data.holder_name || 'Unknown', 'fail', null, '');
   }
 }
 
-function openModal(theme, icon, title, code, rows, extraHtml = '', isVisitor = false) {
-  document.getElementById('modal').className     = 'modal ' + theme;
-  document.getElementById('m-icon').textContent  = icon;
-  document.getElementById('m-title').textContent = title;
-  document.getElementById('m-code').textContent  = code;
+function openModal(theme, icon, title, subtitle, code, rows, extraHtml = '', isVisitor = false) {
+  document.getElementById('modal').className      = 'modal ' + theme;
+  document.getElementById('m-icon').textContent   = icon;
+  document.getElementById('m-title').textContent  = title;
+  document.getElementById('m-subtitle').textContent = subtitle;
+  document.getElementById('m-code').textContent   = code;
   document.getElementById('m-visitor-badge').style.display = isVisitor ? 'block' : 'none';
   document.getElementById('m-body').innerHTML =
     rows.map(([l, v]) => `<div class="modal-row"><span class="lbl">${l}</span><span class="val">${v}</span></div>`).join('');
@@ -323,14 +398,16 @@ function showLockBanner(show) {
   document.getElementById('reader-wrap').classList.toggle('locked', show);
 }
 
-function addHistory(code, name, type, entry) {
+function addHistory(code, name, type, entry, passType) {
   const now = new Date().toLocaleTimeString('en-SG', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Singapore' });
-  scanHistory.unshift({ code, name, type, entry, time: now });
+  const icons = { tennis:'🎾', bbq:'🔥', ktv:'🎤', gym:'🏋️', pool:'🏊', contractor:'🔧', visitor:'👤' };
+  const ptIcon = icons[passType] || '';
+  scanHistory.unshift({ code, name, type, entry, time: now, ptIcon });
   if (scanHistory.length > 20) scanHistory.pop();
   document.getElementById('history').innerHTML = scanHistory.map(h =>
     `<div class="history-item">
       <div class="hi-dot ${h.type}"></div>
-      <div class="hi-name">${h.name}${h.type === 'visitor' ? ' <span style="font-size:9px;color:#60a5fa;font-weight:700">VISITOR</span>' : ''}</div>
+      <div class="hi-name">${h.ptIcon ? h.ptIcon + ' ' : ''}${h.name}</div>
       <div class="hi-code">${h.code}</div>
       <div class="hi-time">${h.time}</div>
     </div>`
