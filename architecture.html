@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>System Architecture — Aiphone Residence × PassQR</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#07101f;color:#e5e7eb;min-height:100vh}
+
+/* ── HEADER ── */
+header{background:#1A2B4A;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(196,160,80,.3)}
+.hdr-left{display:flex;align-items:center;gap:12px}
+.logo{width:36px;height:36px}
+.hdr-title{color:#C4A050;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;font-weight:700}
+.hdr-sub{color:#7a90b0;font-size:10px;margin-top:2px}
+.hdr-actions{display:flex;gap:10px}
+.hdr-btn{padding:7px 14px;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;transition:opacity .2s}
+.hdr-btn.primary{background:#C4A050;color:#0d1a30}
+.hdr-btn.ghost{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:#e5e7eb}
+.hdr-btn:hover{opacity:.82}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(160deg,#1A2B4A 0%,#0d1a30 55%,#07101f 100%);padding:36px 24px 32px;text-align:center;border-bottom:1px solid rgba(196,160,80,.12)}
+.hero-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#C4A050;font-weight:700;margin-bottom:10px}
+.hero-title{font-family:'DM Serif Display',serif;font-size:clamp(22px,5vw,36px);color:#fff;font-weight:400;line-height:1.2;margin-bottom:8px}
+.hero-title em{color:#C4A050;font-style:italic}
+.hero-sub{font-size:13px;color:#7a90b0;max-width:560px;margin:0 auto;line-height:1.65}
+
+/* ── DIAGRAM WRAPPER ── */
+.diagram-outer{max-width:1280px;margin:0 auto;padding:32px 20px 48px}
+
+/* ── LEGEND ── */
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-bottom:28px}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:11px;color:#9ca3af}
+.legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+
+/* ── DIAGRAM GRID ── */
+.diagram{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;align-items:start}
+@media(max-width:900px){.diagram{grid-template-columns:1fr 1fr;gap:16px}}
+@media(max-width:560px){.diagram{grid-template-columns:1fr}}
+
+/* ── COLUMN HEADERS ── */
+.col-header{text-align:center;padding:10px 8px 16px;font-size:9px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:#4b5563;border-bottom:1px solid #1f2937;margin-bottom:16px}
+
+/* ── BLOCKS ── */
+.col{padding:0 10px;position:relative}
+.col::after{content:'';position:absolute;top:0;right:-1px;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.06) 20%,rgba(255,255,255,.06) 80%,transparent)}
+.col:last-child::after{display:none}
+
+.block{background:#111827;border:1px solid #1f2937;border-radius:14px;padding:16px;margin-bottom:12px;position:relative;transition:border-color .2s}
+.block:hover{border-color:rgba(196,160,80,.3)}
+.block.highlight{border-color:rgba(196,160,80,.4);background:linear-gradient(135deg,#111827,#131e2e)}
+.block.highlight::before{content:'INTEGRATION POINT';position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:#C4A050;color:#0d1a30;font-size:8px;font-weight:800;letter-spacing:1.5px;padding:2px 8px;border-radius:4px;white-space:nowrap}
+
+.block-icon{font-size:24px;margin-bottom:8px;line-height:1}
+.block-name{font-size:12px;font-weight:700;color:#f1f5f9;margin-bottom:4px}
+.block-desc{font-size:11px;color:#6b7280;line-height:1.5}
+.block-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.block-tag{font-size:9px;padding:2px 7px;border-radius:8px;font-weight:600;letter-spacing:.3px}
+
+/* ── CONNECTOR ARROWS (desktop) ── */
+.connectors{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none}
+
+/* ── FLOW ARROWS between columns ── */
+.arrow-row{display:flex;align-items:center;justify-content:center;gap:0;margin:8px 0 4px;overflow:visible}
+.arrow-line{height:2px;flex:1;position:relative;overflow:visible}
+.arrow-line::after{content:'▶';position:absolute;right:-6px;top:50%;transform:translateY(-50%);font-size:10px;color:inherit}
+.arrow-label{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;padding:3px 8px;border-radius:6px;flex-shrink:0;margin:0 4px}
+
+/* ── SVG DIAGRAM (main visual) ── */
+.svg-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.svg-wrap svg{min-width:820px;display:block;margin:0 auto}
+
+/* ── DATA FLOW TABLE ── */
+.flow-section{max-width:900px;margin:0 auto;padding:0 20px 48px}
+.flow-title{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#C4A050;font-weight:700;margin-bottom:16px;padding-top:8px}
+.flow-steps{display:flex;flex-direction:column;gap:0}
+.flow-step{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.flow-step:last-child{border-bottom:none}
+.flow-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;margin-top:1px}
+.flow-body{flex:1}
+.flow-step-title{font-size:13px;font-weight:700;color:#f1f5f9;margin-bottom:3px}
+.flow-step-desc{font-size:12px;color:#6b7280;line-height:1.55}
+.flow-step-tech{font-size:10px;font-family:monospace;color:#C4A050;background:rgba(196,160,80,.08);border-radius:4px;padding:2px 7px;margin-top:5px;display:inline-block}
+
+/* ── SPECS TABLE ── */
+.specs-section{max-width:900px;margin:0 auto;padding:0 20px 60px}
+.specs-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.specs-grid{grid-template-columns:1fr}}
+.spec-card{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px}
+.spec-card-title{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#C4A050;font-weight:700;margin-bottom:10px}
+.spec-row{display:flex;justify-content:space-between;align-items:flex-start;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px}
+.spec-row:last-child{border-bottom:none}
+.spec-key{color:#6b7280}
+.spec-val{color:#e5e7eb;font-weight:600;text-align:right;max-width:55%}
+
+/* ── FOOTER ── */
+footer{text-align:center;padding:20px;font-size:11px;color:#374151;border-top:1px solid #111827}
+footer a{color:#C4A050;text-decoration:none}
+
+/* ── PRINT ── */
+@media print{
+  body{background:#fff;color:#000}
+  header{background:#1A2B4A!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .hero{background:#1A2B4A!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .hdr-actions{display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-left">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100" fill="#0F1E3A"/><circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="2"/><rect x="82" y="75" width="36" height="82" fill="#C4A050"/><ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/><rect x="88" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="54" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="66" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="122" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="134" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="40" y="157" width="120" height="4" fill="#C4A050"/><text x="100" y="174" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#C4A050" text-anchor="middle" letter-spacing="3">AIPHONE</text><text x="100" y="187" font-family="Arial,sans-serif" font-size="8" fill="#D4C4A0" text-anchor="middle" letter-spacing="2">RESIDENCE</text></svg></div>
+    <div><div class="hdr-title">Aiphone Residence</div><div class="hdr-sub">System Architecture · IXG × PassQR Integration</div></div>
+  </div>
+  <div class="hdr-actions">
+    <a href="./" class="hdr-btn ghost">← Portal</a>
+    <a href="demo.html" class="hdr-btn primary">🎯 Demo Script</a>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-eyebrow">Technical Overview · POC</div>
+  <div class="hero-title">How <em>Aiphone IXG</em> + PassQR<br>work together</div>
+  <div class="hero-sub">The IXG hardware handles physical access — video intercom, QR scanning, door release. PassQR handles digital identity — wallet passes, validation logic, scan history, and AI management.</div>
+</div>
+
+<div class="diagram-outer">
+
+  <!-- ── LEGEND ── -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Resident / Visitor</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#C4A050"></div>Aiphone IXG Hardware</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#6ee7b7"></div>PassQR + Supabase Cloud</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#c084fc"></div>Management + AI</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f87171;border-radius:50%"></div>Data flow</div>
+  </div>
+
+  <!-- ── MAIN SVG DIAGRAM ── -->
+  <div class="svg-wrap">
+    <svg viewBox="0 0 1100 560" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:1100px">
+      <defs>
+        <!-- Arrow markers -->
+        <marker id="arr-gold" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#C4A050"/>
+        </marker>
+        <marker id="arr-green" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#6ee7b7"/>
+        </marker>
+        <marker id="arr-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#60a5fa"/>
+        </marker>
+        <marker id="arr-purple" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#c084fc"/>
+        </marker>
+        <marker id="arr-red" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#f87171"/>
+        </marker>
+        <!-- Glow filter -->
+        <filter id="glow"><feGaussianBlur stdDeviation="2.5" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <!-- Animated flow -->
+        <linearGradient id="flow-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#C4A050;stop-opacity:0"/>
+          <stop offset="50%" style="stop-color:#C4A050;stop-opacity:1"/>
+          <stop offset="100%" style="stop-color:#C4A050;stop-opacity:0"/>
+        </linearGradient>
+      </defs>
+
+      <!-- ── BACKGROUND COLUMNS ── -->
+      <rect x="10" y="10" width="235" height="540" rx="12" fill="rgba(59,130,246,.04)" stroke="rgba(59,130,246,.12)" stroke-width="1"/>
+      <rect x="255" y="10" width="265" height="540" rx="12" fill="rgba(196,160,80,.04)" stroke="rgba(196,160,80,.2)" stroke-width="1.5"/>
+      <rect x="530" y="10" width="265" height="540" rx="12" fill="rgba(110,231,183,.04)" stroke="rgba(110,231,183,.12)" stroke-width="1"/>
+      <rect x="805" y="10" width="285" height="540" rx="12" fill="rgba(192,132,252,.04)" stroke="rgba(192,132,252,.12)" stroke-width="1"/>
+
+      <!-- ── COLUMN LABELS ── -->
+      <text x="127" y="34" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="700" fill="#3b82f6" letter-spacing="2">RESIDENTS &amp; VISITORS</text>
+      <text x="387" y="34" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="700" fill="#C4A050" letter-spacing="2">AIPHONE IXG HARDWARE</text>
+      <text x="662" y="34" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="700" fill="#6ee7b7" letter-spacing="2">PASSQR + SUPABASE</text>
+      <text x="947" y="34" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="700" fill="#c084fc" letter-spacing="2">MANAGEMENT + AI</text>
+
+      <!-- ══ RESIDENT COLUMN ══ -->
+      <!-- Resident Phone block -->
+      <rect x="28" y="52" width="198" height="100" rx="10" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+      <text x="48" y="75" font-family="DM Sans,sans-serif" font-size="18">📱</text>
+      <text x="72" y="74" font-family="DM Sans,sans-serif" font-size="12" font-weight="700" fill="#f1f5f9">Resident Phone</text>
+      <text x="72" y="88" font-family="DM Sans,sans-serif" font-size="10" fill="#6b7280">Apple / Google Wallet</text>
+      <rect x="72" y="97" width="68" height="14" rx="4" fill="rgba(59,130,246,.15)" stroke="rgba(59,130,246,.3)" stroke-width="1"/>
+      <text x="106" y="108" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" font-weight="700" fill="#60a5fa">QR CODE PASS</text>
+      <rect x="146" y="97" width="68" height="14" rx="4" fill="rgba(196,160,80,.12)" stroke="rgba(196,160,80,.3)" stroke-width="1"/>
+      <text x="180" y="108" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" font-weight="700" fill="#C4A050">WALLET PUSH</text>
+      <text x="48" y="136" font-family="DM Sans,sans-serif" font-size="10" fill="#6b7280">Silent OTA updates</text>
+      <text x="48" y="150" font-family="DM Sans,sans-serif" font-size="10" fill="#6b7280">Works offline</text>
+
+      <!-- Visitor Phone block -->
+      <rect x="28" y="170" width="198" height="88" rx="10" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+      <text x="48" y="193" font-family="DM Sans,sans-serif" font-size="18">👤</text>
+      <text x="72" y="192" font-family="DM Sans,sans-serif" font-size="12" font-weight="700" fill="#f1f5f9">Visitor Phone</text>
+      <text x="72" y="206" font-family="DM Sans,sans-serif" font-size="10" fill="#6b7280">WhatsApp deep link</text>
+      <rect x="72" y="215" width="62" height="14" rx="4" fill="rgba(37,211,102,.12)" stroke="rgba(37,211,102,.3)" stroke-width="1"/>
+      <text x="103" y="226" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" font-weight="700" fill="#25D366">WHATSAPP</text>
+      <text x="48" y="248" font-family="DM Sans,sans-serif" font-size="10" fill="#6b7280">Day pass · expires midnight</text>
+
+      <!-- Contractor block -->
+      <rect x="28" y="276" width="198" height="72" rx="10" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+      <text x="48" y="299" font-family="DM Sans,sans-serif" font-size="18">🔧</text>
+      <text x="72" y="298" font-family="DM Sans,sans-serif" font-size="12" font-weight="700" fill="#f1f5f9">Contractor</text>
+      <text x="72" y="312" font-family="DM Sans,sans-serif" font-size="10" fill="#6b7280">Service provider pass</text>
+      <text x="48" y="338" font-family="DM Sans,sans-serif" font-size="10" fill="#6b7280">Time-limited · revocable</text>
+
+      <!-- ══ AIPHONE IXG COLUMN ══ -->
+      <!-- Integration point badge -->
+      <rect x="270" y="44" width="238" height="18" rx="5" fill="#C4A050"/>
+      <text x="389" y="56" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" font-weight="800" fill="#0d1a30" letter-spacing="1.5">INTEGRATION POINT</text>
+
+      <!-- IXG Door Station — main block -->
+      <rect x="270" y="67" width="238" height="180" rx="10" fill="#131e2e" stroke="rgba(196,160,80,.5)" stroke-width="2" filter="url(#glow)"/>
+      <text x="295" y="92" font-family="DM Sans,sans-serif" font-size="18">🚪</text>
+      <text x="320" y="91" font-family="DM Sans,sans-serif" font-size="13" font-weight="700" fill="#fff">IXG Door Station</text>
+      <text x="320" y="106" font-family="DM Sans,sans-serif" font-size="10" fill="#C4A050">Physical entrance hardware</text>
+      <!-- Sub-components -->
+      <rect x="288" y="118" width="204" height="116" rx="8" fill="rgba(0,0,0,.3)" stroke="#1f2937" stroke-width="1"/>
+      <text x="302" y="138" font-family="DM Sans,sans-serif" font-size="11" fill="#9ca3af">📷  Camera &amp; Video Intercom</text>
+      <text x="302" y="158" font-family="DM Sans,sans-serif" font-size="11" fill="#9ca3af">📡  QR Code Scanner Module</text>
+      <text x="302" y="178" font-family="DM Sans,sans-serif" font-size="11" fill="#9ca3af">🔓  Door Release Relay</text>
+      <text x="302" y="198" font-family="DM Sans,sans-serif" font-size="11" fill="#9ca3af">🌐  HTTP/S API Client</text>
+      <text x="302" y="218" font-family="DM Sans,sans-serif" font-size="11" fill="#C4A050">→  Calls PassQR on each scan</text>
+
+      <!-- IXG Master Station -->
+      <rect x="270" y="265" width="238" height="100" rx="10" fill="#111827" stroke="rgba(196,160,80,.3)" stroke-width="1"/>
+      <text x="295" y="288" font-family="DM Sans,sans-serif" font-size="18">🖥️</text>
+      <text x="322" y="287" font-family="DM Sans,sans-serif" font-size="13" font-weight="700" fill="#fff">IXG Master Station</text>
+      <text x="322" y="302" font-family="DM Sans,sans-serif" font-size="10" fill="#C4A050">Management office</text>
+      <text x="295" y="322" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">Indoor monitor · video display</text>
+      <text x="295" y="337" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">Door unlock override</text>
+      <text x="295" y="352" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">Intercom to door stations</text>
+
+      <!-- ══ PASSQR + SUPABASE COLUMN ══ -->
+      <!-- aiphone-scan -->
+      <rect x="546" y="52" width="232" height="120" rx="10" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+      <text x="566" y="75" font-family="DM Sans,sans-serif" font-size="18">⚡</text>
+      <text x="590" y="74" font-family="DM Sans,sans-serif" font-size="12" font-weight="700" fill="#f1f5f9">aiphone-scan</text>
+      <text x="590" y="88" font-family="DM Sans,sans-serif" font-size="10" fill="#6ee7b7">Supabase Edge Function v5</text>
+      <text x="566" y="108" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">• Validate QR against PassQR API</text>
+      <text x="566" y="123" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">• Detect pass type &amp; tier</text>
+      <text x="566" y="138" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">• Log scan to Supabase DB</text>
+      <text x="566" y="153" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">• Return door signal to IXG</text>
+      <rect x="566" y="160" width="52" height="0" rx="0" fill="none"/>
+
+      <!-- PassQR Platform -->
+      <rect x="546" y="187" width="232" height="100" rx="10" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+      <text x="566" y="210" font-family="DM Sans,sans-serif" font-size="18">🪪</text>
+      <text x="590" y="209" font-family="DM Sans,sans-serif" font-size="12" font-weight="700" fill="#f1f5f9">PassQR Platform</text>
+      <text x="590" y="223" font-family="DM Sans,sans-serif" font-size="10" fill="#6ee7b7">passqr.com / MCP API</text>
+      <text x="566" y="244" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">• 9 pass templates (owner,</text>
+      <text x="566" y="258" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">  tenant, visitor, facilities)</text>
+      <text x="566" y="273" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">• Apple &amp; Google Wallet OTA</text>
+
+      <!-- Supabase DB -->
+      <rect x="546" y="302" width="232" height="90" rx="10" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+      <text x="566" y="325" font-family="DM Sans,sans-serif" font-size="18">🗄️</text>
+      <text x="590" y="324" font-family="DM Sans,sans-serif" font-size="12" font-weight="700" fill="#f1f5f9">Supabase Database</text>
+      <text x="590" y="338" font-family="DM Sans,sans-serif" font-size="10" fill="#6ee7b7">Postgres · Real-time</text>
+      <text x="566" y="359" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">• Scan logs table</text>
+      <text x="566" y="374" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">• Pass activity &amp; stats</text>
+      <text x="566" y="389" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">• Live subscriptions</text>
+
+      <!-- aiphone-book / aiphone-ai -->
+      <rect x="546" y="407" width="109" height="70" rx="10" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+      <text x="566" y="428" font-family="DM Sans,sans-serif" font-size="12">📋</text>
+      <text x="566" y="444" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="#f1f5f9">aiphone-book</text>
+      <text x="566" y="458" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">Create facility</text>
+      <text x="566" y="470" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">booking passes</text>
+
+      <rect x="668" y="407" width="110" height="70" rx="10" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+      <text x="688" y="428" font-family="DM Sans,sans-serif" font-size="12">🤖</text>
+      <text x="688" y="444" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="#f1f5f9">aiphone-ai</text>
+      <text x="688" y="458" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">Claude proxy</text>
+      <text x="688" y="470" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">+ MCP bridge</text>
+
+      <!-- ══ MANAGEMENT COLUMN ══ -->
+      <!-- Web Portal -->
+      <rect x="822" y="52" width="250" height="80" rx="10" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+      <text x="842" y="75" font-family="DM Sans,sans-serif" font-size="18">🏠</text>
+      <text x="866" y="74" font-family="DM Sans,sans-serif" font-size="12" font-weight="700" fill="#f1f5f9">Resident Portal</text>
+      <text x="866" y="88" font-family="DM Sans,sans-serif" font-size="10" fill="#c084fc">dasecure.github.io</text>
+      <text x="842" y="108" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">Facility booking · Visitor pass</text>
+      <text x="842" y="122" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">Wallet add · Pass issuance</text>
+
+      <!-- Staff Scanner -->
+      <rect x="822" y="148" width="250" height="80" rx="10" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+      <text x="842" y="171" font-family="DM Sans,sans-serif" font-size="18">📷</text>
+      <text x="866" y="170" font-family="DM Sans,sans-serif" font-size="12" font-weight="700" fill="#f1f5f9">Staff Scanner</text>
+      <text x="866" y="184" font-family="DM Sans,sans-serif" font-size="10" fill="#c084fc">scan.html</text>
+      <text x="842" y="204" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">QR scan via phone camera</text>
+      <text x="842" y="218" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">Manual override · any device</text>
+
+      <!-- Dashboard -->
+      <rect x="822" y="244" width="250" height="80" rx="10" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+      <text x="842" y="267" font-family="DM Sans,sans-serif" font-size="18">📊</text>
+      <text x="866" y="266" font-family="DM Sans,sans-serif" font-size="12" font-weight="700" fill="#f1f5f9">Live Dashboard</text>
+      <text x="866" y="280" font-family="DM Sans,sans-serif" font-size="10" fill="#c084fc">Polls every 4 seconds</text>
+      <text x="842" y="300" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">Scan feed · Active residents</text>
+      <text x="842" y="314" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">Facility &amp; gate breakdown</text>
+
+      <!-- AI Concierge -->
+      <rect x="822" y="340" width="250" height="100" rx="10" fill="#131420" stroke="rgba(192,132,252,.4)" stroke-width="1.5"/>
+      <text x="842" y="363" font-family="DM Sans,sans-serif" font-size="18">🤖</text>
+      <text x="866" y="362" font-family="DM Sans,sans-serif" font-size="12" font-weight="700" fill="#f1f5f9">AI Concierge</text>
+      <text x="866" y="376" font-family="DM Sans,sans-serif" font-size="10" fill="#c084fc">Claude + PassQR MCP</text>
+      <text x="842" y="396" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">Natural language pass mgmt</text>
+      <text x="842" y="410" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">Create, revoke, query passes</text>
+      <text x="842" y="424" font-family="DM Sans,sans-serif" font-size="10" fill="#9ca3af">Real-time MCP tool calls</text>
+      <text x="842" y="430" font-family="DM Sans,sans-serif" font-size="9" fill="#c084fc">▸ Live in this demo</text>
+
+      <!-- ══ CONNECTION ARROWS ══ -->
+
+      <!-- Resident → IXG (QR scan) -->
+      <line x1="226" y1="102" x2="265" y2="132" stroke="#60a5fa" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-blue)" opacity=".8"/>
+      <rect x="218" y="86" width="54" height="14" rx="4" fill="rgba(59,130,246,.15)"/>
+      <text x="245" y="97" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" font-weight="700" fill="#60a5fa">QR CODE</text>
+
+      <!-- Visitor → IXG -->
+      <line x1="226" y1="210" x2="265" y2="185" stroke="#25D366" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-gold)" opacity=".7"/>
+
+      <!-- Contractor → IXG -->
+      <line x1="226" y1="308" x2="265" y2="275" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-gold)" opacity=".5"/>
+
+      <!-- IXG Door → aiphone-scan (HTTPS POST) — main integration arrow -->
+      <path d="M508,155 Q527,155 527,112 L541,112" fill="none" stroke="#C4A050" stroke-width="2.5" marker-end="url(#arr-gold)" filter="url(#glow)"/>
+      <rect x="495" y="120" width="62" height="28" rx="5" fill="rgba(196,160,80,.12)" stroke="rgba(196,160,80,.3)" stroke-width="1"/>
+      <text x="526" y="132" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" font-weight="700" fill="#C4A050">HTTPS POST</text>
+      <text x="526" y="143" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#C4A050">/aiphone-scan</text>
+
+      <!-- aiphone-scan → PassQR validate -->
+      <line x1="662" y1="172" x2="662" y2="182" stroke="#6ee7b7" stroke-width="1.5" marker-end="url(#arr-green)" opacity=".7"/>
+      <text x="672" y="178" font-family="DM Sans,sans-serif" font-size="8" fill="#6ee7b7">validate</text>
+
+      <!-- aiphone-scan → door signal (back to IXG) -->
+      <path d="M546,100 Q527,100 527,148 L508,160" fill="none" stroke="#f87171" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-red)" opacity=".8"/>
+      <rect x="498" y="99" width="56" height="24" rx="5" fill="rgba(248,113,113,.1)" stroke="rgba(248,113,113,.3)" stroke-width="1"/>
+      <text x="526" y="109" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" font-weight="700" fill="#f87171">DOOR</text>
+      <text x="526" y="119" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#f87171">SIGNAL</text>
+
+      <!-- aiphone-scan → Supabase DB (log) -->
+      <line x1="662" y1="172" x2="662" y2="298" stroke="#6ee7b7" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-green)" opacity=".5"/>
+      <text x="668" y="240" font-family="DM Sans,sans-serif" font-size="8" fill="#6ee7b7">log scan</text>
+
+      <!-- Supabase DB → Dashboard -->
+      <line x1="778" y1="347" x2="817" y2="310" stroke="#6ee7b7" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-green)" opacity=".6"/>
+      <text x="790" y="340" font-family="DM Sans,sans-serif" font-size="8" fill="#6ee7b7">poll 4s</text>
+
+      <!-- AI → aiphone-ai edge fn -->
+      <line x1="822" y1="390" x2="778" y2="442" stroke="#c084fc" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-purple)" opacity=".7"/>
+
+      <!-- Portal → aiphone-book -->
+      <line x1="822" y1="100" x2="778" y2="440" stroke="#c084fc" stroke-width="1" stroke-dasharray="3,4" marker-end="url(#arr-purple)" opacity=".3"/>
+
+      <!-- Staff Scanner → aiphone-scan -->
+      <path d="M822,188 Q800,188 800,112 L778,112" fill="none" stroke="#C4A050" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-gold)" opacity=".5"/>
+
+      <!-- ══ ANIMATED FLOW DOTS ══ -->
+      <circle r="4" fill="#C4A050" opacity=".9">
+        <animateMotion dur="2s" repeatCount="indefinite" path="M508,155 Q527,155 527,112 L541,112"/>
+      </circle>
+      <circle r="3" fill="#f87171" opacity=".8">
+        <animateMotion dur="2.5s" repeatCount="indefinite" begin="1s" path="M546,100 Q527,100 527,148 L508,160"/>
+      </circle>
+      <circle r="3" fill="#6ee7b7" opacity=".7">
+        <animateMotion dur="3s" repeatCount="indefinite" begin=".5s" path="M662,172 L662,298"/>
+      </circle>
+      <circle r="3" fill="#c084fc" opacity=".7">
+        <animateMotion dur="2s" repeatCount="indefinite" begin="1.2s" path="M822,390 L778,442"/>
+      </circle>
+
+      <!-- ══ BOTTOM LABELS ══ -->
+      <text x="127" y="540" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#374151">No app install required</text>
+      <text x="389" y="540" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#374151">Existing Aiphone IXG deployment</text>
+      <text x="662" y="540" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#374151">Zero new infrastructure</text>
+      <text x="947" y="540" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#374151">Web-based, any device</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ── DATA FLOW STEPS ── -->
+<div class="flow-section">
+  <div class="flow-title">End-to-End Data Flow</div>
+  <div class="flow-steps">
+
+    <div class="flow-step">
+      <div class="flow-num" style="background:rgba(59,130,246,.15);color:#60a5fa">1</div>
+      <div class="flow-body">
+        <div class="flow-step-title">Pass issued &amp; added to wallet</div>
+        <div class="flow-step-desc">Management issues a pass via the portal, AI chat, or direct API. PassQR generates a signed QR code and pushes it to the resident's Apple or Google Wallet silently over the air. For visitors, a WhatsApp link is sent directly to their phone.</div>
+        <span class="flow-step-tech">POST /aiphone-book → PassQR API → Wallet OTA push</span>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num" style="background:rgba(196,160,80,.15);color:#C4A050">2</div>
+      <div class="flow-body">
+        <div class="flow-step-title">Resident presents QR at IXG door station</div>
+        <div class="flow-step-desc">The resident opens their Wallet (or the WhatsApp pass link) and holds the QR to the Aiphone IXG door station's scanner module. This works entirely offline on the resident's phone — no app, no internet required at the device.</div>
+        <span class="flow-step-tech">Aiphone IXG QR scanner module → HTTP client</span>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num" style="background:rgba(196,160,80,.15);color:#C4A050">3</div>
+      <div class="flow-body">
+        <div class="flow-step-title">IXG posts QR code to PassQR validation endpoint</div>
+        <div class="flow-step-desc">The IXG door station sends an HTTPS POST request containing the scanned QR code to the <code>aiphone-scan</code> edge function. This is the core integration point — configured once in the IXG's "external access control URL" setting.</div>
+        <span class="flow-step-tech">POST https://...supabase.co/functions/v1/aiphone-scan</span>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num" style="background:rgba(110,231,183,.15);color:#6ee7b7">4</div>
+      <div class="flow-body">
+        <div class="flow-step-title">Validation, logging &amp; door signal</div>
+        <div class="flow-step-desc">The edge function validates the pass against PassQR, detects the pass type (resident/visitor/contractor/facility), increments the scan count, and logs the scan to Supabase with timestamp, gate, and holder details. It returns a JSON response that IXG maps to a door open or deny signal.</div>
+        <span class="flow-step-tech">200 OK {valid:true} → IXG releases door · 4xx → access denied</span>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num" style="background:rgba(110,231,183,.15);color:#6ee7b7">5</div>
+      <div class="flow-body">
+        <div class="flow-step-title">Scan appears on live dashboard</div>
+        <div class="flow-step-desc">The management dashboard polls Supabase every 4 seconds. The new scan entry slides into the live feed with the resident's name, unit, pass type, and timestamp. The "Active Now" panel shows everyone who has scanned in the last 2 hours.</div>
+        <span class="flow-step-tech">aiphone-stats → Supabase DB → dashboard poll 4s</span>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num" style="background:rgba(192,132,252,.15);color:#c084fc">6</div>
+      <div class="flow-body">
+        <div class="flow-step-title">AI concierge provides natural language oversight</div>
+        <div class="flow-step-desc">Property managers can ask the AI to look up any resident, create facility bookings, issue visitor passes, or revoke contractor access — all through plain English. Claude calls the PassQR MCP tools directly, with every action audited in Supabase.</div>
+        <span class="flow-step-tech">AI chat → aiphone-ai → Claude Sonnet → PassQR MCP tools</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── SPECS ── -->
+<div class="specs-section">
+  <div class="flow-title">Integration Specifications</div>
+  <div class="specs-grid">
+
+    <div class="spec-card">
+      <div class="spec-card-title">Aiphone IXG Configuration</div>
+      <div class="spec-row"><span class="spec-key">Integration method</span><span class="spec-val">HTTP access control URL</span></div>
+      <div class="spec-row"><span class="spec-key">Endpoint</span><span class="spec-val" style="font-family:monospace;font-size:10px">/functions/v1/aiphone-scan</span></div>
+      <div class="spec-row"><span class="spec-key">Protocol</span><span class="spec-val">HTTPS POST, JSON body</span></div>
+      <div class="spec-row"><span class="spec-key">Door open response</span><span class="spec-val">HTTP 200 · {valid: true}</span></div>
+      <div class="spec-row"><span class="spec-key">Deny response</span><span class="spec-val">HTTP 403 or {valid: false}</span></div>
+      <div class="spec-row"><span class="spec-key">Timeout</span><span class="spec-val">&lt; 1.5s typical</span></div>
+    </div>
+
+    <div class="spec-card">
+      <div class="spec-card-title">PassQR Pass Types</div>
+      <div class="spec-row"><span class="spec-key">Resident Owner</span><span class="spec-val">Permanent · navy #1A2B4A</span></div>
+      <div class="spec-row"><span class="spec-key">Resident Tenant</span><span class="spec-val">Expiry date · green #2D6A4F</span></div>
+      <div class="spec-row"><span class="spec-key">Visitor</span><span class="spec-val">Day pass · brown #8B5E3C</span></div>
+      <div class="spec-row"><span class="spec-key">Contractor</span><span class="spec-val">Date-limited · grey #5A5A5A</span></div>
+      <div class="spec-row"><span class="spec-key">Facility booking</span><span class="spec-val">5 types · per-facility colours</span></div>
+      <div class="spec-row"><span class="spec-key">Wallet support</span><span class="spec-val">Apple Wallet + Google Wallet</span></div>
+    </div>
+
+    <div class="spec-card">
+      <div class="spec-card-title">Cloud Infrastructure</div>
+      <div class="spec-row"><span class="spec-key">Edge functions</span><span class="spec-val">Supabase (Deno runtime)</span></div>
+      <div class="spec-row"><span class="spec-key">Database</span><span class="spec-val">Supabase Postgres</span></div>
+      <div class="spec-row"><span class="spec-key">Pass platform</span><span class="spec-val">PassQR (Singapore)</span></div>
+      <div class="spec-row"><span class="spec-key">AI model</span><span class="spec-val">Claude Sonnet (Anthropic)</span></div>
+      <div class="spec-row"><span class="spec-key">AI tools</span><span class="spec-val">PassQR MCP server</span></div>
+      <div class="spec-row"><span class="spec-key">Frontend hosting</span><span class="spec-val">GitHub Pages (static)</span></div>
+    </div>
+
+    <div class="spec-card">
+      <div class="spec-card-title">Resident Experience</div>
+      <div class="spec-row"><span class="spec-key">App install required</span><span class="spec-val">None</span></div>
+      <div class="spec-row"><span class="spec-key">Offline capability</span><span class="spec-val">Full (Wallet QR)</span></div>
+      <div class="spec-row"><span class="spec-key">Pass updates</span><span class="spec-val">Silent OTA push</span></div>
+      <div class="spec-row"><span class="spec-key">Visitor invite method</span><span class="spec-val">WhatsApp deep link</span></div>
+      <div class="spec-row"><span class="spec-key">Facility booking</span><span class="spec-val">Web form → Wallet pass</span></div>
+      <div class="spec-row"><span class="spec-key">Gate scan time</span><span class="spec-val">&lt; 2 seconds</span></div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <a href="./">← Resident Portal</a> &nbsp;·&nbsp;
+  <a href="demo.html">Demo Script</a> &nbsp;·&nbsp;
+  <a href="dashboard.html">Dashboard</a> &nbsp;·&nbsp;
+  © 2026 <span style="color:#C4A050">dasecure.com</span> × <span style="color:#C4A050">PassQR</span>
+</footer>
+
+</body>
+</html>
