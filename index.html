@@ -103,7 +103,6 @@ header .logo{width:40px;height:40px;flex-shrink:0}
 .staff-arrow{margin-left:auto;background:rgba(255,255,255,.06);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--silver);font-size:16px;flex-shrink:0}
 .staff-card.scanner .staff-arrow{background:var(--gold-dim);color:var(--gold)}
 .staff-card.dashboard .staff-arrow{background:rgba(110,231,183,.1);color:var(--green)}
-/* ── AI CARD ── */
 .ai-card{background:var(--surface);border-radius:var(--radius-card);padding:24px;box-shadow:var(--shadow);margin-top:32px}
 .ai-hd{display:flex;align-items:center;gap:12px;margin-bottom:16px}
 .ai-ico{width:38px;height:38px;background:linear-gradient(135deg,var(--navy-mid),#2d4a7a);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
@@ -112,7 +111,6 @@ header .logo{width:40px;height:40px;flex-shrink:0}
 .ai-badge{margin-left:auto;background:var(--gold-dim);border:1px solid rgba(196,160,80,.25);border-radius:20px;padding:4px 10px;font-size:9px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;flex-shrink:0}
 .ai-clear-btn{background:none;border:1px solid #e2e8f0;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:700;color:#94a3b8;cursor:pointer;letter-spacing:.5px;transition:all .15s;margin-left:6px;flex-shrink:0}
 .ai-clear-btn:hover{border-color:var(--gold);color:var(--gold)}
-/* ── AI CHAT ── */
 .ai-prompts{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .ai-prompt-chip{background:var(--gold-dim);border:1px solid rgba(196,160,80,.25);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--navy-mid);font-weight:600;cursor:pointer;transition:background .15s,transform .1s;white-space:nowrap;user-select:none}
 .ai-prompt-chip:hover{background:rgba(196,160,80,.25)}
@@ -204,7 +202,7 @@ footer{background:#080f1e;padding:24px 20px 80px;margin-top:48px}
     <p class="hero-body">Resident cards, facility bookings, visitor passes — all managed through a live digital pass that updates silently in Apple &amp; Google Wallet.</p>
     <div class="hero-line"></div>
     <div class="hiw-row">
-      <div class="hiw-chip"><span class="ico">🪹</span><span class="n">01</span><span class="lbl">Issue a pass</span></div>
+      <div class="hiw-chip"><span class="ico">🪪</span><span class="n">01</span><span class="lbl">Issue a pass</span></div>
       <div class="hiw-chip"><span class="ico">📲</span><span class="n">02</span><span class="lbl">Add to wallet</span></div>
       <div class="hiw-chip"><span class="ico">📷</span><span class="n">03</span><span class="lbl">Scan at gate</span></div>
       <div class="hiw-chip"><span class="ico">📊</span><span class="n">04</span><span class="lbl">Live dashboard</span></div>
@@ -238,7 +236,7 @@ footer{background:#080f1e;padding:24px 20px 80px;margin-top:48px}
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
           Add to Apple Wallet
         </a>
-        <a class="w-btn google" id="btn-google" href="https://www.passqr.com/api/wallet/google?code=PASS-2MM95YKC" target="_blank">
+        <a class="w-btn google" id="btn-google" href="https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-wallet?code=PASS-2MM95YKC" target="_blank">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21.56 10.74l-9.56-.01v2.92h5.49c-.54 2.67-2.86 4.35-5.49 4.35-3.35 0-6-2.69-6-6s2.65-6 6-6c1.48 0 2.82.54 3.86 1.42l2.12-2.12C16.55 3.6 14.38 2.75 12 2.75 6.9 2.75 2.75 6.9 2.75 12S6.9 21.25 12 21.25c5.61 0 9.25-3.95 9.25-9.5 0-.68-.07-1.35-.19-2.01h-1.5v1z"/></svg>
           Save to Google Wallet
         </a>
@@ -289,7 +287,6 @@ footer{background:#080f1e;padding:24px 20px 80px;margin-top:48px}
     </a>
   </div>
 
-  <!-- AI SECTION -->
   <div class="ai-card">
     <div class="ai-hd">
       <div class="ai-ico">🤖</div>
@@ -301,10 +298,10 @@ footer{background:#080f1e;padding:24px 20px 80px;margin-top:48px}
       <button class="ai-clear-btn" onclick="clearChat()" title="Clear conversation">↺ Clear</button>
     </div>
     <div class="ai-prompts">
-      <button class="ai-prompt-chip" onclick="aiSend('How many scans happened today?'">📊 Scans today</button>
-      <button class="ai-prompt-chip" onclick="aiSend('Look up pass PASS-2MM95YKC')">🔍 Look up Vincent Ooi</button>
-      <button class="ai-prompt-chip" onclick="aiSend('Book Tennis Court 1 today at 7PM for Tan Wei Ming unit #12-08')">🎾 Book tennis</button>
-      <button class="ai-prompt-chip" onclick="aiSend('Issue a visitor pass for James Lim visiting unit #12-08 today, purpose: dinner')">👤 Visitor pass</button>
+      <button class="ai-prompt-chip" onclick="aiSend('How many scans happened today?')">&#x1F4CA; Scans today</button>
+      <button class="ai-prompt-chip" onclick="aiSend('Look up pass PASS-2MM95YKC')">&#x1F50D; Look up Vincent Ooi</button>
+      <button class="ai-prompt-chip" onclick="aiSend('Book Tennis Court 1 today at 7PM for Tan Wei Ming unit #12-08')">&#x1F3BE; Book tennis</button>
+      <button class="ai-prompt-chip" onclick="aiSend('Issue a visitor pass for James Lim visiting unit #12-08 today, purpose: dinner')">&#x1F464; Visitor pass</button>
     </div>
     <div class="ai-chat-wrap">
       <div class="ai-messages" id="ai-messages">
@@ -328,7 +325,7 @@ footer{background:#080f1e;padding:24px 20px 80px;margin-top:48px}
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
       Apple Wallet
     </a>
-    <a class="w-btn google" id="sticky-google" href="https://www.passqr.com/api/wallet/google?code=PASS-2MM95YKC" target="_blank">
+    <a class="w-btn google" id="sticky-google" href="https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-wallet?code=PASS-2MM95YKC" target="_blank">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21.56 10.74l-9.56-.01v2.92h5.49c-.54 2.67-2.86 4.35-5.49 4.35-3.35 0-6-2.69-6-6s2.65-6 6-6c1.48 0 2.82.54 3.86 1.42l2.12-2.12C16.55 3.6 14.38 2.75 12 2.75 6.9 2.75 2.75 6.9 2.75 12S6.9 21.25 12 21.25c5.61 0 9.25-3.95 9.25-9.5 0-.68-.07-1.35-.19-2.01h-1.5v1z"/></svg>
       Google Wallet
     </a>
@@ -342,8 +339,6 @@ footer{background:#080f1e;padding:24px 20px 80px;margin-top:48px}
       <div class="footer-links">
         <a href="scan.html">Scanner</a>
         <a href="dashboard.html">Dashboard</a>
-        <a href="demo.html">Demo Script</a>
-        <a href="architecture.html">Architecture</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -401,7 +396,6 @@ new QRCode(document.getElementById('qrcode'), {
   obs.observe(ws);
 })();
 
-// ── AI Chat ──
 var chatHistory = [];
 
 function clearChat() {
