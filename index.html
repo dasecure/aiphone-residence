@@ -34,8 +34,15 @@ header .brand p{color:#aab8d0;font-size:11px;margin-top:2px}
 .hiw-desc{font-size:11px;color:#6a7c99;margin-top:3px;line-height:1.5}
 .try-banner{background:#1A2B4A;border-top:3px solid #C4A050}
 .try-inner{max-width:1100px;margin:0 auto;padding:36px 30px;display:flex;align-items:center;gap:40px;flex-wrap:wrap}
-.try-qr{background:white;border-radius:12px;padding:14px;flex-shrink:0;box-shadow:0 4px 24px rgba(0,0,0,.3)}
+.try-qr-block{display:flex;flex-direction:column;align-items:center;gap:12px;flex-shrink:0}
+.try-qr{background:white;border-radius:12px;padding:14px;box-shadow:0 4px 24px rgba(0,0,0,.3)}
 #qrcode canvas,#qrcode img{display:block}
+.qr-label{font-size:10px;letter-spacing:2px;color:#6a7c99;text-transform:uppercase;text-align:center}
+.wallet-btns{display:flex;flex-direction:column;gap:8px;width:100%}
+.wallet-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 14px;border-radius:9px;font-size:12px;font-weight:700;text-decoration:none;text-align:center;transition:opacity .2s}
+.wallet-btn:hover{opacity:.85}
+.wallet-btn.apple{background:white;color:#0F1E3A}
+.wallet-btn.google{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:white}
 .try-text{flex:1;min-width:240px}
 .try-text .eyebrow{font-size:10px;letter-spacing:3px;color:#C4A050;text-transform:uppercase;margin-bottom:10px}
 .try-text h3{color:white;font-size:22px;font-weight:700;line-height:1.3}
@@ -71,7 +78,7 @@ header .brand p{color:#aab8d0;font-size:11px;margin-top:2px}
 .staff-icon{font-size:32px;flex-shrink:0}
 .staff-text h3{color:white;font-size:14px;font-weight:700;letter-spacing:.5px}
 .staff-text p{color:#8a9ab8;font-size:11px;margin-top:3px;line-height:1.5}
-.staff-btn{margin-left:auto;border:none;border-radius:9px;padding:9px 18px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:opacity .2s;text-decoration:none;display:block}
+.staff-btn{margin-left:auto;border:none;border-radius:9px;padding:9px 18px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;text-decoration:none;display:block}
 .live-indicator{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:#6ee7b7;margin-top:5px;font-weight:600;letter-spacing:.5px}
 .live-indicator .dot{width:5px;height:5px;border-radius:50%;background:#6ee7b7;animation:pulse 1.8s infinite}
 .ai-section{background:white;border-radius:16px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,.06);margin-top:40px}
@@ -98,7 +105,7 @@ footer{background:#0f1e3a;padding:28px 30px;margin-top:50px}
   .how-it-works{flex-direction:column;gap:16px}
   .hiw-step::after{display:none}
   .try-inner{gap:24px}
-  .try-qr{align-self:center}
+  .try-qr-block{align-self:center}
   .footer-inner{flex-direction:column;gap:6px;text-align:center}
 }
 </style>
@@ -172,20 +179,35 @@ footer{background:#0f1e3a;padding:28px 30px;margin-top:50px}
 
 <div class="try-banner">
   <div class="try-inner">
-    <div class="try-qr">
-      <div id="qrcode"></div>
+
+    <!-- QR + wallet buttons stacked -->
+    <div class="try-qr-block">
+      <div class="qr-label">iPhone — scan to add</div>
+      <div class="try-qr">
+        <div id="qrcode"></div>
+      </div>
+      <div class="wallet-btns">
+        <a class="wallet-btn apple" href="https://www.passqr.com/api/wallet/apple?code=PASS-FNEBCPT9" target="_blank">
+          🍎 Add to Apple Wallet
+        </a>
+        <a class="wallet-btn google" href="https://www.passqr.com/api/wallet/google?code=PASS-FNEBCPT9" target="_blank">
+          🤖 Save to Google Wallet
+        </a>
+      </div>
     </div>
+
     <div class="try-text">
       <div class="eyebrow">Try it now — live pass</div>
-      <h3>Scan to add a resident pass<br>to your wallet</h3>
-      <p>This is a live resident card for <strong style="color:white">Mr. David Tan</strong>, Owner Unit 12-08. Scan the QR with your phone — it opens the real PassQR pass page with an Add to Wallet button.</p>
+      <h3>Add a real resident pass<br>to your wallet</h3>
+      <p>This is a live resident card for <strong style="color:white">Mr. David Tan</strong>, Owner Unit 12-08. On iPhone, scan the QR — it triggers Add to Apple Wallet directly. On Android, tap the Google Wallet button.</p>
       <div class="try-steps">
-        <div class="try-step"><span class="try-step-num">1</span> Scan the QR code with your phone camera</div>
-        <div class="try-step"><span class="try-step-num">2</span> Tap "Add to Apple Wallet" or "Add to Google Wallet"</div>
-        <div class="try-step"><span class="try-step-num">3</span> Open the Scanner below — scan your pass</div>
+        <div class="try-step"><span class="try-step-num">1</span> iPhone: scan QR · Android: tap Google Wallet button</div>
+        <div class="try-step"><span class="try-step-num">2</span> Add the pass to your wallet</div>
+        <div class="try-step"><span class="try-step-num">3</span> Open the Scanner below and scan your pass</div>
         <div class="try-step"><span class="try-step-num">4</span> Watch the entry appear live on the Dashboard</div>
       </div>
     </div>
+
     <div class="pass-info">
       <div class="pi-label">Live Pass Details</div>
       <div class="pi-row">
@@ -320,8 +342,9 @@ footer{background:#0f1e3a;padding:28px 30px;margin-top:50px}
 </footer>
 
 <script>
+  // QR points directly to Apple Wallet download — triggers native Add to Wallet sheet on iOS
   new QRCode(document.getElementById("qrcode"), {
-    text: "https://www.passqr.com/p/PASS-FNEBCPT9",
+    text: "https://www.passqr.com/api/wallet/apple?code=PASS-FNEBCPT9",
     width: 148,
     height: 148,
     colorDark: "#0F1E3A",
