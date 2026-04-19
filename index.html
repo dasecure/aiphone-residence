@@ -29,12 +29,14 @@ header .brand p{color:#aab8d0;font-size:12px;margin-top:3px}
 .fc-title{font-size:15px;font-weight:700;margin-top:9px}
 .fc-desc{font-size:12px;color:#777;margin-top:4px;line-height:1.5}
 .fc-footer{padding:10px 20px;border-top:1px solid #f0f0f0;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
-.staff-section{background:#1A2B4A;border-radius:14px;padding:26px;box-shadow:0 2px 16px rgba(0,0,0,.15);margin-top:28px;display:flex;align-items:center;gap:20px;text-decoration:none}
-.staff-section:hover .staff-btn{background:#d4b060}
+.staff-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px}
+@media(max-width:640px){.staff-row{grid-template-columns:1fr}}
+.staff-section{background:#1A2B4A;border-radius:14px;padding:26px;box-shadow:0 2px 16px rgba(0,0,0,.15);display:flex;align-items:center;gap:20px;text-decoration:none}
+.staff-section:hover .staff-btn{opacity:.85}
 .staff-icon{font-size:36px;flex-shrink:0}
 .staff-text h3{color:#C4A050;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
 .staff-text p{color:#aab8d0;font-size:12px;margin-top:4px}
-.staff-btn{margin-left:auto;background:#C4A050;color:#0F1E3A;border:none;border-radius:9px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;transition:background .2s;white-space:nowrap;flex-shrink:0}
+.staff-btn{margin-left:auto;color:#0F1E3A;border:none;border-radius:9px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:opacity .2s}
 .api-section{background:white;border-radius:14px;padding:26px;box-shadow:0 2px 16px rgba(0,0,0,.07);margin-top:28px}
 .api-section h3{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#1A2B4A;margin-bottom:12px}
 .api-section code{background:#E8EDF5;border-radius:8px;padding:14px 16px;display:block;font-size:12px;line-height:1.9;color:#333;font-family:monospace}
@@ -70,15 +72,25 @@ footer span{color:#C4A050}
     <a class="facility-card" href="book/visitor.html"><div class="fc-header"><div class="fc-emoji">👤</div><div class="fc-title">Visitor Passes</div><div class="fc-desc">Issue a digital day-pass for guests. Valid today only.</div></div><div class="fc-footer" style="color:#8B5E3C">Issue Pass →</div></a>
   </div>
 
-  <!-- Staff Scanner CTA -->
-  <a class="staff-section" href="scan.html">
-    <div class="staff-icon">📷</div>
-    <div class="staff-text">
-      <h3>Staff Pass Scanner</h3>
-      <p>Validate resident &amp; visitor passes &middot; Increment scan count &middot; Push wallet update</p>
-    </div>
-    <div class="staff-btn">Open Scanner →</div>
-  </a>
+  <!-- Staff CTAs -->
+  <div class="staff-row">
+    <a class="staff-section" href="scan.html">
+      <div class="staff-icon">📷</div>
+      <div class="staff-text">
+        <h3>Pass Scanner</h3>
+        <p>Validate passes &middot; Scan &amp; log entries &middot; Push wallet updates</p>
+      </div>
+      <div class="staff-btn" style="background:#C4A050">Open →</div>
+    </a>
+    <a class="staff-section" href="dashboard.html">
+      <div class="staff-icon">📊</div>
+      <div class="staff-text">
+        <h3>Live Dashboard</h3>
+        <p>Real-time scan feed &middot; Who's active &middot; Facility stats</p>
+      </div>
+      <div class="staff-btn" style="background:#6ee7b7">View →</div>
+    </a>
+  </div>
 
   <div class="api-section">
     <h3>PassQR MCP Integration — Demo Commands</h3>
