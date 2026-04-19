@@ -1,5 +1,5 @@
 // Aiphone Residence — shared booking logic
-// Each page defines: FACILITY, getPayload(), validate(), setSuccess(data)
+// Each page defines: FACILITY, DEMO_VALUES (optional), getPayload(), validate(), setSuccess(data)
 
 const BOOK_URL = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-book';
 
@@ -12,14 +12,45 @@ function id(elementId) {
   return document.getElementById(elementId);
 }
 
-// Set today as default date on all date inputs
+// Set today as default date on all date inputs + handle demo mode
 window.addEventListener('DOMContentLoaded', () => {
   const today = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
   document.querySelectorAll('input[type="date"]').forEach(el => {
     el.value = today;
     el.min = today;
   });
+
+  // Demo mode: append ?demo to any booking URL to pre-fill the form
+  if (new URLSearchParams(window.location.search).has('demo') && window.DEMO_VALUES) {
+    _injectDemoBanner();
+    _fillDemoValues();
+  }
 });
+
+function _injectDemoBanner() {
+  const banner = document.createElement('div');
+  banner.className = 'demo-banner';
+  banner.innerHTML = '<span class="demo-dot"></span><strong>Demo Mode</strong>&ensp;&mdash;&ensp;Fields pre-filled &middot; tap Confirm to generate a live pass';
+  const formView = id('form-view');
+  if (formView) formView.insertAdjacentElement('afterbegin', banner);
+}
+
+function _fillDemoValues() {
+  const values = window.DEMO_VALUES;
+  if (!values) return;
+  Object.entries(values).forEach(([fieldId, value]) => {
+    const el = document.getElementById(fieldId);
+    if (!el) return;
+    el.value = value;
+    el.classList.add('demo-filled');
+    setTimeout(() => el.classList.remove('demo-filled'), 1600);
+  });
+  // Pulse the submit button after a short delay
+  setTimeout(() => {
+    const btn = id('submit-btn');
+    if (btn) btn.classList.add('demo-pulse');
+  }, 800);
+}
 
 async function book() {
   const errEl  = id('err');
@@ -37,6 +68,7 @@ async function book() {
 
   // Lock UI
   btnEl.disabled = true;
+  btnEl.classList.remove('demo-pulse');
   btnEl.innerHTML = '<span class="spin"></span>Creating pass…';
   btnEl.dataset.origLabel = origLabel;
 
@@ -97,8 +129,8 @@ function showSuccess(data) {
     `${holderLine}Pass: ${data.code}`,
     details,
     '',
-    `🍎 Apple Wallet:\n${data.apple_url}`,
-    `🤖 Google Wallet:\n${data.google_url}`,
+    `\uD83C\uDF4E Apple Wallet:\n${data.apple_url}`,
+    `\uD83E\uDD16 Google Wallet:\n${data.google_url}`,
   ].filter(Boolean).join('\n');
   const waHref = 'https://wa.me/?text=' + encodeURIComponent(waText);
 

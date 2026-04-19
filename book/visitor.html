@@ -91,6 +91,12 @@
 <footer>© 2026 <span>Aiphone Residence</span> &middot; <a href="../">← Back to Portal</a></footer>
 <script src="../book.js"></script>
 <script>
+const DEMO_VALUES = {
+  'f-vname':   'James Lim',
+  'f-vphone':  '+65 9123 4567',
+  'f-unit':    '#12-08',
+  'f-purpose': 'Dinner party',
+};
 const FACILITY = 'visitor';
 let _passData = null;
 
@@ -122,11 +128,11 @@ function setSuccess(data) {
   // WhatsApp deep link with pre-composed message
   const visitorPhone = val('f-vphone').replace(/[^+\d]/g, '');
   const waMsg = encodeURIComponent(
-    `Hi ${data.holder_name}! 🏠\n\n` +
+    `Hi ${data.holder_name}! \uD83C\uDFE0\n\n` +
     `You have been issued a visitor pass for Aiphone Residence.\n\n` +
-    `📅 Date: ${data.data.valid_date}\n` +
-    `🏠 Visiting: Unit ${data.data.host_unit}\n` +
-    (data.data.purpose ? `📝 Purpose: ${data.data.purpose}\n` : '') +
+    `\uD83D\uDCC5 Date: ${data.data.valid_date}\n` +
+    `\uD83C\uDFE0 Visiting: Unit ${data.data.host_unit}\n` +
+    (data.data.purpose ? `\uD83D\uDCDD Purpose: ${data.data.purpose}\n` : '') +
     `\nTap the link below to add your pass to Apple/Google Wallet:\n${data.public_url}\n\n` +
     `Show the QR code at the Visitor Checkpoint on arrival. Valid today only.`
   );
@@ -141,8 +147,8 @@ function setSuccess(data) {
   // Copy link button
   id('s-copy').onclick = () => {
     navigator.clipboard.writeText(data.public_url).then(() => {
-      id('s-copy').textContent = '✅ Copied!';
-      setTimeout(() => { id('s-copy').textContent = '🔗 Copy Link'; }, 2500);
+      id('s-copy').textContent = '\u2705 Copied!';
+      setTimeout(() => { id('s-copy').textContent = '\uD83D\uDD17 Copy Link'; }, 2500);
     });
   };
 }

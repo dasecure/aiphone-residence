@@ -69,6 +69,13 @@
 <footer>© 2026 <span>Aiphone Residence</span> &middot; <a href="../">← Back to Portal</a></footer>
 <script src="../book.js"></script>
 <script>
+const DEMO_VALUES = {
+  'f-name':   'Tan Wei Ming',
+  'f-unit':   '#12-08',
+  'f-pit':    'BBQ Pit 1 (Rooftop)',
+  'f-slot':   '5:00 PM – 8:00 PM',
+  'f-guests': '10',
+};
 const FACILITY = 'bbq';
 function getPayload() {
   return { facility: FACILITY, holder_name: val('f-name'), unit: val('f-unit'), pit: val('f-pit'), date: val('f-date'), slot: val('f-slot'), guests: val('f-guests') };
