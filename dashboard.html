@@ -196,7 +196,7 @@ footer span{color:#C4A050}
 
 <script>
 const STATS_URL = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-stats';
-const REFRESH_MS = 8000;
+const REFRESH_MS = 4000;
 
 const FACILITY_ICONS = {
   'Tennis Court':   '🎾',
@@ -224,9 +224,9 @@ function fmtTime(iso) {
 
 function timeSince(iso) {
   const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
-  if (diff < 60)   return `${diff}s ago`;
-  if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
-  return `${Math.floor(diff/3600)}h ago`;
+  if (diff < 60)   return diff + 's ago';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  return Math.floor(diff/3600) + 'h ago';
 }
 
 function renderFeed(feed) {
@@ -238,26 +238,25 @@ function renderFeed(feed) {
     return;
   }
 
-  el.innerHTML = feed.map(s => {
+  el.innerHTML = feed.map(function(s) {
     const isValid = s.result === 'valid';
     const facilityIcon = icon(s.facility || s.template_name);
     const tags = [];
-    if (s.gate)     tags.push(`<span class="feed-tag" style="background:#1f2937;color:#9ca3af">${s.gate}</span>`);
-    if (s.unit)     tags.push(`<span class="feed-tag" style="background:#1A2B4A;color:#C4A050">${s.unit}</span>`);
-    if (s.tier)     tags.push(`<span class="feed-tag" style="background:#1A2B4A;color:#aab8d0">${s.tier}</span>`);
+    if (s.gate)     tags.push('<span class="feed-tag" style="background:#1f2937;color:#9ca3af">' + s.gate + '</span>');
+    if (s.unit)     tags.push('<span class="feed-tag" style="background:#1A2B4A;color:#C4A050">' + s.unit + '</span>');
+    if (s.tier)     tags.push('<span class="feed-tag" style="background:#1A2B4A;color:#aab8d0">' + s.tier + '</span>');
     if (s.facility || s.template_name) {
       const label = s.facility || s.template_name;
-      tags.push(`<span class="feed-tag" style="background:${s.template_color}22;color:${s.template_color}">${facilityIcon} ${label}</span>`);
+      tags.push('<span class="feed-tag" style="background:' + s.template_color + '22;color:' + s.template_color + '">' + facilityIcon + ' ' + label + '</span>');
     }
-    return `
-      <div class="feed-item">
-        <div class="feed-dot ${isValid ? 'valid' : 'invalid'}"></div>
-        <div class="feed-body">
-          <div class="feed-name">${s.holder_name || s.code || 'Unknown'}</div>
-          <div class="feed-meta">${tags.join('')}</div>
-        </div>
-        <div class="feed-time">${fmtTime(s.scanned_at)}</div>
-      </div>`;
+    return '<div class="feed-item">' +
+      '<div class="feed-dot ' + (isValid ? 'valid' : 'invalid') + '"></div>' +
+      '<div class="feed-body">' +
+        '<div class="feed-name">' + (s.holder_name || s.code || 'Unknown') + '</div>' +
+        '<div class="feed-meta">' + tags.join('') + '</div>' +
+      '</div>' +
+      '<div class="feed-time">' + fmtTime(s.scanned_at) + '</div>' +
+    '</div>';
   }).join('');
 }
 
@@ -271,62 +270,59 @@ function renderActive(active) {
     return;
   }
 
-  el.innerHTML = active.map(a => `
-    <div class="active-item">
-      <div class="active-dot"></div>
-      <div style="flex:1;min-width:0">
-        <div class="active-name">${a.holder_name || a.code}</div>
-        <div class="active-info">${[a.unit, a.gate].filter(Boolean).join(' · ')}</div>
-      </div>
-      <div class="active-time">${timeSince(a.last_seen)}</div>
-    </div>`).join('');
+  el.innerHTML = active.map(function(a) {
+    return '<div class="active-item">' +
+      '<div class="active-dot"></div>' +
+      '<div style="flex:1;min-width:0">' +
+        '<div class="active-name">' + (a.holder_name || a.code) + '</div>' +
+        '<div class="active-info">' + [a.unit, a.gate].filter(Boolean).join(' · ') + '</div>' +
+      '</div>' +
+      '<div class="active-time">' + timeSince(a.last_seen) + '</div>' +
+    '</div>';
+  }).join('');
 }
 
 function renderFacility(byFacility) {
   const el = document.getElementById('facility-list');
-  const entries = Object.entries(byFacility).sort((a,b) => b[1] - a[1]);
+  const entries = Object.entries(byFacility).sort(function(a,b){ return b[1] - a[1]; });
   if (!entries.length) { el.innerHTML = '<div style="color:#4b5563;font-size:12px">No data yet</div>'; return; }
   const max = entries[0][1] || 1;
-  el.innerHTML = entries.map(([name, count]) => `
-    <div class="facility-row">
-      <div class="facility-header">
-        <span class="facility-name">${icon(name)} ${name}</span>
-        <span class="facility-count">${count}</span>
-      </div>
-      <div class="facility-bar-bg">
-        <div class="facility-bar-fill" style="width:${Math.round(count/max*100)}%"></div>
-      </div>
-    </div>`).join('');
+  el.innerHTML = entries.map(function(e) {
+    const name = e[0], count = e[1];
+    return '<div class="facility-row">' +
+      '<div class="facility-header">' +
+        '<span class="facility-name">' + icon(name) + ' ' + name + '</span>' +
+        '<span class="facility-count">' + count + '</span>' +
+      '</div>' +
+      '<div class="facility-bar-bg">' +
+        '<div class="facility-bar-fill" style="width:' + Math.round(count/max*100) + '%"></div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
 }
 
 function renderGates(byGate) {
   const el = document.getElementById('gate-list');
-  const entries = Object.entries(byGate).sort((a,b) => b[1] - a[1]);
+  const entries = Object.entries(byGate).sort(function(a,b){ return b[1] - a[1]; });
   if (!entries.length) { el.innerHTML = '<div style="color:#4b5563;font-size:12px">No data yet</div>'; return; }
-  el.innerHTML = entries.map(([gate, count]) => `
-    <div class="gate-row">
-      <span class="gate-name">${gate}</span>
-      <span class="gate-count">${count}</span>
-    </div>`).join('');
+  el.innerHTML = entries.map(function(e) {
+    return '<div class="gate-row"><span class="gate-name">' + e[0] + '</span><span class="gate-count">' + e[1] + '</span></div>';
+  }).join('');
 }
-
-let lastFetchTime = null;
-let refreshTimer = null;
-let progressTimer = null;
 
 async function refresh() {
   try {
     const res = await fetch(STATS_URL);
     const data = await res.json();
 
-    lastFetchTime = new Date();
-    document.getElementById('live-status').textContent = 'LIVE · ' + lastFetchTime.toLocaleTimeString('en-SG', { timeZone: 'Asia/Singapore' });
+    const now = new Date();
+    document.getElementById('live-status').textContent = 'LIVE · ' + now.toLocaleTimeString('en-SG', { timeZone: 'Asia/Singapore' });
 
     const s = data.stats || {};
     document.getElementById('s-today').textContent   = s.scans_today  ?? 0;
     document.getElementById('s-unique').textContent  = s.unique_today ?? 0;
     document.getElementById('s-total').textContent   = s.total_passes ?? 0;
-    document.getElementById('s-today-sub').textContent = `${s.scans_today ?? 0} validated entries`;
+    document.getElementById('s-today-sub').textContent = (s.scans_today ?? 0) + ' validated entries';
 
     renderFeed(data.feed || []);
     renderActive(data.active_passes || []);
@@ -343,9 +339,8 @@ function startProgress() {
   const fill = document.getElementById('rfill');
   fill.style.transition = 'none';
   fill.style.width = '100%';
-  // Force reflow
-  fill.offsetWidth;
-  fill.style.transition = `width ${REFRESH_MS}ms linear`;
+  fill.offsetWidth; // force reflow
+  fill.style.transition = 'width ' + REFRESH_MS + 'ms linear';
   fill.style.width = '0%';
 }
 
