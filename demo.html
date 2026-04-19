@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Demo Script — Aiphone Residence × PassQR</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,sans-serif;background:#07101f;color:#e5e7eb;min-height:100vh}
+
+/* ── HEADER ── */
+header{background:#1A2B4A;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(196,160,80,.3);position:sticky;top:0;z-index:50}
+.hdr-left{display:flex;align-items:center;gap:12px}
+.logo{width:36px;height:36px;flex-shrink:0}
+.hdr-title{color:#C4A050;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;font-weight:700}
+.hdr-sub{color:#7a90b0;font-size:10px;margin-top:2px}
+.demo-badge{background:rgba(196,160,80,.15);border:1.5px solid rgba(196,160,80,.4);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;color:#C4A050;letter-spacing:.5px}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(160deg,#1A2B4A 0%,#0d1a30 60%,#07101f 100%);padding:32px 18px 28px;text-align:center;border-bottom:1px solid rgba(196,160,80,.15)}
+.hero-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#C4A050;font-weight:700;margin-bottom:10px}
+.hero-title{font-size:24px;font-weight:800;color:#fff;line-height:1.25;margin-bottom:8px}
+.hero-title span{color:#C4A050}
+.hero-sub{font-size:13px;color:#7a90b0;max-width:340px;margin:0 auto 20px;line-height:1.6}
+.hero-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.hero-btn{display:inline-flex;align-items:center;gap:7px;padding:11px 18px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;transition:opacity .2s}
+.hero-btn.primary{background:#C4A050;color:#0d1a30}
+.hero-btn.secondary{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);color:#e5e7eb}
+.hero-btn:hover{opacity:.85}
+
+/* ── CONTAINER ── */
+.container{max-width:600px;margin:0 auto;padding:20px 14px 60px}
+
+/* ── SECTION LABEL ── */
+.section-label{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#C4A050;font-weight:700;margin:28px 0 12px;padding-left:2px}
+
+/* ── STEP CARDS ── */
+.step{background:#111827;border:1px solid #1f2937;border-radius:16px;margin-bottom:12px;overflow:hidden;transition:border-color .2s}
+.step.active{border-color:rgba(196,160,80,.4)}
+.step-header{display:flex;align-items:center;gap:12px;padding:15px 16px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.step-num{width:30px;height:30px;border-radius:50%;background:rgba(196,160,80,.12);border:1.5px solid rgba(196,160,80,.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#C4A050;flex-shrink:0}
+.step.done .step-num{background:#064e3b;border-color:#065f46;color:#6ee7b7}
+.step-icon{font-size:20px;flex-shrink:0}
+.step-title-wrap{flex:1;min-width:0}
+.step-title{font-size:14px;font-weight:700;color:#f1f5f9}
+.step-desc{font-size:11px;color:#6b7280;margin-top:2px}
+.step-chevron{color:#374151;font-size:16px;transition:transform .2s;flex-shrink:0}
+.step.open .step-chevron{transform:rotate(90deg)}
+
+.step-body{display:none;padding:0 16px 16px;border-top:1px solid #1f2937}
+.step.open .step-body{display:block}
+
+/* Talk track */
+.talk-track{background:#0d1a30;border-left:3px solid #C4A050;border-radius:0 8px 8px 0;padding:11px 14px;margin:12px 0;font-size:12px;color:#aab8d0;line-height:1.65;font-style:italic}
+.talk-track strong{color:#C4A050;font-style:normal}
+
+/* Action buttons */
+.action-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.action-btn{display:inline-flex;align-items:center;gap:7px;padding:10px 16px;border-radius:9px;font-size:13px;font-weight:700;text-decoration:none;border:none;cursor:pointer;transition:opacity .2s;white-space:nowrap}
+.action-btn:hover{opacity:.85}
+.action-btn.primary{background:#C4A050;color:#0d1a30}
+.action-btn.navy{background:#1A2B4A;color:#C4A050;border:1.5px solid rgba(196,160,80,.3)}
+.action-btn.green{background:#064e3b;color:#6ee7b7;border:1.5px solid #065f46}
+.action-btn.red{background:#7f1d1d;color:#fca5a5;border:1.5px solid #991b1b}
+.action-btn.purple{background:#3b0764;color:#c4b5fd;border:1.5px solid #4c1d95}
+.action-btn.blue{background:#1e3a5f;color:#93c5fd;border:1.5px solid #1d4ed8}
+
+/* Pass code chips */
+.pass-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pass-chip{display:flex;align-items:center;gap:8px;background:#0d1a30;border:1.5px solid #1f2937;border-radius:9px;padding:8px 12px;font-size:12px}
+.pass-chip-code{font-family:monospace;font-weight:700;color:#C4A050;letter-spacing:1px}
+.pass-chip-name{color:#6b7280;font-size:11px}
+.pass-chip-copy{background:rgba(196,160,80,.1);border:1px solid rgba(196,160,80,.25);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;color:#C4A050;cursor:pointer;transition:background .15s;white-space:nowrap}
+.pass-chip-copy:hover{background:rgba(196,160,80,.22)}
+.pass-chip-copy.copied{background:#064e3b;border-color:#065f46;color:#6ee7b7}
+
+/* Done toggle */
+.done-toggle{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid #1f2937}
+.done-toggle input[type=checkbox]{width:18px;height:18px;accent-color:#6ee7b7;cursor:pointer;flex-shrink:0}
+.done-toggle label{font-size:12px;color:#6b7280;cursor:pointer}
+
+/* ── PASS SHOWCASE ── */
+.pass-showcase{background:#111827;border:1px solid #1f2937;border-radius:16px;padding:16px}
+.showcase-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.showcase-row:last-child{border-bottom:none;padding-bottom:0}
+.showcase-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.showcase-info{flex:1;min-width:0}
+.showcase-name{font-size:13px;font-weight:700;color:#f1f5f9}
+.showcase-meta{font-size:11px;color:#6b7280;margin-top:2px}
+.showcase-code{font-family:monospace;font-size:11px;font-weight:700;color:#C4A050;background:rgba(196,160,80,.08);padding:3px 8px;border-radius:5px;white-space:nowrap}
+
+/* ── TIPS ── */
+.tip-card{background:#0d1a30;border:1px solid rgba(196,160,80,.2);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.tip-title{font-size:11px;font-weight:700;color:#C4A050;letter-spacing:.5px;margin-bottom:6px;text-transform:uppercase}
+.tip-body{font-size:12px;color:#9ca3af;line-height:1.65}
+.tip-body li{margin-left:16px;margin-top:4px}
+
+/* ── FOOTER ── */
+footer{text-align:center;padding:24px;font-size:11px;color:#374151;border-top:1px solid #111827}
+footer a{color:#C4A050;text-decoration:none}
+footer span{color:#C4A050}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-left">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100" fill="#0F1E3A"/><circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="2"/><rect x="82" y="75" width="36" height="82" fill="#C4A050"/><ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/><rect x="88" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="54" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="66" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="122" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="134" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="40" y="157" width="120" height="4" fill="#C4A050"/><text x="100" y="174" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#C4A050" text-anchor="middle" letter-spacing="3">AIPHONE</text><text x="100" y="187" font-family="Arial,sans-serif" font-size="8" fill="#D4C4A0" text-anchor="middle" letter-spacing="2">RESIDENCE</text></svg></div>
+    <div>
+      <div class="hdr-title">Aiphone Residence</div>
+      <div class="hdr-sub">Demo Script · dasecure.com</div>
+    </div>
+  </div>
+  <div class="demo-badge">🎯 DEMO</div>
+</header>
+
+<div class="hero">
+  <div class="hero-eyebrow">Live Demo · Singapore</div>
+  <div class="hero-title">A Day at <span>Aiphone Residence</span></div>
+  <div class="hero-sub">Follow this script to walk prospects through a complete resident experience — from gate entry to facility booking to visitor management.</div>
+  <div class="hero-actions">
+    <a href="./" class="hero-btn primary">🏠 Open Portal</a>
+    <a href="dashboard.html" class="hero-btn secondary">📊 Dashboard</a>
+    <a href="scan.html" class="hero-btn secondary">📷 Scanner</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ── DEMO PASSES ── -->
+  <div class="section-label">Key Demo Passes</div>
+  <div class="pass-showcase">
+    <div class="showcase-row">
+      <div class="showcase-dot" style="background:#22c55e"></div>
+      <div class="showcase-info">
+        <div class="showcase-name">Vincent Ooi — Owner #08-08 Tower A</div>
+        <div class="showcase-meta">Resident Card Owner · expires 2027-12-31 · <strong style="color:#C4A050">Primary demo pass</strong></div>
+      </div>
+      <div class="showcase-code" id="code-vincent" onclick="copyCode('PASS-2MM95YKC','code-vincent')">PASS-2MM95YKC</div>
+    </div>
+    <div class="showcase-row">
+      <div class="showcase-dot" style="background:#22c55e"></div>
+      <div class="showcase-info">
+        <div class="showcase-name">Mr. Tan Wei Ming — Owner #12-08</div>
+        <div class="showcase-meta">Resident Card Owner · 34 scans · high activity</div>
+      </div>
+      <div class="showcase-code" id="code-tan" onclick="copyCode('PASS-SHGR6UMU','code-tan')">PASS-SHGR6UMU</div>
+    </div>
+    <div class="showcase-row">
+      <div class="showcase-dot" style="background:#f59e0b"></div>
+      <div class="showcase-info">
+        <div class="showcase-name">Mr. David Lim — Tenant #05-11 Tower A</div>
+        <div class="showcase-meta">Resident Card Tenant · expires 2027-10-31</div>
+      </div>
+      <div class="showcase-code" id="code-david" onclick="copyCode('PASS-4HLTXDT6','code-david')">PASS-4HLTXDT6</div>
+    </div>
+    <div class="showcase-row">
+      <div class="showcase-dot" style="background:#6b7280"></div>
+      <div class="showcase-info">
+        <div class="showcase-name">Cool Air Services — Contractor</div>
+        <div class="showcase-meta">Contractor/Service pass · expires 2027-12-31</div>
+      </div>
+      <div class="showcase-code" id="code-contractor" onclick="copyCode('PASS-YVW9ZZDF','code-contractor')">PASS-YVW9ZZDF</div>
+    </div>
+  </div>
+  <div style="font-size:11px;color:#4b5563;margin-top:8px;text-align:center">Tap any code to copy · Use in scanner or share with prospect</div>
+
+  <!-- ── STEPS ── -->
+  <div class="section-label">Demo Walkthrough — 6 Steps</div>
+
+  <!-- Step 1 -->
+  <div class="step" id="step1">
+    <div class="step-header" onclick="toggleStep('step1')">
+      <div class="step-num">1</div>
+      <div class="step-icon">🏠</div>
+      <div class="step-title-wrap">
+        <div class="step-title">The Resident Portal</div>
+        <div class="step-desc">Set the scene — one URL, everything digital</div>
+      </div>
+      <div class="step-chevron">›</div>
+    </div>
+    <div class="step-body">
+      <div class="talk-track">
+        <strong>Say:</strong> "Today every condominium hands residents a plastic card and a printed visitor form. Aiphone Residence replaces all of that with a single QR code on their phone. This is the resident portal — scan it at the lobby or open it from anywhere."
+      </div>
+      <div class="action-row">
+        <a href="./" class="action-btn primary" target="_blank">🏠 Open Portal</a>
+      </div>
+      <div class="done-toggle">
+        <input type="checkbox" id="done1" onchange="markDone('step1','done1')">
+        <label for="done1">Mark complete</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step" id="step2">
+    <div class="step-header" onclick="toggleStep('step2')">
+      <div class="step-num">2</div>
+      <div class="step-icon">📷</div>
+      <div class="step-title-wrap">
+        <div class="step-title">Gate Entry — Resident Scan</div>
+        <div class="step-desc">Staff scans Vincent Ooi's pass at the main lobby</div>
+      </div>
+      <div class="step-chevron">›</div>
+    </div>
+    <div class="step-body">
+      <div class="talk-track">
+        <strong>Say:</strong> "Security staff open the scanner on any phone — no dedicated hardware needed. The resident shows their QR, staff tap scan, and within a second they see the resident's name, unit, tier, and scan history. Validation is instant and works fully offline."
+      </div>
+      <div class="action-row">
+        <a href="scan.html" class="action-btn primary" target="_blank">📷 Open Scanner</a>
+      </div>
+      <p style="font-size:12px;color:#6b7280;margin-top:12px;margin-bottom:6px">Scan this pass at the checkpoint:</p>
+      <div class="pass-chips">
+        <div class="pass-chip">
+          <span class="pass-chip-code">PASS-2MM95YKC</span>
+          <span class="pass-chip-name">Vincent Ooi · #08-08</span>
+          <button class="pass-chip-copy" onclick="copyCode('PASS-2MM95YKC',this)">Copy</button>
+        </div>
+        <div class="pass-chip">
+          <span class="pass-chip-code">PASS-SHGR6UMU</span>
+          <span class="pass-chip-name">Tan Wei Ming · #12-08</span>
+          <button class="pass-chip-copy" onclick="copyCode('PASS-SHGR6UMU',this)">Copy</button>
+        </div>
+      </div>
+      <div class="talk-track" style="margin-top:12px">
+        <strong>Highlight:</strong> Pass type is auto-detected — Owner vs Tenant vs Visitor vs Contractor get different colour badges. Expired or revoked passes show a red alert immediately.
+      </div>
+      <div class="done-toggle">
+        <input type="checkbox" id="done2" onchange="markDone('step2','done2')">
+        <label for="done2">Mark complete</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step" id="step3">
+    <div class="step-header" onclick="toggleStep('step3')">
+      <div class="step-num">3</div>
+      <div class="step-icon">🎾</div>
+      <div class="step-title-wrap">
+        <div class="step-title">Facility Booking</div>
+        <div class="step-desc">Book tennis in 10 seconds — pass lands in Wallet</div>
+      </div>
+      <div class="step-chevron">›</div>
+    </div>
+    <div class="step-body">
+      <div class="talk-track">
+        <strong>Say:</strong> "A resident wants to book the tennis court. They open the booking page — all fields are pre-filled with their profile. One tap. The booking pass goes straight into Apple Wallet or Google Wallet. At the court gate, they just show their phone."
+      </div>
+      <div class="action-row">
+        <a href="book/tennis.html?demo" class="action-btn primary" target="_blank">🎾 Book Tennis (pre-filled)</a>
+      </div>
+      <div class="talk-track" style="margin-top:12px">
+        <strong>Also show:</strong> After confirming, the QR appears immediately on screen and the WhatsApp share button lets them send the pass to another player.
+      </div>
+      <div class="action-row">
+        <a href="book/bbq.html?demo" class="action-btn navy" target="_blank">🔥 BBQ Pit</a>
+        <a href="book/ktv.html?demo" class="action-btn purple" target="_blank">🎤 KTV Room</a>
+        <a href="book/gym.html?demo" class="action-btn red" target="_blank">🏋️ Gym</a>
+        <a href="book/pool.html?demo" class="action-btn blue" target="_blank">🏊 Pool</a>
+      </div>
+      <div class="done-toggle">
+        <input type="checkbox" id="done3" onchange="markDone('step3','done3')">
+        <label for="done3">Mark complete</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step" id="step4">
+    <div class="step-header" onclick="toggleStep('step4')">
+      <div class="step-num">4</div>
+      <div class="step-icon">👤</div>
+      <div class="step-title-wrap">
+        <div class="step-title">Visitor Pass</div>
+        <div class="step-desc">Issue a digital visitor pass — send via WhatsApp</div>
+      </div>
+      <div class="step-chevron">›</div>
+    </div>
+    <div class="step-body">
+      <div class="talk-track">
+        <strong>Say:</strong> "A friend is coming over tonight. The resident issues a visitor pass in seconds — name, phone, unit, purpose. The pass is sent directly to the visitor's WhatsApp. At the lobby, the visitor shows the QR from their phone. The system logs every entry and exit. No paper, no phone calls to the guard."
+      </div>
+      <div class="action-row">
+        <a href="book/visitor.html?demo" class="action-btn primary" target="_blank">👤 Issue Visitor Pass (pre-filled)</a>
+      </div>
+      <div class="talk-track" style="margin-top:12px">
+        <strong>Highlight:</strong> The WhatsApp deep-link pre-fills the visitor's number and message — one tap sends it. Visitor can add the pass to their own Apple or Google Wallet.
+      </div>
+      <div class="done-toggle">
+        <input type="checkbox" id="done4" onchange="markDone('step4','done4')">
+        <label for="done4">Mark complete</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step" id="step5">
+    <div class="step-header" onclick="toggleStep('step5')">
+      <div class="step-num">5</div>
+      <div class="step-icon">📊</div>
+      <div class="step-title-wrap">
+        <div class="step-title">Management Dashboard</div>
+        <div class="step-desc">Real-time oversight — every scan, every gate</div>
+      </div>
+      <div class="step-chevron">›</div>
+    </div>
+    <div class="step-body">
+      <div class="talk-track">
+        <strong>Say:</strong> "Management gets a live dashboard. Every scan appears in the feed within 4 seconds. They can see who is active in the building right now, which facilities are being used, and which gates are busiest. No extra hardware — the scanner phones feed this directly."
+      </div>
+      <div class="action-row">
+        <a href="dashboard.html" class="action-btn primary" target="_blank">📊 Open Dashboard</a>
+      </div>
+      <div class="talk-track" style="margin-top:12px">
+        <strong>Pro tip:</strong> Trigger a scan from the scanner page while the dashboard is open on another device — the prospect sees the feed update live. This is the most impressive moment of the demo.
+      </div>
+      <div class="done-toggle">
+        <input type="checkbox" id="done5" onchange="markDone('step5','done5')">
+        <label for="done5">Mark complete</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="step" id="step6">
+    <div class="step-header" onclick="toggleStep('step6')">
+      <div class="step-num">6</div>
+      <div class="step-icon">👛</div>
+      <div class="step-title-wrap">
+        <div class="step-title">Apple &amp; Google Wallet</div>
+        <div class="step-desc">Add Vincent Ooi's pass to your Wallet now</div>
+      </div>
+      <div class="step-chevron">›</div>
+    </div>
+    <div class="step-body">
+      <div class="talk-track">
+        <strong>Say:</strong> "Every pass in the system — resident cards, facility bookings, visitor passes — can be added to Apple Wallet or Google Wallet with one tap. The QR code is always there, even offline. When the resident updates their pass details, the Wallet card updates automatically in the background."
+      </div>
+      <div class="action-row">
+        <a href="https://www.passqr.com/api/wallet/apple?code=PASS-2MM95YKC" class="action-btn primary" target="_blank">🍎 Add to Apple Wallet</a>
+        <a href="https://www.passqr.com/api/wallet/google?code=PASS-2MM95YKC" class="action-btn navy" target="_blank">🤖 Google Wallet</a>
+      </div>
+      <div class="talk-track" style="margin-top:12px">
+        <strong>Close:</strong> "What you've just seen replaces the plastic card, the paper visitor book, the facility booking register, and the management spreadsheet — all in one system, running on phones your team already owns."
+      </div>
+      <div class="done-toggle">
+        <input type="checkbox" id="done6" onchange="markDone('step6','done6')">
+        <label for="done6">Mark complete</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TIPS ── -->
+  <div class="section-label">Presenter Tips</div>
+
+  <div class="tip-card">
+    <div class="tip-title">⚡ Best Flow for a 10-Minute Slot</div>
+    <div class="tip-body">
+      <ul>
+        <li>Steps 1–2 (portal + scan): 2 min — set the scene</li>
+        <li>Step 3 (tennis booking): 2 min — show the booking flow end-to-end</li>
+        <li>Step 4 (visitor pass): 2 min — show WhatsApp share live</li>
+        <li>Step 5 (dashboard): 2 min — scan live while dashboard is on screen</li>
+        <li>Step 6 (wallet): 1 min — add to Wallet, close strong</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-card">
+    <div class="tip-title">📱 Two-Device Setup (Recommended)</div>
+    <div class="tip-body">
+      Open the <strong style="color:#C4A050">dashboard</strong> on one device and the <strong style="color:#C4A050">scanner</strong> on another. When you scan a pass, the dashboard feed updates in real time — this reliably lands the "wow" moment with prospects.
+    </div>
+  </div>
+
+  <div class="tip-card">
+    <div class="tip-title">🔑 Common Objections</div>
+    <div class="tip-body">
+      <ul>
+        <li><strong style="color:#e5e7eb">No internet at the gate?</strong> — Passes are validated client-side; scan history syncs when connection returns.</li>
+        <li><strong style="color:#e5e7eb">What about elderly residents?</strong> — Management office can print QR code stickers. The system never forces digital-only.</li>
+        <li><strong style="color:#e5e7eb">Integration with existing Aiphone hardware?</strong> — The scan page runs on any phone or tablet already deployed at the intercom station.</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<footer>
+  <a href="./">← Resident Portal</a> &nbsp;·&nbsp;
+  <a href="dashboard.html">Dashboard</a> &nbsp;·&nbsp;
+  <a href="scan.html">Scanner</a> &nbsp;·&nbsp;
+  © 2026 <span>dasecure.com</span> × <span>PassQR</span>
+</footer>
+
+<script>
+// ── Step accordion ──
+function toggleStep(id) {
+  var step = document.getElementById(id);
+  var isOpen = step.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.step').forEach(function(s) {
+    s.classList.remove('open', 'active');
+  });
+  if (!isOpen) {
+    step.classList.add('open', 'active');
+    step.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+// ── Mark done ──
+function markDone(stepId, cbId) {
+  var cb = document.getElementById(cbId);
+  var step = document.getElementById(stepId);
+  if (cb.checked) {
+    step.classList.add('done');
+    step.classList.remove('open', 'active');
+    // Auto-open next step
+    var num = parseInt(stepId.replace('step',''));
+    var next = document.getElementById('step' + (num + 1));
+    if (next && !next.classList.contains('done')) {
+      next.classList.add('open', 'active');
+      next.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  } else {
+    step.classList.remove('done');
+  }
+}
+
+// ── Copy code ──
+function copyCode(code, elOrId) {
+  navigator.clipboard.writeText(code).catch(function() {});
+  var el = typeof elOrId === 'string' ? document.getElementById(elOrId) : elOrId;
+  if (!el) return;
+  var orig = el.textContent;
+  el.textContent = '✅ Copied!';
+  if (el.classList) el.classList.add('copied');
+  setTimeout(function() {
+    el.textContent = orig;
+    if (el.classList) el.classList.remove('copied');
+  }, 2000);
+}
+
+// ── Auto-open Step 1 on load ──
+window.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('step1').classList.add('open', 'active');
+});
+</script>
+</body>
+</html>
