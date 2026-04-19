@@ -4,99 +4,386 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aiphone Residence — Resident Portal</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Helvetica Neue',Arial,sans-serif;background:#E8EDF5;color:#1a1a1a}
+
+/* ── Header ───────────────────────────────────────────── */
 header{background:#1A2B4A}
-.header-inner{max-width:1100px;margin:0 auto;padding:20px 30px;display:flex;align-items:center;gap:20px}
-header .logo{width:52px;height:52px;flex-shrink:0}
-header .brand h1{color:#C4A050;font-size:20px;letter-spacing:2px}
-header .brand p{color:#aab8d0;font-size:12px;margin-top:3px}
-.hero{background:linear-gradient(135deg,#0F1E3A 0%,#1A2B4A 40%,#243555 60%,#1A3050 100%);padding:48px 30px;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;right:-40px;top:-40px;width:320px;height:320px;border:2px solid rgba(196,160,80,.15);border-radius:50%}
-.hero::after{content:'';position:absolute;right:40px;bottom:-60px;width:200px;height:200px;border:1px solid rgba(196,160,80,.1);border-radius:50%}
+.header-inner{max-width:1100px;margin:0 auto;padding:18px 30px;display:flex;align-items:center;gap:18px}
+header .logo{width:48px;height:48px;flex-shrink:0}
+header .brand h1{color:#C4A050;font-size:18px;letter-spacing:2px}
+header .brand p{color:#aab8d0;font-size:11px;margin-top:2px}
+.live-badge{margin-left:auto;display:flex;align-items:center;gap:7px;background:rgba(110,231,183,.12);border:1px solid rgba(110,231,183,.3);border-radius:20px;padding:6px 14px;color:#6ee7b7;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;flex-shrink:0}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#6ee7b7;animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+
+/* ── Hero ─────────────────────────────────────────────── */
+.hero{background:linear-gradient(140deg,#080f1e 0%,#0f1e3a 35%,#1a2b4a 65%,#1a304f 100%);padding:56px 30px 52px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;right:-60px;top:-60px;width:380px;height:380px;border:1px solid rgba(196,160,80,.1);border-radius:50%}
+.hero::after{content:'';position:absolute;right:80px;bottom:-80px;width:240px;height:240px;border:1px solid rgba(196,160,80,.07);border-radius:50%}
 .hero-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1}
-.hero h2{color:#C4A050;font-size:34px;font-weight:700;letter-spacing:1px}
-.hero p{color:#aab8d0;margin-top:10px;font-size:15px}
-.hero-line{width:60px;height:2px;background:#C4A050;margin:14px 0}
+.hero-eyebrow{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:#C4A050;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.hero-eyebrow::before{content:'';display:block;width:28px;height:1px;background:#C4A050;opacity:.6}
+.hero h2{color:#ffffff;font-size:38px;font-weight:700;letter-spacing:.5px;line-height:1.15}
+.hero h2 span{color:#C4A050}
+.hero-sub{color:#8a9ab8;margin-top:12px;font-size:15px;max-width:560px;line-height:1.6}
+.hero-line{width:48px;height:2px;background:#C4A050;margin:22px 0}
+
+/* ── How it works ─────────────────────────────────────── */
+.how-it-works{display:flex;gap:0;margin-top:36px;max-width:680px}
+.hiw-step{flex:1;position:relative}
+.hiw-step:not(:last-child)::after{content:'→';position:absolute;right:-12px;top:22px;color:#C4A050;opacity:.5;font-size:18px}
+.hiw-icon{width:44px;height:44px;border-radius:12px;background:rgba(196,160,80,.12);border:1px solid rgba(196,160,80,.2);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:10px}
+.hiw-label{font-size:11px;font-weight:700;color:#C4A050;letter-spacing:.5px;text-transform:uppercase}
+.hiw-desc{font-size:11px;color:#6a7c99;margin-top:3px;line-height:1.5}
+
+/* ── Try it now ───────────────────────────────────────── */
+.try-banner{background:#1A2B4A;border-top:3px solid #C4A050}
+.try-inner{max-width:1100px;margin:0 auto;padding:36px 30px;display:flex;align-items:center;gap:40px;flex-wrap:wrap}
+.try-qr{background:white;border-radius:12px;padding:14px;flex-shrink:0;box-shadow:0 4px 24px rgba(0,0,0,.3)}
+#qrcode canvas,#qrcode img{display:block}
+.try-text{flex:1;min-width:240px}
+.try-text .eyebrow{font-size:10px;letter-spacing:3px;color:#C4A050;text-transform:uppercase;margin-bottom:10px}
+.try-text h3{color:white;font-size:22px;font-weight:700;line-height:1.3}
+.try-text p{color:#8a9ab8;font-size:13px;margin-top:8px;line-height:1.6;max-width:440px}
+.try-steps{display:flex;flex-direction:column;gap:9px;margin-top:18px}
+.try-step{display:flex;align-items:center;gap:12px;color:#aab8d0;font-size:13px}
+.try-step-num{width:24px;height:24px;border-radius:50%;background:rgba(196,160,80,.15);border:1px solid rgba(196,160,80,.4);color:#C4A050;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pass-info{margin-left:auto;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px 24px;flex-shrink:0;min-width:200px}
+@media(max-width:740px){.pass-info{display:none}}
+.pass-info .pi-label{font-size:10px;letter-spacing:2px;color:#6a7c99;text-transform:uppercase;margin-bottom:12px}
+.pass-info .pi-row{margin-bottom:8px}
+.pass-info .pi-key{font-size:10px;color:#6a7c99;text-transform:uppercase;letter-spacing:.5px}
+.pass-info .pi-val{font-size:13px;color:#C4A050;font-weight:600;margin-top:1px}
+
+/* ── Sections ─────────────────────────────────────────── */
 .section{max-width:1100px;margin:0 auto;padding:40px 30px}
-.section-title{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#999;margin-bottom:20px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
-.facility-card{background:white;border-radius:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.07);transition:transform .2s,box-shadow .2s;text-decoration:none;color:inherit;display:block}
-.facility-card:hover{transform:translateY(-3px);box-shadow:0 6px 28px rgba(0,0,0,.11)}
-.fc-header{padding:22px 20px 16px}
-.fc-emoji{font-size:30px}
-.fc-title{font-size:15px;font-weight:700;margin-top:9px}
+.section-header{display:flex;align-items:baseline;gap:14px;margin-bottom:22px}
+.section-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#999}
+.section-line{flex:1;height:1px;background:#d0d8e4}
+
+/* ── Facility cards ───────────────────────────────────── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.facility-card{background:white;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s;text-decoration:none;color:inherit;display:block}
+.facility-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.11)}
+.fc-header{padding:20px 20px 14px}
+.fc-emoji{font-size:28px}
+.fc-title{font-size:14px;font-weight:700;margin-top:9px}
 .fc-desc{font-size:12px;color:#777;margin-top:4px;line-height:1.5}
-.fc-footer{padding:10px 20px;border-top:1px solid #f0f0f0;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
-.staff-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px}
+.fc-footer{padding:10px 20px;border-top:1px solid #f0f0f0;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+
+/* ── Staff CTAs ───────────────────────────────────────── */
+.staff-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:4px}
 @media(max-width:640px){.staff-row{grid-template-columns:1fr}}
-.staff-section{background:#1A2B4A;border-radius:14px;padding:26px;box-shadow:0 2px 16px rgba(0,0,0,.15);display:flex;align-items:center;gap:20px;text-decoration:none}
-.staff-section:hover .staff-btn{opacity:.85}
-.staff-icon{font-size:36px;flex-shrink:0}
-.staff-text h3{color:#C4A050;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
-.staff-text p{color:#aab8d0;font-size:12px;margin-top:4px}
-.staff-btn{margin-left:auto;color:#0F1E3A;border:none;border-radius:9px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:opacity .2s}
-.api-section{background:white;border-radius:14px;padding:26px;box-shadow:0 2px 16px rgba(0,0,0,.07);margin-top:28px}
-.api-section h3{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#1A2B4A;margin-bottom:12px}
-.api-section code{background:#E8EDF5;border-radius:8px;padding:14px 16px;display:block;font-size:12px;line-height:1.9;color:#333;font-family:monospace}
-footer{text-align:center;padding:28px;font-size:12px;color:#aaa;background:#1A2B4A;margin-top:40px}
-footer span{color:#C4A050}
+.staff-card{background:#1A2B4A;border-radius:14px;padding:24px;box-shadow:0 2px 16px rgba(0,0,0,.15);display:flex;align-items:center;gap:18px;text-decoration:none;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden}
+.staff-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.25)}
+.staff-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.staff-card.scanner::before{background:#C4A050}
+.staff-card.dashboard::before{background:#6ee7b7}
+.staff-icon{font-size:32px;flex-shrink:0}
+.staff-text h3{color:white;font-size:14px;font-weight:700;letter-spacing:.5px}
+.staff-text p{color:#8a9ab8;font-size:11px;margin-top:3px;line-height:1.5}
+.staff-btn{margin-left:auto;border:none;border-radius:9px;padding:9px 18px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:opacity .2s;text-decoration:none;display:block}
+.live-indicator{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:#6ee7b7;margin-top:5px;font-weight:600;letter-spacing:.5px}
+.live-indicator .dot{width:5px;height:5px;border-radius:50%;background:#6ee7b7;animation:pulse 1.8s infinite}
+
+/* ── AI-Native section ────────────────────────────────── */
+.ai-section{background:white;border-radius:16px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,.06);margin-top:40px}
+.ai-section-head{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.ai-section-head .ai-icon{width:40px;height:40px;background:linear-gradient(135deg,#1A2B4A,#2D4A7A);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ai-section-head h3{font-size:15px;font-weight:700;color:#1A2B4A}
+.ai-section-head p{font-size:12px;color:#888;margin-top:2px}
+.ai-badge{margin-left:auto;background:linear-gradient(135deg,rgba(196,160,80,.1),rgba(196,160,80,.18));border:1px solid rgba(196,160,80,.3);border-radius:20px;padding:5px 12px;font-size:10px;font-weight:700;color:#C4A050;letter-spacing:1px;text-transform:uppercase;flex-shrink:0}
+.chat-bubbles{display:flex;flex-direction:column;gap:10px}
+.chat-bubble{display:flex;align-items:flex-start;gap:10px}
+.chat-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#1A2B4A,#2D4A7A);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.chat-msg{background:#f4f6fa;border-radius:0 12px 12px 12px;padding:11px 16px;font-size:13px;color:#333;line-height:1.5;flex:1;position:relative}
+.chat-msg::before{content:'';position:absolute;left:-6px;top:10px;width:0;height:0;border-top:6px solid transparent;border-bottom:6px solid transparent;border-right:6px solid #f4f6fa}
+.chat-result{background:linear-gradient(135deg,rgba(26,43,74,.06),rgba(26,43,74,.1));border-radius:12px 0 12px 12px;padding:11px 16px;font-size:12px;color:#1A2B4A;line-height:1.5;flex:1;border:1px solid rgba(26,43,74,.1);margin-left:40px}
+.chat-result strong{color:#C4A050}
+
+/* ── Footer ───────────────────────────────────────────── */
+footer{background:#0f1e3a;padding:28px 30px;margin-top:50px}
+.footer-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:gap}
+.footer-left{font-size:12px;color:#5a7090;line-height:1.8}
+.footer-left span{color:#C4A050}
+.footer-right{font-size:11px;color:#3a5070;margin-top:4px}
+.footer-right a{color:#C4A050;text-decoration:none}
+
+@media(max-width:640px){
+  .hero h2{font-size:26px}
+  .how-it-works{flex-direction:column;gap:16px}
+  .hiw-step::after{display:none}
+  .try-inner{gap:24px}
+  .try-qr{align-self:center}
+  .footer-inner{flex-direction:column;gap:6px;text-align:center}
+}
 </style>
 </head>
 <body>
+
+<!-- ── Header ─────────────────────────────────────────── -->
 <header>
   <div class="header-inner">
-    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100" fill="#0F1E3A"/><circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="2"/><rect x="82" y="75" width="36" height="82" fill="#C4A050"/><ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/><rect x="88" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="54" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="66" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="122" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="134" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="40" y="157" width="120" height="4" fill="#C4A050"/><text x="100" y="174" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#C4A050" text-anchor="middle" letter-spacing="3">AIPHONE</text><text x="100" y="187" font-family="Arial,sans-serif" font-size="8" fill="#D4C4A0" text-anchor="middle" letter-spacing="2">RESIDENCE</text></svg></div>
+    <div class="logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="100" fill="#0F1E3A"/>
+        <circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="2"/>
+        <rect x="82" y="75" width="36" height="82" fill="#C4A050"/>
+        <ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/>
+        <rect x="88" y="85" width="8" height="10" fill="#0F1E3A"/>
+        <rect x="104" y="85" width="8" height="10" fill="#0F1E3A"/>
+        <rect x="88" y="102" width="8" height="10" fill="#0F1E3A"/>
+        <rect x="104" y="102" width="8" height="10" fill="#0F1E3A"/>
+        <rect x="88" y="119" width="8" height="10" fill="#0F1E3A"/>
+        <rect x="104" y="119" width="8" height="10" fill="#0F1E3A"/>
+        <rect x="54" y="105" width="24" height="52" fill="#C8D4E0"/>
+        <ellipse cx="66" cy="105" rx="12" ry="12" fill="#C8D4E0"/>
+        <rect x="122" y="105" width="24" height="52" fill="#C8D4E0"/>
+        <ellipse cx="134" cy="105" rx="12" ry="12" fill="#C8D4E0"/>
+        <rect x="40" y="157" width="120" height="4" fill="#C4A050"/>
+        <text x="100" y="174" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#C4A050" text-anchor="middle" letter-spacing="3">AIPHONE</text>
+        <text x="100" y="187" font-family="Arial,sans-serif" font-size="8" fill="#D4C4A0" text-anchor="middle" letter-spacing="2">RESIDENCE</text>
+      </svg>
+    </div>
     <div class="brand">
       <h1>AIPHONE RESIDENCE</h1>
       <p>Luxury Living &middot; Digital First &middot; Singapore</p>
     </div>
+    <div class="live-badge">
+      <span class="live-dot"></span>
+      Live Demo
+    </div>
   </div>
 </header>
+
+<!-- ── Hero ───────────────────────────────────────────── -->
 <div class="hero">
   <div class="hero-inner">
-    <h2>AIPHONE RESIDENCE</h2>
+    <div class="hero-eyebrow">PassQR × dasecure POC</div>
+    <h2>Every resident. Every access.<br><span>One pass in their wallet.</span></h2>
+    <div class="hero-sub">
+      A fully digital residence experience — resident cards, facility bookings, visitor passes and gate access, all managed through a live digital pass that updates silently in Apple &amp; Google Wallet.
+    </div>
     <div class="hero-line"></div>
-    <p>Where Living Is An Art &middot; Est. 2024 &middot; Singapore</p>
+
+    <!-- How it works -->
+    <div class="how-it-works">
+      <div class="hiw-step">
+        <div class="hiw-icon">🪪</div>
+        <div class="hiw-label">1. Issue</div>
+        <div class="hiw-desc">Resident or AI creates a pass in seconds. Added to Wallet instantly.</div>
+      </div>
+      <div class="hiw-step">
+        <div class="hiw-icon">📲</div>
+        <div class="hiw-label">2. Use</div>
+        <div class="hiw-desc">Book facilities, invite visitors — pass updates silently on their phone.</div>
+      </div>
+      <div class="hiw-step">
+        <div class="hiw-icon">📷</div>
+        <div class="hiw-label">3. Scan</div>
+        <div class="hiw-desc">Security scans at the gate. Entry logged, wallet pushed, dashboard updated.</div>
+      </div>
+      <div class="hiw-step">
+        <div class="hiw-icon">📊</div>
+        <div class="hiw-label">4. Manage</div>
+        <div class="hiw-desc">Live dashboard shows who's in, facility usage, and real-time scan feed.</div>
+      </div>
+    </div>
   </div>
 </div>
+
+<!-- ── Try it Now ─────────────────────────────────────── -->
+<div class="try-banner">
+  <div class="try-inner">
+    <div class="try-qr">
+      <div id="qrcode"></div>
+    </div>
+
+    <div class="try-text">
+      <div class="eyebrow">Try it now — live pass</div>
+      <h3>Scan to add a resident pass<br>to your wallet</h3>
+      <p>This is a live resident card for <strong style="color:white">Vincent Ooi</strong>, Owner #08-08 Tower A. Scan the QR with your phone — it opens the real PassQR pass page with an Add to Wallet button.</p>
+      <div class="try-steps">
+        <div class="try-step"><span class="try-step-num">1</span> Scan the QR code with your phone camera</div>
+        <div class="try-step"><span class="try-step-num">2</span> Tap "Add to Apple Wallet" or "Add to Google Wallet"</div>
+        <div class="try-step"><span class="try-step-num">3</span> Open the Scanner below — scan your own pass</div>
+        <div class="try-step"><span class="try-step-num">4</span> Watch the entry appear live on the Dashboard</div>
+      </div>
+    </div>
+
+    <div class="pass-info">
+      <div class="pi-label">Live Pass Details</div>
+      <div class="pi-row">
+        <div class="pi-key">Holder</div>
+        <div class="pi-val">Vincent Ooi</div>
+      </div>
+      <div class="pi-row">
+        <div class="pi-key">Unit</div>
+        <div class="pi-val">#08-08 Tower A</div>
+      </div>
+      <div class="pi-row">
+        <div class="pi-key">Type</div>
+        <div class="pi-val">Owner — Resident Card</div>
+      </div>
+      <div class="pi-row">
+        <div class="pi-key">Pass Code</div>
+        <div class="pi-val">PASS-2MM95YKC</div>
+      </div>
+      <div class="pi-row">
+        <div class="pi-key">Status</div>
+        <div class="pi-val" style="color:#6ee7b7">● Active</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── For Residents ──────────────────────────────────── -->
 <div class="section">
-  <div class="section-title">Resident Facilities</div>
+  <div class="section-header">
+    <div class="section-title">For Residents — Facilities &amp; Services</div>
+    <div class="section-line"></div>
+  </div>
   <div class="grid">
-    <a class="facility-card" href="book/tennis.html"><div class="fc-header"><div class="fc-emoji">🎾</div><div class="fc-title">Tennis Courts</div><div class="fc-desc">Court 1 &amp; 2 available daily 6AM–10PM. 1-hour slots.</div></div><div class="fc-footer" style="color:#1A2B4A">Book Now →</div></a>
-    <a class="facility-card" href="book/bbq.html"><div class="fc-header"><div class="fc-emoji">🔥</div><div class="fc-title">BBQ Pits</div><div class="fc-desc">Rooftop Pit 1 &amp; 2. Evening slots from 5PM. SGD 50 deposit.</div></div><div class="fc-footer" style="color:#C0392B">Book Now →</div></a>
-    <a class="facility-card" href="book/ktv.html"><div class="fc-header"><div class="fc-emoji">🎤</div><div class="fc-title">KTV Room</div><div class="fc-desc">Private KTV suite for up to 12 guests. Weeknight &amp; weekend.</div></div><div class="fc-footer" style="color:#7B2FBE">Book Now →</div></a>
-    <a class="facility-card" href="book/gym.html"><div class="fc-header"><div class="fc-emoji">🏋️</div><div class="fc-title">Gym</div><div class="fc-desc">Fully equipped fitness centre open 6AM–11PM. Residents only.</div></div><div class="fc-footer" style="color:#E67E22">Access Info →</div></a>
-    <a class="facility-card" href="book/pool.html"><div class="fc-header"><div class="fc-emoji">🏊</div><div class="fc-title">Swimming Pool</div><div class="fc-desc">Lap pool + leisure pool. 7AM–10PM daily.</div></div><div class="fc-footer" style="color:#1B8FC4">Access Info →</div></a>
-    <a class="facility-card" href="book/visitor.html"><div class="fc-header"><div class="fc-emoji">👤</div><div class="fc-title">Visitor Passes</div><div class="fc-desc">Issue a digital day-pass for guests. Valid today only.</div></div><div class="fc-footer" style="color:#8B5E3C">Issue Pass →</div></a>
+    <a class="facility-card" href="book/tennis.html">
+      <div class="fc-header">
+        <div class="fc-emoji">🎾</div>
+        <div class="fc-title">Tennis Courts</div>
+        <div class="fc-desc">Court 1 &amp; 2 available daily 6AM–10PM. Book a 1-hour slot and get a pass issued instantly.</div>
+      </div>
+      <div class="fc-footer" style="color:#1A2B4A">Book Now →</div>
+    </a>
+    <a class="facility-card" href="book/bbq.html">
+      <div class="fc-header">
+        <div class="fc-emoji">🔥</div>
+        <div class="fc-title">BBQ Pits</div>
+        <div class="fc-desc">Rooftop Pit 1 &amp; 2. Evening slots from 5PM. SGD 50 deposit required at booking.</div>
+      </div>
+      <div class="fc-footer" style="color:#C0392B">Book Now →</div>
+    </a>
+    <a class="facility-card" href="book/ktv.html">
+      <div class="fc-header">
+        <div class="fc-emoji">🎤</div>
+        <div class="fc-title">KTV Room</div>
+        <div class="fc-desc">Private KTV suite for up to 12 guests. Weeknight &amp; weekend slots available.</div>
+      </div>
+      <div class="fc-footer" style="color:#7B2FBE">Book Now →</div>
+    </a>
+    <a class="facility-card" href="book/gym.html">
+      <div class="fc-header">
+        <div class="fc-emoji">🏋️</div>
+        <div class="fc-title">Gym</div>
+        <div class="fc-desc">Fully equipped fitness centre, 6AM–11PM. Tap your resident pass at the door.</div>
+      </div>
+      <div class="fc-footer" style="color:#E67E22">Get Access Pass →</div>
+    </a>
+    <a class="facility-card" href="book/pool.html">
+      <div class="fc-header">
+        <div class="fc-emoji">🏊</div>
+        <div class="fc-title">Swimming Pool</div>
+        <div class="fc-desc">Lap pool + leisure pool. 7AM–10PM daily. Resident pass required for entry.</div>
+      </div>
+      <div class="fc-footer" style="color:#1B8FC4">Get Access Pass →</div>
+    </a>
+    <a class="facility-card" href="book/visitor.html">
+      <div class="fc-header">
+        <div class="fc-emoji">👤</div>
+        <div class="fc-title">Visitor Passes</div>
+        <div class="fc-desc">Issue a day-pass for your guest. Valid today only — share via WhatsApp in one tap.</div>
+      </div>
+      <div class="fc-footer" style="color:#8B5E3C">Issue &amp; Share →</div>
+    </a>
   </div>
 
-  <!-- Staff CTAs -->
+  <!-- ── For Staff ──────────────────────────────────── -->
+  <div class="section-header" style="margin-top:44px">
+    <div class="section-title">For Staff — Operations Tools</div>
+    <div class="section-line"></div>
+  </div>
   <div class="staff-row">
-    <a class="staff-section" href="scan.html">
+    <a class="staff-card scanner" href="scan.html">
       <div class="staff-icon">📷</div>
       <div class="staff-text">
         <h3>Pass Scanner</h3>
-        <p>Validate passes &middot; Scan &amp; log entries &middot; Push wallet updates</p>
+        <p>Scan &amp; validate any pass · Detect visitor vs resident · Push wallet updates on scan</p>
       </div>
-      <div class="staff-btn" style="background:#C4A050">Open →</div>
+      <div class="staff-btn" style="background:#C4A050;color:#0F1E3A">Open →</div>
     </a>
-    <a class="staff-section" href="dashboard.html">
+    <a class="staff-card dashboard" href="dashboard.html">
       <div class="staff-icon">📊</div>
       <div class="staff-text">
         <h3>Live Dashboard</h3>
-        <p>Real-time scan feed &middot; Who's active &middot; Facility stats</p>
+        <p>Real-time scan feed · Who's active now · Facility &amp; gate breakdown</p>
+        <div class="live-indicator"><span class="dot"></span>Updates every 8 seconds</div>
       </div>
-      <div class="staff-btn" style="background:#6ee7b7">View →</div>
+      <div class="staff-btn" style="background:#6ee7b7;color:#0F1E3A">View →</div>
     </a>
   </div>
 
-  <div class="api-section">
-    <h3>PassQR MCP Integration — Demo Commands</h3>
-    <code>"Create a resident card for Mr. Tan Wei Ming, unit #12-08 Tower A, owner"<br>"Create a contractor pass for Cool Air Services for today, unit #08-03"<br>"Book Tennis Court 1 tomorrow 7AM for Mr. Tan Wei Ming"</code>
+  <!-- ── AI-Native ──────────────────────────────────── -->
+  <div class="ai-section">
+    <div class="ai-section-head">
+      <div class="ai-icon">🤖</div>
+      <div>
+        <h3>AI-Native Pass Management</h3>
+        <p>Manage the entire residence with natural language via PassQR MCP</p>
+      </div>
+      <div class="ai-badge">MCP Integration</div>
+    </div>
+
+    <div class="chat-bubbles">
+      <div class="chat-bubble">
+        <div class="chat-avatar">👤</div>
+        <div class="chat-msg">"Create a resident card for Mr. Tan Wei Ming, unit #12-08 Tower A, owner"</div>
+      </div>
+      <div class="chat-bubble">
+        <div style="width:30px;flex-shrink:0"></div>
+        <div class="chat-result">✓ Pass created — <strong>PASS-SHGR6UMU</strong> · Mr. Tan Wei Ming · Owner #12-08 Tower A · Apple &amp; Google Wallet links ready</div>
+      </div>
+
+      <div class="chat-bubble" style="margin-top:6px">
+        <div class="chat-avatar">👤</div>
+        <div class="chat-msg">"Book Tennis Court 1 tomorrow 7AM for Mr. Tan Wei Ming"</div>
+      </div>
+      <div class="chat-bubble">
+        <div style="width:30px;flex-shrink:0"></div>
+        <div class="chat-result">✓ Tennis Court booking confirmed — <strong>tomorrow 7:00–8:00AM</strong> · Booking pass issued &amp; pushed to Mr. Tan's wallet</div>
+      </div>
+
+      <div class="chat-bubble" style="margin-top:6px">
+        <div class="chat-avatar">👤</div>
+        <div class="chat-msg">"Create a contractor pass for Cool Air Services for today, unit #08-03"</div>
+      </div>
+      <div class="chat-bubble">
+        <div style="width:30px;flex-shrink:0"></div>
+        <div class="chat-result">✓ Contractor pass issued — <strong>Cool Air Services</strong> · Unit #08-03 · Valid today only · Security notified</div>
+      </div>
+    </div>
   </div>
 </div>
-<footer>&copy; 2026 <span>Aiphone Residence</span> &middot; Management: <span>+65 6123 8888</span> &middot; Powered by <span>PassQR × dasecure</span></footer>
+
+<!-- ── Footer ─────────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-left">&copy; 2026 <span>Aiphone Residence</span> &middot; Management: <span>+65 6123 8888</span></div>
+      <div class="footer-right">Powered by <a href="https://passqr.com" target="_blank">PassQR</a> &times; <a href="https://dasecure.com" target="_blank">dasecure</a> &middot; Demo environment</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Generate live QR code for Vincent's pass public page
+  new QRCode(document.getElementById("qrcode"), {
+    text: "https://passqr.com/p/PASS-2MM95YKC",
+    width: 148,
+    height: 148,
+    colorDark: "#0F1E3A",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.M
+  });
+</script>
 </body>
 </html>
