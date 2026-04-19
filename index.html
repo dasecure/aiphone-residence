@@ -4,114 +4,228 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aiphone Residence — Resident Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Helvetica Neue',Arial,sans-serif;background:#E8EDF5;color:#1a1a1a}
-header{background:#1A2B4A}
-.header-inner{max-width:1100px;margin:0 auto;padding:18px 30px;display:flex;align-items:center;gap:18px}
-header .logo{width:48px;height:48px;flex-shrink:0}
-header .brand h1{color:#C4A050;font-size:18px;letter-spacing:2px}
-header .brand p{color:#aab8d0;font-size:11px;margin-top:2px}
-.live-badge{margin-left:auto;display:flex;align-items:center;gap:7px;background:rgba(110,231,183,.12);border:1px solid rgba(110,231,183,.3);border-radius:20px;padding:6px 14px;color:#6ee7b7;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;flex-shrink:0}
-.live-dot{width:7px;height:7px;border-radius:50%;background:#6ee7b7;animation:pulse 1.8s infinite}
+/* ── Design tokens ─────────────────────────────────────────────────────── */
+:root{
+  --navy:      #0d1e38;
+  --navy-mid:  #1A2B4A;
+  --navy-light:#243555;
+  --gold:      #C4A050;
+  --gold-dim:  rgba(196,160,80,.15);
+  --gold-glow: rgba(196,160,80,.08);
+  --green:     #6ee7b7;
+  --silver:    #aab8d0;
+  --bg:        #E8EDF5;
+  --surface:   #ffffff;
+  --text:      #1a1a1a;
+  --radius-card: 16px;
+  --radius-btn:  12px;
+  --shadow:    0 2px 16px rgba(0,0,0,.07);
+  --shadow-dark:0 4px 28px rgba(0,0,0,.22);
+}
+
+/* ── Reset ──────────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+header{background:var(--navy-mid);position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(196,160,80,.15)}
+.header-inner{max-width:1100px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:14px}
+header .logo{width:40px;height:40px;flex-shrink:0}
+.brand h1{color:var(--gold);font-size:16px;letter-spacing:2px;font-weight:700}
+.brand p{color:var(--silver);font-size:10px;margin-top:1px;letter-spacing:.5px}
+.live-badge{margin-left:auto;display:flex;align-items:center;gap:6px;background:rgba(110,231,183,.1);border:1px solid rgba(110,231,183,.25);border-radius:20px;padding:5px 12px;color:var(--green);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;flex-shrink:0}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.8s infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
-.hero{background:linear-gradient(140deg,#080f1e 0%,#0f1e3a 35%,#1a2b4a 65%,#1a304f 100%);padding:56px 30px 52px;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;right:-60px;top:-60px;width:380px;height:380px;border:1px solid rgba(196,160,80,.1);border-radius:50%}
-.hero::after{content:'';position:absolute;right:80px;bottom:-80px;width:240px;height:240px;border:1px solid rgba(196,160,80,.07);border-radius:50%}
+
+/* ── Hero ───────────────────────────────────────────────────────────────── */
+.hero{background:linear-gradient(150deg,#060d1c 0%,#0d1e38 40%,#1a2b4a 100%);padding:40px 20px 36px;position:relative;overflow:hidden}
+.hero-orb{position:absolute;border-radius:50%;pointer-events:none}
+.hero-orb-1{width:400px;height:400px;right:-100px;top:-120px;background:radial-gradient(circle,rgba(196,160,80,.06) 0%,transparent 70%)}
+.hero-orb-2{width:260px;height:260px;left:-60px;bottom:-80px;background:radial-gradient(circle,rgba(26,43,74,.8) 0%,transparent 70%)}
 .hero-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1}
-.hero-eyebrow{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:#C4A050;margin-bottom:14px;display:flex;align-items:center;gap:10px}
-.hero-eyebrow::before{content:'';display:block;width:28px;height:1px;background:#C4A050;opacity:.6}
-.hero h2{color:#ffffff;font-size:38px;font-weight:700;letter-spacing:.5px;line-height:1.15}
-.hero h2 span{color:#C4A050}
-.hero-sub{color:#8a9ab8;margin-top:12px;font-size:15px;max-width:560px;line-height:1.6}
-.hero-line{width:48px;height:2px;background:#C4A050;margin:22px 0}
-.how-it-works{display:flex;gap:0;margin-top:36px;max-width:680px}
-.hiw-step{flex:1;position:relative}
-.hiw-step:not(:last-child)::after{content:'→';position:absolute;right:-12px;top:22px;color:#C4A050;opacity:.5;font-size:18px}
-.hiw-icon{width:44px;height:44px;border-radius:12px;background:rgba(196,160,80,.12);border:1px solid rgba(196,160,80,.2);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:10px}
-.hiw-label{font-size:11px;font-weight:700;color:#C4A050;letter-spacing:.5px;text-transform:uppercase}
-.hiw-desc{font-size:11px;color:#6a7c99;margin-top:3px;line-height:1.5}
-.try-banner{background:#1A2B4A;border-top:3px solid #C4A050}
-.try-inner{max-width:1100px;margin:0 auto;padding:36px 30px;display:flex;align-items:center;gap:40px;flex-wrap:wrap}
-.try-qr-block{display:flex;flex-direction:column;align-items:center;gap:12px;flex-shrink:0}
-.try-qr{background:white;border-radius:12px;padding:14px;box-shadow:0 4px 24px rgba(0,0,0,.3)}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;opacity:.9}
+.hero-tag::before{content:'';display:block;width:20px;height:1px;background:var(--gold);opacity:.5}
+.hero h2{font-family:'DM Serif Display',serif;color:#fff;font-size:clamp(26px,6vw,42px);line-height:1.15;font-weight:400}
+.hero h2 em{color:var(--gold);font-style:italic}
+.hero-body{color:#8090ae;font-size:14px;line-height:1.7;margin-top:12px;max-width:520px}
+.hero-line{width:40px;height:2px;background:var(--gold);margin:20px 0;opacity:.7}
+
+/* ── How-it-works chips ─────────────────────────────────────────────────── */
+.hiw-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-ms-overflow-style:none}
+.hiw-row::-webkit-scrollbar{display:none}
+.hiw-chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:30px;padding:8px 14px;white-space:nowrap;flex-shrink:0}
+.hiw-chip .n{font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.5px}
+.hiw-chip .lbl{font-size:12px;color:#8090ae}
+.hiw-chip .ico{font-size:16px}
+
+/* ── Wallet section ─────────────────────────────────────────────────────── */
+.wallet-section{background:var(--navy-mid);border-top:3px solid var(--gold)}
+.wallet-inner{max-width:1100px;margin:0 auto;padding:32px 20px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:36px}
+
+/* Animated demo pass card */
+.demo-pass{background:linear-gradient(135deg,var(--navy) 0%,#0d1829 100%);border:1px solid rgba(196,160,80,.2);border-radius:18px;padding:0;width:200px;flex-shrink:0;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4);position:relative}
+.dp-strip{background:linear-gradient(90deg,var(--gold),#e8c070,var(--gold));height:5px;position:relative}
+.dp-strip::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.4) 50%,transparent 100%);animation:strip-shine 3s ease-in-out infinite}
+@keyframes strip-shine{0%{transform:translateX(-100%)}60%,100%{transform:translateX(100%)}}
+.dp-body{padding:16px}
+.dp-logo{width:28px;height:28px;margin-bottom:10px;opacity:.9}
+.dp-name{font-size:13px;font-weight:700;color:#fff;line-height:1.2}
+.dp-unit{font-size:10px;color:var(--silver);margin-top:3px;letter-spacing:.5px}
+.dp-tier{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-top:8px;background:var(--gold-dim);border:1px solid rgba(196,160,80,.2);border-radius:4px;padding:2px 6px;display:inline-block}
+.dp-status{display:flex;align-items:center;gap:5px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06)}
+.dp-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite}
+.dp-status-text{font-size:9px;color:#6a8c76;letter-spacing:.5px;text-transform:uppercase}
+
+/* Shine overlay on hover */
+.demo-pass::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(196,160,80,.04) 50%,transparent 60%);pointer-events:none}
+
+.wallet-text{flex:1}
+.wallet-eyebrow{font-size:10px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:10px}
+.wallet-text h3{color:#fff;font-size:20px;font-weight:700;line-height:1.3}
+.wallet-text p{color:#6a7c99;font-size:13px;margin-top:8px;line-height:1.6;max-width:380px}
+.wallet-actions{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+.w-btn{display:flex;align-items:center;justify-content:center;gap:9px;padding:13px 20px;border-radius:11px;font-size:13px;font-weight:700;text-decoration:none;transition:transform .15s,opacity .15s;cursor:pointer}
+.w-btn:active{transform:scale(.97)}
+.w-btn.apple{background:#fff;color:#000}
+.w-btn.google{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff}
+.w-btn.wa{background:#25D366;color:#fff}
+
+/* QR block (desktop only) */
+.qr-block{display:flex;flex-direction:column;align-items:center;gap:10px}
+.qr-wrap{background:#fff;border-radius:12px;padding:12px;box-shadow:var(--shadow-dark)}
 #qrcode canvas,#qrcode img{display:block}
-.qr-label{font-size:10px;letter-spacing:2px;color:#6a7c99;text-transform:uppercase;text-align:center}
-.wallet-btns{display:flex;flex-direction:column;gap:8px;width:100%}
-.wallet-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 14px;border-radius:9px;font-size:12px;font-weight:700;text-decoration:none;text-align:center;transition:opacity .2s}
-.wallet-btn:hover{opacity:.85}
-.wallet-btn.apple{background:white;color:#0F1E3A}
-.wallet-btn.google{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:white}
-.try-text{flex:1;min-width:240px}
-.try-text .eyebrow{font-size:10px;letter-spacing:3px;color:#C4A050;text-transform:uppercase;margin-bottom:10px}
-.try-text h3{color:white;font-size:22px;font-weight:700;line-height:1.3}
-.try-text p{color:#8a9ab8;font-size:13px;margin-top:8px;line-height:1.6;max-width:440px}
-.try-steps{display:flex;flex-direction:column;gap:9px;margin-top:18px}
-.try-step{display:flex;align-items:center;gap:12px;color:#aab8d0;font-size:13px}
-.try-step-num{width:24px;height:24px;border-radius:50%;background:rgba(196,160,80,.15);border:1px solid rgba(196,160,80,.4);color:#C4A050;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.pass-info{margin-left:auto;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px 24px;flex-shrink:0;min-width:200px}
-@media(max-width:740px){.pass-info{display:none}}
-.pass-info .pi-label{font-size:10px;letter-spacing:2px;color:#6a7c99;text-transform:uppercase;margin-bottom:12px}
-.pass-info .pi-row{margin-bottom:8px}
-.pass-info .pi-key{font-size:10px;color:#6a7c99;text-transform:uppercase;letter-spacing:.5px}
-.pass-info .pi-val{font-size:13px;color:#C4A050;font-weight:600;margin-top:1px}
-.section{max-width:1100px;margin:0 auto;padding:40px 30px}
-.section-header{display:flex;align-items:baseline;gap:14px;margin-bottom:22px}
-.section-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#999}
-.section-line{flex:1;height:1px;background:#d0d8e4}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
-.facility-card{background:white;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s;text-decoration:none;color:inherit;display:block}
-.facility-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.11)}
-.fc-header{padding:20px 20px 14px}
-.fc-emoji{font-size:28px}
-.fc-title{font-size:14px;font-weight:700;margin-top:9px}
-.fc-desc{font-size:12px;color:#777;margin-top:4px;line-height:1.5}
-.fc-footer{padding:10px 20px;border-top:1px solid #f0f0f0;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
-.staff-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:4px}
-@media(max-width:640px){.staff-row{grid-template-columns:1fr}}
-.staff-card{background:#1A2B4A;border-radius:14px;padding:24px;box-shadow:0 2px 16px rgba(0,0,0,.15);display:flex;align-items:center;gap:18px;text-decoration:none;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden}
-.staff-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.25)}
-.staff-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-.staff-card.scanner::before{background:#C4A050}
-.staff-card.dashboard::before{background:#6ee7b7}
-.staff-icon{font-size:32px;flex-shrink:0}
-.staff-text h3{color:white;font-size:14px;font-weight:700;letter-spacing:.5px}
-.staff-text p{color:#8a9ab8;font-size:11px;margin-top:3px;line-height:1.5}
-.staff-btn{margin-left:auto;border:none;border-radius:9px;padding:9px 18px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;text-decoration:none;display:block}
-.live-indicator{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:#6ee7b7;margin-top:5px;font-weight:600;letter-spacing:.5px}
-.live-indicator .dot{width:5px;height:5px;border-radius:50%;background:#6ee7b7;animation:pulse 1.8s infinite}
-.ai-section{background:white;border-radius:16px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,.06);margin-top:40px}
-.ai-section-head{display:flex;align-items:center;gap:14px;margin-bottom:22px}
-.ai-section-head .ai-icon{width:40px;height:40px;background:linear-gradient(135deg,#1A2B4A,#2D4A7A);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.ai-section-head h3{font-size:15px;font-weight:700;color:#1A2B4A}
-.ai-section-head p{font-size:12px;color:#888;margin-top:2px}
-.ai-badge{margin-left:auto;background:linear-gradient(135deg,rgba(196,160,80,.1),rgba(196,160,80,.18));border:1px solid rgba(196,160,80,.3);border-radius:20px;padding:5px 12px;font-size:10px;font-weight:700;color:#C4A050;letter-spacing:1px;text-transform:uppercase;flex-shrink:0}
+.qr-lbl{font-size:9px;letter-spacing:2px;color:#4a6080;text-transform:uppercase;text-align:center}
+
+/* Steps hint */
+.wallet-steps{display:flex;flex-direction:column;gap:8px;margin-top:20px}
+.ws{display:flex;align-items:center;gap:10px;color:#8090ae;font-size:12px}
+.ws-n{width:22px;height:22px;border-radius:50%;background:var(--gold-dim);border:1px solid rgba(196,160,80,.3);color:var(--gold);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ── Sticky mobile wallet bar ────────────────────────────────────────────── */
+.sticky-wallet{display:none;position:fixed;bottom:0;left:0;right:0;z-index:40;padding:12px 16px 20px;background:linear-gradient(to top,var(--navy-mid) 85%,transparent);border-top:1px solid rgba(196,160,80,.15)}
+.sticky-wallet-inner{max-width:480px;margin:0 auto;display:flex;gap:10px}
+.sticky-wallet .w-btn{flex:1;padding:14px 12px;font-size:13px}
+
+/* ── Sections ───────────────────────────────────────────────────────────── */
+.section{max-width:1100px;margin:0 auto;padding:36px 20px}
+.section-hd{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.section-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#999;white-space:nowrap}
+.section-rule{flex:1;height:1px;background:#d0d8e4}
+
+/* ── Facility grid ───────────────────────────────────────────────────────── */
+.fac-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.fac-card{background:var(--surface);border-radius:var(--radius-card);overflow:hidden;box-shadow:var(--shadow);text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:transform .18s,box-shadow .18s;-webkit-user-select:none;user-select:none}
+.fac-card:active{transform:scale(.97)}
+@media(hover:hover){.fac-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.11)}}
+.fac-body{padding:18px 16px 12px;flex:1}
+.fac-emoji{font-size:26px}
+.fac-name{font-size:13px;font-weight:700;margin-top:8px;line-height:1.2}
+.fac-desc{font-size:11px;color:#777;margin-top:4px;line-height:1.5;display:none}/* hidden on mobile */
+.fac-foot{padding:9px 16px;border-top:1px solid #f0f0f0;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+
+/* ── Staff cards ─────────────────────────────────────────────────────────── */
+.staff-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.staff-card{background:var(--navy-mid);border-radius:var(--radius-card);padding:20px;display:flex;align-items:center;gap:16px;text-decoration:none;transition:transform .18s,box-shadow .18s;position:relative;overflow:hidden;border-top:2px solid transparent}
+.staff-card.scanner{border-top-color:var(--gold)}
+.staff-card.dashboard{border-top-color:var(--green)}
+.staff-card:active{transform:scale(.98)}
+@media(hover:hover){.staff-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.25)}}
+.staff-ico{font-size:28px;flex-shrink:0}
+.staff-txt h3{color:#fff;font-size:14px;font-weight:700}
+.staff-txt p{color:#6a7c99;font-size:11px;margin-top:3px;line-height:1.5}
+.live-ind{display:inline-flex;align-items:center;gap:5px;font-size:9px;color:var(--green);margin-top:4px;font-weight:600;letter-spacing:.5px}
+.live-ind .d{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.8s infinite}
+.staff-arrow{margin-left:auto;background:rgba(255,255,255,.06);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--silver);font-size:16px;flex-shrink:0}
+.staff-card.scanner .staff-arrow{background:var(--gold-dim);color:var(--gold)}
+.staff-card.dashboard .staff-arrow{background:rgba(110,231,183,.1);color:var(--green)}
+
+/* ── AI section ─────────────────────────────────────────────────────────── */
+.ai-card{background:var(--surface);border-radius:var(--radius-card);padding:24px;box-shadow:var(--shadow);margin-top:32px}
+.ai-hd{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.ai-ico{width:38px;height:38px;background:linear-gradient(135deg,var(--navy-mid),#2d4a7a);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ai-hd-txt h3{font-size:14px;font-weight:700;color:var(--navy-mid)}
+.ai-hd-txt p{font-size:11px;color:#888;margin-top:1px}
+.ai-badge{margin-left:auto;background:var(--gold-dim);border:1px solid rgba(196,160,80,.25);border-radius:20px;padding:4px 10px;font-size:9px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;flex-shrink:0}
 .chat-bubbles{display:flex;flex-direction:column;gap:10px}
-.chat-bubble{display:flex;align-items:flex-start;gap:10px}
-.chat-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#1A2B4A,#2D4A7A);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
-.chat-msg{background:#f4f6fa;border-radius:0 12px 12px 12px;padding:11px 16px;font-size:13px;color:#333;line-height:1.5;flex:1;position:relative}
-.chat-msg::before{content:'';position:absolute;left:-6px;top:10px;width:0;height:0;border-top:6px solid transparent;border-bottom:6px solid transparent;border-right:6px solid #f4f6fa}
-.chat-result{background:linear-gradient(135deg,rgba(26,43,74,.06),rgba(26,43,74,.1));border-radius:12px 0 12px 12px;padding:11px 16px;font-size:12px;color:#1A2B4A;line-height:1.5;flex:1;border:1px solid rgba(26,43,74,.1);margin-left:40px}
-.chat-result strong{color:#C4A050}
-footer{background:#0f1e3a;padding:28px 30px;margin-top:50px}
-.footer-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
-.footer-left{font-size:12px;color:#5a7090;line-height:1.8}
-.footer-left span{color:#C4A050}
-.footer-right{font-size:11px;color:#3a5070}
-.footer-right a{color:#C4A050;text-decoration:none}
-@media(max-width:640px){
-  .hero h2{font-size:26px}
-  .how-it-works{flex-direction:column;gap:16px}
-  .hiw-step::after{display:none}
-  .try-inner{gap:24px}
-  .try-qr-block{align-self:center}
-  .footer-inner{flex-direction:column;gap:6px;text-align:center}
+.cb{display:flex;align-items:flex-start;gap:9px}
+.cb-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--navy-mid),#2d4a7a);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.cb-q{background:#f4f6fa;border-radius:0 10px 10px 10px;padding:10px 14px;font-size:12px;color:#333;line-height:1.5;flex:1;position:relative}
+.cb-q::before{content:'';position:absolute;left:-5px;top:9px;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:5px solid #f4f6fa}
+.cb-r{background:linear-gradient(135deg,rgba(26,43,74,.06),rgba(26,43,74,.1));border-radius:10px 0 10px 10px;padding:10px 14px;font-size:11px;color:var(--navy-mid);line-height:1.5;flex:1;border:1px solid rgba(26,43,74,.1);margin-left:37px}
+.cb-r strong{color:var(--gold)}
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+footer{background:#080f1e;padding:24px 20px 80px;margin-top:48px}/* extra bottom pad for sticky bar on mobile */
+.footer-inner{max-width:1100px;margin:0 auto}
+.footer-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.05)}
+.footer-brand{color:#C4A050;font-size:13px;font-weight:700;letter-spacing:1px}
+.footer-links{display:flex;gap:18px}
+.footer-links a{color:#3a5070;font-size:11px;text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--gold)}
+.footer-bottom{margin-top:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.footer-copy{font-size:11px;color:#2a3a50}
+.footer-power{font-size:10px;color:#2a3a50}
+.footer-power a{color:#3a5070;text-decoration:none}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   DESKTOP overrides (min-width: 640px)
+───────────────────────────────────────────────────────────────────────── */
+@media(min-width:640px){
+  .hero{padding:56px 30px 52px}
+  .hero h2{font-size:40px}
+  .hiw-chip .lbl{font-size:13px}
+  .wallet-inner{padding:36px 30px}
+  .fac-grid{grid-template-columns:repeat(3,1fr);gap:16px}
+  .fac-desc{display:block}
+  .fac-body{padding:20px 20px 14px}
+  .fac-emoji{font-size:28px}
+  .staff-grid{grid-template-columns:1fr 1fr}
+  .section{padding:40px 30px}
+  footer{padding-bottom:28px}
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   DESKTOP wallet layout (min-width: 900px)
+───────────────────────────────────────────────────────────────────────── */
+@media(min-width:900px){
+  .wallet-inner{grid-template-columns:auto 1fr auto}
+  .wallet-text h3{font-size:22px}
+  .wallet-actions{flex-direction:row;flex-wrap:wrap}
+  .w-btn{flex:1;min-width:160px}
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   MOBILE: wallet section single column, show sticky bar
+───────────────────────────────────────────────────────────────────────── */
+@media(max-width:639px){
+  .wallet-inner{
+    grid-template-columns:1fr;
+    grid-template-rows:auto auto;
+    gap:20px
+  }
+  /* On mobile: pass card + text in a row, QR hidden */
+  .wallet-inner{display:flex;flex-direction:column}
+  .qr-block{display:none!important}
+  .demo-pass{width:100%;display:flex;flex-direction:row;align-items:center;gap:16px;padding:16px}
+  .dp-strip{display:none}
+  .dp-body{padding:0;display:flex;flex-direction:row;align-items:center;gap:16px;flex:1}
+  .dp-logo{margin-bottom:0;width:36px;height:36px}
+  .dp-info{flex:1}
+  .dp-tier{margin-top:6px}
+  .dp-status{border:none;padding:0;margin-top:6px}
+  .wallet-steps{display:none}
+  .sticky-wallet{display:block}
+  footer{padding-bottom:100px}
 }
 </style>
 </head>
 <body>
 
+<!-- ── Header ─────────────────────────────────────────────── -->
 <header>
   <div class="header-inner">
     <div class="logo">
@@ -137,7 +251,7 @@ footer{background:#0f1e3a;padding:28px 30px;margin-top:50px}
     </div>
     <div class="brand">
       <h1>AIPHONE RESIDENCE</h1>
-      <p>Luxury Living &middot; Digital First &middot; Singapore</p>
+      <p>Luxury Living · Digital First · Singapore</p>
     </div>
     <div class="live-badge">
       <span class="live-dot"></span>
@@ -146,210 +260,255 @@ footer{background:#0f1e3a;padding:28px 30px;margin-top:50px}
   </div>
 </header>
 
+<!-- ── Hero ───────────────────────────────────────────────── -->
 <div class="hero">
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
   <div class="hero-inner">
-    <div class="hero-eyebrow">PassQR × dasecure POC</div>
-    <h2>Every resident. Every access.<br><span>One pass in their wallet.</span></h2>
-    <div class="hero-sub">A fully digital residence experience — resident cards, facility bookings, visitor passes and gate access, all managed through a live digital pass that updates silently in Apple &amp; Google Wallet.</div>
+    <div class="hero-tag">PassQR × dasecure POC</div>
+    <h2>Every resident.<br><em>One pass in their wallet.</em></h2>
+    <p class="hero-body">Resident cards, facility bookings, visitor passes — all managed through a live digital pass that updates silently in Apple &amp; Google Wallet.</p>
     <div class="hero-line"></div>
-    <div class="how-it-works">
-      <div class="hiw-step">
-        <div class="hiw-icon">🪪</div>
-        <div class="hiw-label">1. Issue</div>
-        <div class="hiw-desc">Resident or AI creates a pass in seconds. Added to Wallet instantly.</div>
-      </div>
-      <div class="hiw-step">
-        <div class="hiw-icon">📲</div>
-        <div class="hiw-label">2. Use</div>
-        <div class="hiw-desc">Book facilities, invite visitors — pass updates silently on their phone.</div>
-      </div>
-      <div class="hiw-step">
-        <div class="hiw-icon">📷</div>
-        <div class="hiw-label">3. Scan</div>
-        <div class="hiw-desc">Security scans at the gate. Entry logged, wallet pushed, dashboard updated.</div>
-      </div>
-      <div class="hiw-step">
-        <div class="hiw-icon">📊</div>
-        <div class="hiw-label">4. Manage</div>
-        <div class="hiw-desc">Live dashboard shows who's in, facility usage, and real-time scan feed.</div>
-      </div>
+    <div class="hiw-row">
+      <div class="hiw-chip"><span class="ico">🪪</span><span class="n">01</span><span class="lbl">Issue a pass</span></div>
+      <div class="hiw-chip"><span class="ico">📲</span><span class="n">02</span><span class="lbl">Add to wallet</span></div>
+      <div class="hiw-chip"><span class="ico">📷</span><span class="n">03</span><span class="lbl">Scan at gate</span></div>
+      <div class="hiw-chip"><span class="ico">📊</span><span class="n">04</span><span class="lbl">Live dashboard</span></div>
     </div>
   </div>
 </div>
 
-<div class="try-banner">
-  <div class="try-inner">
+<!-- ── Wallet section ─────────────────────────────────────── -->
+<div class="wallet-section">
+  <div class="wallet-inner">
 
-    <div class="try-qr-block">
-      <div class="qr-label">iPhone — scan to add</div>
-      <div class="try-qr">
-        <div id="qrcode"></div>
-      </div>
-      <div class="wallet-btns">
-        <a class="wallet-btn apple" href="https://www.passqr.com/api/wallet/apple?code=PASS-2MM95YKC" target="_blank">
-          🍎 Add to Apple Wallet
-        </a>
-        <a class="wallet-btn google" href="https://www.passqr.com/api/wallet/google?code=PASS-2MM95YKC" target="_blank">
-          🤖 Save to Google Wallet
-        </a>
+    <!-- Animated pass card -->
+    <div class="demo-pass" id="demo-pass">
+      <div class="dp-strip"></div>
+      <div class="dp-body">
+        <svg class="dp-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="100" fill="#0F1E3A"/>
+          <circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="3"/>
+          <rect x="82" y="75" width="36" height="82" fill="#C4A050"/>
+          <ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/>
+        </svg>
+        <div class="dp-info">
+          <div class="dp-name">Vincent Ooi</div>
+          <div class="dp-unit">#08-08 Tower A</div>
+          <div class="dp-tier">Owner</div>
+          <div class="dp-status">
+            <div class="dp-dot"></div>
+            <span class="dp-status-text">Active · 7 scans</span>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="try-text">
-      <div class="eyebrow">Try it now — live pass</div>
+    <!-- Text + buttons -->
+    <div class="wallet-text">
+      <div class="wallet-eyebrow">Try it now — live pass</div>
       <h3>Add a real resident pass<br>to your wallet</h3>
-      <p>This is a live resident card for <strong style="color:white">Vincent Ooi</strong>, Owner Unit #08-08 Tower A. On iPhone, scan the QR — it triggers Add to Apple Wallet directly. On Android, tap the Google Wallet button.</p>
-      <div class="try-steps">
-        <div class="try-step"><span class="try-step-num">1</span> iPhone: scan QR · Android: tap Google Wallet button</div>
-        <div class="try-step"><span class="try-step-num">2</span> Add the pass to your wallet</div>
-        <div class="try-step"><span class="try-step-num">3</span> Open the Scanner below and scan your pass</div>
-        <div class="try-step"><span class="try-step-num">4</span> Watch the entry appear live on the Dashboard</div>
+      <p>This is a live resident card for <strong style="color:white">Vincent Ooi</strong>, Owner #08-08. On iPhone, scan the QR or tap Add to Apple Wallet. On Android, tap Google Wallet.</p>
+      <div class="wallet-actions" id="wallet-actions">
+        <a class="w-btn apple" id="btn-apple" href="https://www.passqr.com/api/wallet/apple?code=PASS-2MM95YKC" target="_blank">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          Add to Apple Wallet
+        </a>
+        <a class="w-btn google" id="btn-google" href="https://www.passqr.com/api/wallet/google?code=PASS-2MM95YKC" target="_blank">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21.56 10.74l-9.56-.01v2.92h5.49c-.54 2.67-2.86 4.35-5.49 4.35-3.35 0-6-2.69-6-6s2.65-6 6-6c1.48 0 2.82.54 3.86 1.42l2.12-2.12C16.55 3.6 14.38 2.75 12 2.75 6.9 2.75 2.75 6.9 2.75 12S6.9 21.25 12 21.25c5.61 0 9.25-3.95 9.25-9.5 0-.68-.07-1.35-.19-2.01h-1.5v1z"/></svg>
+          Save to Google Wallet
+        </a>
+      </div>
+      <div class="wallet-steps">
+        <div class="ws"><span class="ws-n">1</span> Scan QR (iPhone) or tap Google Wallet button (Android)</div>
+        <div class="ws"><span class="ws-n">2</span> Add the pass to your wallet</div>
+        <div class="ws"><span class="ws-n">3</span> Open the Scanner &amp; scan your pass</div>
+        <div class="ws"><span class="ws-n">4</span> Watch the entry appear live on Dashboard</div>
       </div>
     </div>
 
-    <div class="pass-info">
-      <div class="pi-label">Live Pass Details</div>
-      <div class="pi-row">
-        <div class="pi-key">Holder</div>
-        <div class="pi-val">Vincent Ooi</div>
-      </div>
-      <div class="pi-row">
-        <div class="pi-key">Unit</div>
-        <div class="pi-val">#08-08 Tower A</div>
-      </div>
-      <div class="pi-row">
-        <div class="pi-key">Type</div>
-        <div class="pi-val">Owner — Resident Card</div>
-      </div>
-      <div class="pi-row">
-        <div class="pi-key">Carpark</div>
-        <div class="pi-val">Lot A-888</div>
-      </div>
-      <div class="pi-row">
-        <div class="pi-key">Scans</div>
-        <div class="pi-val">7 entries logged</div>
-      </div>
-      <div class="pi-row">
-        <div class="pi-key">Status</div>
-        <div class="pi-val" style="color:#6ee7b7">● Active</div>
-      </div>
+    <!-- QR (desktop only) -->
+    <div class="qr-block">
+      <div class="qr-lbl">iPhone — scan to add</div>
+      <div class="qr-wrap"><div id="qrcode"></div></div>
+      <div class="qr-lbl" style="margin-top:4px;color:#6ee7b7">● PASS-2MM95YKC</div>
     </div>
+
   </div>
 </div>
 
+<!-- ── Facilities ─────────────────────────────────────────── -->
 <div class="section">
-  <div class="section-header">
-    <div class="section-title">For Residents — Facilities &amp; Services</div>
-    <div class="section-line"></div>
+  <div class="section-hd">
+    <div class="section-label">For Residents — Facilities</div>
+    <div class="section-rule"></div>
   </div>
-  <div class="grid">
-    <a class="facility-card" href="book/tennis.html">
-      <div class="fc-header"><div class="fc-emoji">🎾</div><div class="fc-title">Tennis Courts</div><div class="fc-desc">Court 1 &amp; 2 available daily 6AM–10PM. Book a 1-hour slot and get a pass issued instantly.</div></div>
-      <div class="fc-footer" style="color:#1A2B4A">Book Now →</div>
+  <div class="fac-grid">
+    <a class="fac-card" href="book/tennis.html">
+      <div class="fac-body"><div class="fac-emoji">🎾</div><div class="fac-name">Tennis Courts</div><div class="fac-desc">Court 1 &amp; 2 · 6AM–10PM daily · 1-hour slots.</div></div>
+      <div class="fac-foot" style="color:#1A2B4A">Book Now →</div>
     </a>
-    <a class="facility-card" href="book/bbq.html">
-      <div class="fc-header"><div class="fc-emoji">🔥</div><div class="fc-title">BBQ Pits</div><div class="fc-desc">Rooftop Pit 1 &amp; 2. Evening slots from 5PM. SGD 50 deposit required at booking.</div></div>
-      <div class="fc-footer" style="color:#C0392B">Book Now →</div>
+    <a class="fac-card" href="book/bbq.html">
+      <div class="fac-body"><div class="fac-emoji">🔥</div><div class="fac-name">BBQ Pits</div><div class="fac-desc">Rooftop Pit 1 &amp; 2 · Evening slots from 5PM.</div></div>
+      <div class="fac-foot" style="color:#C0392B">Book Now →</div>
     </a>
-    <a class="facility-card" href="book/ktv.html">
-      <div class="fc-header"><div class="fc-emoji">🎤</div><div class="fc-title">KTV Room</div><div class="fc-desc">Private KTV suite for up to 12 guests. Weeknight &amp; weekend slots available.</div></div>
-      <div class="fc-footer" style="color:#7B2FBE">Book Now →</div>
+    <a class="fac-card" href="book/ktv.html">
+      <div class="fac-body"><div class="fac-emoji">🎤</div><div class="fac-name">KTV Room</div><div class="fac-desc">Private suite · Up to 12 guests · Weeknight &amp; weekend.</div></div>
+      <div class="fac-foot" style="color:#7B2FBE">Book Now →</div>
     </a>
-    <a class="facility-card" href="book/gym.html">
-      <div class="fc-header"><div class="fc-emoji">🏋️</div><div class="fc-title">Gym</div><div class="fc-desc">Fully equipped fitness centre, 6AM–11PM. Tap your resident pass at the door.</div></div>
-      <div class="fc-footer" style="color:#E67E22">Get Access Pass →</div>
+    <a class="fac-card" href="book/gym.html">
+      <div class="fac-body"><div class="fac-emoji">🏋️</div><div class="fac-name">Gym</div><div class="fac-desc">Fully equipped · 6AM–11PM · Residents only.</div></div>
+      <div class="fac-foot" style="color:#E67E22">Get Pass →</div>
     </a>
-    <a class="facility-card" href="book/pool.html">
-      <div class="fc-header"><div class="fc-emoji">🏊</div><div class="fc-title">Swimming Pool</div><div class="fc-desc">Lap pool + leisure pool. 7AM–10PM daily. Resident pass required for entry.</div></div>
-      <div class="fc-footer" style="color:#1B8FC4">Get Access Pass →</div>
+    <a class="fac-card" href="book/pool.html">
+      <div class="fac-body"><div class="fac-emoji">🏊</div><div class="fac-name">Pool</div><div class="fac-desc">Lap + leisure pool · 7AM–10PM daily.</div></div>
+      <div class="fac-foot" style="color:#1B8FC4">Get Pass →</div>
     </a>
-    <a class="facility-card" href="book/visitor.html">
-      <div class="fc-header"><div class="fc-emoji">👤</div><div class="fc-title">Visitor Passes</div><div class="fc-desc">Issue a day-pass for your guest. Valid today only — share via WhatsApp in one tap.</div></div>
-      <div class="fc-footer" style="color:#8B5E3C">Issue &amp; Share →</div>
+    <a class="fac-card" href="book/visitor.html">
+      <div class="fac-body"><div class="fac-emoji">👤</div><div class="fac-name">Visitor Pass</div><div class="fac-desc">Day-pass for guests · Valid today · Share via WhatsApp.</div></div>
+      <div class="fac-foot" style="color:#8B5E3C">Issue &amp; Share →</div>
     </a>
   </div>
 
-  <div class="section-header" style="margin-top:44px">
-    <div class="section-title">For Staff — Operations Tools</div>
-    <div class="section-line"></div>
+  <!-- Staff -->
+  <div class="section-hd" style="margin-top:40px">
+    <div class="section-label">For Staff — Operations</div>
+    <div class="section-rule"></div>
   </div>
-  <div class="staff-row">
+  <div class="staff-grid">
     <a class="staff-card scanner" href="scan.html">
-      <div class="staff-icon">📷</div>
-      <div class="staff-text">
+      <div class="staff-ico">📷</div>
+      <div class="staff-txt">
         <h3>Pass Scanner</h3>
-        <p>Scan &amp; validate any pass · Detect visitor vs resident · Push wallet updates on scan</p>
+        <p>Scan &amp; validate · Resident, visitor, booking &amp; contractor passes</p>
       </div>
-      <div class="staff-btn" style="background:#C4A050;color:#0F1E3A">Open →</div>
+      <div class="staff-arrow">→</div>
     </a>
     <a class="staff-card dashboard" href="dashboard.html">
-      <div class="staff-icon">📊</div>
-      <div class="staff-text">
+      <div class="staff-ico">📊</div>
+      <div class="staff-txt">
         <h3>Live Dashboard</h3>
-        <p>Real-time scan feed · Who's active now · Facility &amp; gate breakdown</p>
-        <div class="live-indicator"><span class="dot"></span>Updates every 8 seconds</div>
+        <p>Real-time scan feed · Who's active · Facility stats</p>
+        <div class="live-ind"><span class="d"></span> Updates every 8s</div>
       </div>
-      <div class="staff-btn" style="background:#6ee7b7;color:#0F1E3A">View →</div>
+      <div class="staff-arrow" style="color:#6ee7b7">→</div>
     </a>
   </div>
 
-  <div class="ai-section">
-    <div class="ai-section-head">
-      <div class="ai-icon">🤖</div>
-      <div>
+  <!-- AI section -->
+  <div class="ai-card">
+    <div class="ai-hd">
+      <div class="ai-ico">🤖</div>
+      <div class="ai-hd-txt">
         <h3>AI-Native Pass Management</h3>
         <p>Manage the entire residence with natural language via PassQR MCP</p>
       </div>
-      <div class="ai-badge">MCP Integration</div>
+      <div class="ai-badge">MCP</div>
     </div>
     <div class="chat-bubbles">
-      <div class="chat-bubble">
-        <div class="chat-avatar">👤</div>
-        <div class="chat-msg">"Create a resident card for Mr. Tan Wei Ming, unit #12-08 Tower A, owner"</div>
+      <div class="cb">
+        <div class="cb-av">👤</div>
+        <div class="cb-q">"Create a resident card for Mr. Tan Wei Ming, unit #12-08 Tower A, owner"</div>
       </div>
-      <div class="chat-bubble">
-        <div style="width:30px;flex-shrink:0"></div>
-        <div class="chat-result">✓ Pass created — <strong>PASS-SHGR6UMU</strong> · Mr. Tan Wei Ming · Owner #12-08 Tower A · Apple &amp; Google Wallet links ready</div>
+      <div class="cb">
+        <div style="width:28px;flex-shrink:0"></div>
+        <div class="cb-r">✓ Pass created — <strong>PASS-SHGR6UMU</strong> · Mr. Tan Wei Ming · Owner #12-08 Tower A · Wallet links ready</div>
       </div>
-      <div class="chat-bubble" style="margin-top:6px">
-        <div class="chat-avatar">👤</div>
-        <div class="chat-msg">"Book Tennis Court 1 tomorrow 7AM for Vincent Ooi #08-08"</div>
+      <div class="cb" style="margin-top:6px">
+        <div class="cb-av">👤</div>
+        <div class="cb-q">"Book Tennis Court 1 tomorrow 7AM for Vincent Ooi #08-08"</div>
       </div>
-      <div class="chat-bubble">
-        <div style="width:30px;flex-shrink:0"></div>
-        <div class="chat-result">✓ Tennis Court booking confirmed — <strong>PASS-7D7X6T75</strong> · Court 1, 8:00–9:00AM · Pass pushed to Vincent's wallet</div>
+      <div class="cb">
+        <div style="width:28px;flex-shrink:0"></div>
+        <div class="cb-r">✓ Booking confirmed — <strong>PASS-7D7X6T75</strong> · Court 1, 8:00–9:00AM · Pass pushed to wallet</div>
       </div>
-      <div class="chat-bubble" style="margin-top:6px">
-        <div class="chat-avatar">👤</div>
-        <div class="chat-msg">"Create a contractor pass for Cool Air Services for today, unit #12-08"</div>
+      <div class="cb" style="margin-top:6px">
+        <div class="cb-av">👤</div>
+        <div class="cb-q">"Create a contractor pass for Cool Air Services today, unit #12-08"</div>
       </div>
-      <div class="chat-bubble">
-        <div style="width:30px;flex-shrink:0"></div>
-        <div class="chat-result">✓ Contractor pass issued — <strong>PASS-YY7R4QRY</strong> · Cool Air Services · Unit #12-08 · Valid today 9AM–5PM</div>
+      <div class="cb">
+        <div style="width:28px;flex-shrink:0"></div>
+        <div class="cb-r">✓ Contractor pass issued — <strong>PASS-YY7R4QRY</strong> · Cool Air Services · Unit #12-08 · Valid today 9AM–5PM</div>
       </div>
     </div>
   </div>
 </div>
 
+<!-- ── Sticky wallet bar (mobile only) ───────────────────── -->
+<div class="sticky-wallet" id="sticky-wallet">
+  <div class="sticky-wallet-inner">
+    <a class="w-btn apple" id="sticky-apple" href="https://www.passqr.com/api/wallet/apple?code=PASS-2MM95YKC" target="_blank">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      Apple Wallet
+    </a>
+    <a class="w-btn google" id="sticky-google" href="https://www.passqr.com/api/wallet/google?code=PASS-2MM95YKC" target="_blank">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21.56 10.74l-9.56-.01v2.92h5.49c-.54 2.67-2.86 4.35-5.49 4.35-3.35 0-6-2.69-6-6s2.65-6 6-6c1.48 0 2.82.54 3.86 1.42l2.12-2.12C16.55 3.6 14.38 2.75 12 2.75 6.9 2.75 2.75 6.9 2.75 12S6.9 21.25 12 21.25c5.61 0 9.25-3.95 9.25-9.5 0-.68-.07-1.35-.19-2.01h-1.5v1z"/></svg>
+      Google Wallet
+    </a>
+  </div>
+</div>
+
+<!-- ── Footer ─────────────────────────────────────────────── -->
 <footer>
   <div class="footer-inner">
-    <div>
-      <div class="footer-left">&copy; 2026 <span>Aiphone Residence</span> &middot; Management: <span>+65 6123 8888</span></div>
-      <div class="footer-right">Powered by <a href="https://www.passqr.com" target="_blank">PassQR</a> &times; <a href="https://dasecure.com" target="_blank">dasecure</a> &middot; Demo environment</div>
+    <div class="footer-top">
+      <div class="footer-brand">AIPHONE RESIDENCE</div>
+      <div class="footer-links">
+        <a href="scan.html">Scanner</a>
+        <a href="dashboard.html">Dashboard</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 Aiphone Residence · Management: +65 6123 8888</div>
+      <div class="footer-power">Powered by <a href="https://www.passqr.com" target="_blank">PassQR</a> × <a href="https://dasecure.com" target="_blank">dasecure</a></div>
     </div>
   </div>
 </footer>
 
 <script>
-  // QR → Apple Wallet direct for PASS-2MM95YKC (Vincent Ooi, Owner #08-08, Aiphone Residence org)
-  new QRCode(document.getElementById("qrcode"), {
-    text: "https://www.passqr.com/api/wallet/apple?code=PASS-2MM95YKC",
-    width: 148,
-    height: 148,
-    colorDark: "#0F1E3A",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.M
-  });
+// QR (desktop only — JS will hide if mobile)
+new QRCode(document.getElementById('qrcode'), {
+  text: 'https://www.passqr.com/api/wallet/apple?code=PASS-2MM95YKC',
+  width: 140, height: 140,
+  colorDark: '#0F1E3A', colorLight: '#ffffff',
+  correctLevel: QRCode.CorrectLevel.M
+});
+
+// Platform detection — highlight the right wallet button
+(function(){
+  const ua  = navigator.userAgent;
+  const iOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+  const And = /android/i.test(ua);
+
+  if (iOS) {
+    // Dim Google Wallet on iOS
+    ['btn-google','sticky-google'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.opacity = '0.45';
+    });
+  } else if (And) {
+    // Dim Apple Wallet on Android
+    ['btn-apple','sticky-apple'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.opacity = '0.45';
+    });
+  }
+})();
+
+// Sticky wallet bar: fade in after scrolling past wallet section
+(function(){
+  const sticky = document.getElementById('sticky-wallet');
+  const ws     = document.querySelector('.wallet-section');
+  if (!sticky || !ws) return;
+  sticky.style.opacity = '0';
+  sticky.style.transition = 'opacity .3s';
+  const obs = new IntersectionObserver(entries => {
+    const hidden = !entries[0].isIntersecting;
+    sticky.style.opacity = hidden ? '1' : '0';
+    sticky.style.pointerEvents = hidden ? 'auto' : 'none';
+  }, { threshold: 0.1 });
+  obs.observe(ws);
+})();
 </script>
 </body>
 </html>
