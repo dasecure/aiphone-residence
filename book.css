@@ -1,0 +1,63 @@
+/* Aiphone Residence — shared booking page styles */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,sans-serif;background:#E8EDF5;min-height:100vh}
+
+header{background:#1A2B4A;padding:14px 18px;display:flex;align-items:center;gap:12px}
+header .logo{width:40px;height:40px;flex-shrink:0}
+.brand{color:#C4A050;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;font-weight:700}
+.sub{color:#aab8d0;font-size:10px;margin-top:2px}
+
+.strip{padding:24px 20px;border-bottom:3px solid rgba(255,255,255,.15)}
+.strip-icon{font-size:32px}
+.strip-title{color:white;font-size:19px;font-weight:700;margin-top:6px}
+.strip-sub{color:rgba(255,255,255,.75);font-size:12px;margin-top:3px}
+
+.container{max-width:520px;margin:20px auto;padding:0 14px 60px}
+
+.card{background:white;border-radius:14px;padding:20px;box-shadow:0 2px 14px rgba(0,0,0,.07);margin-bottom:14px}
+.card-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#C8A951;font-weight:700;margin-bottom:14px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:10px;font-weight:700;color:#666;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.field input,.field select{width:100%;border:1.5px solid #e0e0e0;border-radius:8px;padding:10px 12px;font-size:14px;background:white;color:#1a1a1a;-webkit-appearance:none;appearance:none}
+.field input:focus,.field select:focus{outline:none;border-color:#C8A951;box-shadow:0 0 0 3px rgba(200,169,81,.12)}
+
+.rules-card{background:#fafafa;border:1px solid #eee}
+.rules{list-style:none;padding:0}
+.rules li{font-size:12px;color:#555;padding:4px 0 4px 16px;position:relative;line-height:1.5}
+.rules li::before{content:'›';position:absolute;left:0;color:#C8A951;font-weight:700}
+
+.btn{width:100%;padding:14px;border:none;border-radius:10px;font-size:14px;font-weight:800;color:white;background:#C8A951;cursor:pointer;letter-spacing:.3px;transition:opacity .2s;margin-top:6px}
+.btn:hover{opacity:.88}
+.btn:disabled{opacity:.45;cursor:default}
+
+.err{color:#c0392b;font-size:12px;padding:8px 12px;background:#fdf2f2;border-radius:7px;border-left:3px solid #c0392b;display:none;margin-bottom:8px}
+
+/* ── SUCCESS ── */
+.success-card{background:white;border-radius:16px;padding:28px 20px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.1)}
+.success-icon{font-size:48px;margin-bottom:10px}
+.success-title{font-size:22px;font-weight:800;color:#1A2B4A;margin-bottom:4px}
+.success-sub{font-size:13px;color:#555;margin-bottom:16px;line-height:1.5}
+.pass-code{font-family:monospace;font-size:17px;font-weight:700;letter-spacing:2px;color:#C8A951;background:#fffbec;border:1.5px solid #C8A951;border-radius:8px;padding:8px 14px;display:inline-block;margin-bottom:16px}
+.qr-wrap{display:flex;justify-content:center;margin:8px 0 6px;padding:12px;background:#f8f8f8;border-radius:12px;border:1px solid #e8e8e8}
+.qr-wrap canvas,.qr-wrap img{border-radius:4px}
+.qr-hint{font-size:11px;color:#888;margin-bottom:20px;letter-spacing:.3px}
+
+.wallet-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;margin-bottom:10px;transition:opacity .2s}
+.wallet-btn:hover{opacity:.88}
+.wallet-btn.apple{background:#000;color:white}
+.wallet-btn.google{background:#4285F4;color:white}
+.share-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;margin-bottom:10px;background:#25D366;color:white;cursor:pointer;transition:opacity .2s}
+.share-btn:hover{opacity:.88}
+.view-link{display:block;font-size:13px;color:#C8A951;text-decoration:none;margin-bottom:14px;font-weight:600}
+.view-link:hover{text-decoration:underline}
+.expiry-note{font-size:11px;color:#aaa;margin-bottom:16px}
+.btn-secondary{background:transparent;border:1.5px solid #ddd;border-radius:10px;padding:11px;width:100%;font-size:13px;color:#666;cursor:pointer;transition:border-color .2s}
+.btn-secondary:hover{border-color:#C8A951;color:#C8A951}
+
+footer{text-align:center;padding:20px;font-size:11px;color:#aaa}
+footer span{color:#C8A951}
+footer a{color:#C8A951;text-decoration:none}
+
+/* Spinner */
+.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}

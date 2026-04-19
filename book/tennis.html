@@ -1,12 +1,116 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tennis Court Booking — Aiphone Residence</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Helvetica Neue',Arial,sans-serif;background:#E8EDF5}header{background:#1A2B4A;padding:14px 22px;display:flex;align-items:center;gap:14px}header .logo{width:42px;height:42px;flex-shrink:0}header h1{color:#C4A050;font-size:12px;letter-spacing:3px;text-transform:uppercase}header p{color:#aab8d0;font-size:10px;margin-top:2px}.strip{background:#C8A951;padding:26px 22px;border-left:5px solid rgba(255,255,255,.2)}.strip .icon{font-size:34px}.strip h2{color:white;font-size:20px;margin-top:7px;font-weight:700}.strip p{color:rgba(255,255,255,.8);font-size:12px;margin-top:4px}.container{max-width:560px;margin:22px auto;padding:0 14px 60px}.notice{background:#fffbec;border:1.5px solid #C4A050;border-radius:10px;padding:11px 14px;font-size:12px;color:#7a6000;margin-bottom:14px}.card{background:white;border-radius:12px;padding:22px;box-shadow:0 3px 16px rgba(0,0,0,.07);margin-bottom:14px}.card h3{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#C8A951;margin-bottom:14px}.field{margin-bottom:12px}.field label{display:block;font-size:10px;font-weight:600;color:#666;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}.field input{width:100%;border:1.5px solid #e0e0e0;border-radius:7px;padding:9px 11px;font-size:13px}.field input:focus{outline:none;border-color:#C8A951}.rules{padding-left:15px}.rules li{font-size:12px;color:#555;margin-bottom:5px;line-height:1.5}.btn{width:100%;background:#C8A951;color:white;border:none;border-radius:9px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-top:5px}.confirm{display:none;text-align:center;padding:22px 14px}.confirm .check{font-size:48px}.confirm h3{color:#C8A951;margin-top:12px;font-size:17px}.confirm p{color:#666;margin-top:5px;font-size:12px}footer{text-align:center;padding:14px;font-size:10px;color:#999}</style></head><body>
-<header><div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100" fill="#0F1E3A"/><circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="2"/><rect x="82" y="75" width="36" height="82" fill="#C4A050"/><ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/><rect x="88" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="54" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="66" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="122" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="134" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="40" y="157" width="120" height="4" fill="#C4A050"/><text x="100" y="74" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#0F1E3A" text-anchor="middle">A</text><text x="100" y="174" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#C4A050" text-anchor="middle" letter-spacing="3">AIPHONE</text><text x="100" y="187" font-family="Arial,sans-serif" font-size="8" fill="#D4C4A0" text-anchor="middle" letter-spacing="2">RESIDENCE</text></svg></div><div><h1>Aiphone Residence</h1><p>Facility Booking Portal</p></div></header>
-<div class="strip"><div class="icon">🎾</div><h2>Tennis Court Booking</h2><p>Court 1 &amp; 2 · 1-hour slots · 6AM–10PM daily</p></div>
-<div class="container">
-<div class="notice">⚠️ <strong>Demo Mode:</strong> In production this issues a PassQR booking pass via API.</div>
-<div id="fv"><div class="card"><h3>Booking Details</h3><div class="field"><label>Unit No. *</label><input type="text" placeholder="e.g. #12-08" required></div><div class="field"><label>Court *</label><input type="text" placeholder="Court 1 or Court 2" required></div><div class="field"><label>Date *</label><input type="date" required></div><div class="field"><label>Time Slot *</label><input type="text" placeholder="e.g. 7:00 AM – 8:00 AM" required></div><div class="field"><label>Players</label><input type="text" placeholder="2–4"></div><button class="btn" onclick="go()">Confirm &amp; Get Pass</button></div><div class="card"><h3>Rules</h3><ul class="rules"><li>Max 1-hour slot (2 consecutive on weekdays)</li><li>No public holiday reservations — walk-in only</li><li>Resident must be present during booking</li><li>Proper sports attire required</li><li>Cancel ≥4 hours in advance to avoid forfeiture</li></ul></div></div>
-<div class="card confirm" id="cv"><div class="check">✅</div><h3>Confirmed!</h3><p>Your tennis court pass has been issued.</p></div>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Tennis Court Booking — Aiphone Residence</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link rel="stylesheet" href="../book.css">
+</head>
+<body>
+<header>
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100" fill="#0F1E3A"/><circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="2"/><rect x="82" y="75" width="36" height="82" fill="#C4A050"/><ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/><rect x="88" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="54" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="66" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="122" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="134" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="40" y="157" width="120" height="4" fill="#C4A050"/><text x="100" y="174" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#C4A050" text-anchor="middle" letter-spacing="3">AIPHONE</text><text x="100" y="187" font-family="Arial,sans-serif" font-size="8" fill="#D4C4A0" text-anchor="middle" letter-spacing="2">RESIDENCE</text></svg></div>
+  <div><div class="brand">Aiphone Residence</div><div class="sub">Facility Booking</div></div>
+</header>
+
+<div class="strip" style="background:#C8A951">
+  <div class="strip-icon">🎾</div>
+  <div class="strip-title">Tennis Court Booking</div>
+  <div class="strip-sub">Court 1 &amp; 2 &middot; 1-hour slots &middot; 6AM–10PM daily</div>
 </div>
-<footer>© 2026 Aiphone Residence · <a href="../" style="color:#C8A951">← Back</a></footer>
-<script>function go(){document.getElementById('fv').style.display='none';document.getElementById('cv').style.display='block'}</script>
-</body></html>
+
+<div class="container">
+  <!-- FORM -->
+  <div id="form-view">
+    <div class="card">
+      <div class="card-title">Booking Details</div>
+      <div class="field"><label>Your Name *</label><input id="f-name" type="text" placeholder="e.g. Tan Wei Ming" autocomplete="name"></div>
+      <div class="field"><label>Unit No. *</label><input id="f-unit" type="text" placeholder="e.g. #12-08"></div>
+      <div class="field"><label>Court *</label>
+        <select id="f-court"><option value="Court 1">Court 1</option><option value="Court 2">Court 2</option></select>
+      </div>
+      <div class="field"><label>Date *</label><input id="f-date" type="date"></div>
+      <div class="field"><label>Time Slot *</label>
+        <select id="f-slot">
+          <option value="6:00 AM – 7:00 AM">6:00 AM – 7:00 AM</option>
+          <option value="7:00 AM – 8:00 AM">7:00 AM – 8:00 AM</option>
+          <option value="8:00 AM – 9:00 AM">8:00 AM – 9:00 AM</option>
+          <option value="9:00 AM – 10:00 AM">9:00 AM – 10:00 AM</option>
+          <option value="5:00 PM – 6:00 PM">5:00 PM – 6:00 PM</option>
+          <option value="6:00 PM – 7:00 PM">6:00 PM – 7:00 PM</option>
+          <option value="7:00 PM – 8:00 PM">7:00 PM – 8:00 PM</option>
+          <option value="8:00 PM – 9:00 PM">8:00 PM – 9:00 PM</option>
+        </select>
+      </div>
+      <div class="field"><label>No. of Players</label><input id="f-guests" type="number" min="1" max="4" placeholder="2" value="2"></div>
+      <div id="err" class="err"></div>
+      <button class="btn" id="submit-btn" onclick="book()">Confirm &amp; Get Pass 🎾</button>
+    </div>
+    <div class="card rules-card">
+      <div class="card-title">Court Rules</div>
+      <ul class="rules">
+        <li>1-hour slots (2 consecutive on weekdays)</li>
+        <li>Proper sports attire required</li>
+        <li>Cancel ≥4 hours in advance to avoid forfeiture</li>
+        <li>Show pass QR at court entrance</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="success-view" style="display:none">
+    <div class="success-card">
+      <div class="success-icon">🎾</div>
+      <div class="success-title">Court Booked!</div>
+      <div class="success-sub" id="s-sub"></div>
+      <div class="pass-code" id="s-code"></div>
+      <div class="qr-wrap"><div id="qr"></div></div>
+      <div class="qr-hint">Show QR code at court entrance</div>
+      <a class="wallet-btn apple" id="s-apple" href="#" target="_blank">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        Add to Apple Wallet
+      </a>
+      <a class="wallet-btn google" id="s-google" href="#" target="_blank">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M21.56 10.74l-9.56-.01v2.92h5.49c-.54 2.67-2.86 4.35-5.49 4.35-3.35 0-6-2.69-6-6s2.65-6 6-6c1.48 0 2.82.54 3.86 1.42l2.12-2.12C16.55 3.6 14.38 2.75 12 2.75 6.9 2.75 2.75 6.9 2.75 12S6.9 21.25 12 21.25c5.61 0 9.25-3.95 9.25-9.5 0-.68-.07-1.35-.19-2.01h-1.5v1z"/></svg>
+        Save to Google Wallet
+      </a>
+      <a class="view-link" id="s-view" href="#" target="_blank">View pass details →</a>
+      <div class="expiry-note" id="s-expiry"></div>
+      <button class="btn-secondary" onclick="reset()">Book Another Slot</button>
+    </div>
+  </div>
+</div>
+
+<footer>© 2026 <span>Aiphone Residence</span> &middot; <a href="../">← Back to Portal</a></footer>
+
+<script src="../book.js"></script>
+<script>
+const FACILITY = 'tennis';
+const ACCENT   = '#C8A951';
+
+function getPayload() {
+  return {
+    facility:     FACILITY,
+    holder_name:  val('f-name'),
+    unit:         val('f-unit'),
+    court:        val('f-court'),
+    date:         val('f-date'),
+    slot:         val('f-slot'),
+    guests:       val('f-guests'),
+  };
+}
+
+function validate() {
+  if (!val('f-name'))  return 'Please enter your name.';
+  if (!val('f-unit'))  return 'Please enter your unit number.';
+  if (!val('f-date'))  return 'Please select a date.';
+  return null;
+}
+
+function setSuccess(data) {
+  id('s-sub').textContent   = `${data.data.court} · ${data.data.date} · ${data.data.time_slot}`;
+  id('s-expiry').textContent = `Valid today only · Max ${data.max_uses} scans`;
+}
+</script>
+</body>
+</html>

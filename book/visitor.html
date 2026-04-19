@@ -1,12 +1,87 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Visitor Day Pass — Aiphone Residence</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Helvetica Neue',Arial,sans-serif;background:#E8EDF5}header{background:#1A2B4A;padding:14px 22px;display:flex;align-items:center;gap:14px}header .logo{width:42px;height:42px;flex-shrink:0}header h1{color:#C4A050;font-size:12px;letter-spacing:3px;text-transform:uppercase}header p{color:#aab8d0;font-size:10px;margin-top:2px}.strip{background:#8B5E3C;padding:26px 22px;border-left:5px solid rgba(255,255,255,.2)}.strip .icon{font-size:34px}.strip h2{color:white;font-size:20px;margin-top:7px;font-weight:700}.strip p{color:rgba(255,255,255,.8);font-size:12px;margin-top:4px}.container{max-width:560px;margin:22px auto;padding:0 14px 60px}.notice{background:#fffbec;border:1.5px solid #C4A050;border-radius:10px;padding:11px 14px;font-size:12px;color:#7a6000;margin-bottom:14px}.card{background:white;border-radius:12px;padding:22px;box-shadow:0 3px 16px rgba(0,0,0,.07);margin-bottom:14px}.card h3{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#8B5E3C;margin-bottom:14px}.field{margin-bottom:12px}.field label{display:block;font-size:10px;font-weight:600;color:#666;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}.field input{width:100%;border:1.5px solid #e0e0e0;border-radius:7px;padding:9px 11px;font-size:13px}.field input:focus{outline:none;border-color:#8B5E3C}.rules{padding-left:15px}.rules li{font-size:12px;color:#555;margin-bottom:5px;line-height:1.5}.btn{width:100%;background:#8B5E3C;color:white;border:none;border-radius:9px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-top:5px}.confirm{display:none;text-align:center;padding:22px 14px}.confirm .check{font-size:48px}.confirm h3{color:#8B5E3C;margin-top:12px;font-size:17px}.confirm p{color:#666;margin-top:5px;font-size:12px}footer{text-align:center;padding:14px;font-size:10px;color:#999}</style></head><body>
-<header><div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100" fill="#0F1E3A"/><circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="2"/><rect x="82" y="75" width="36" height="82" fill="#C4A050"/><ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/><rect x="88" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="54" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="66" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="122" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="134" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="40" y="157" width="120" height="4" fill="#C4A050"/><text x="100" y="74" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#0F1E3A" text-anchor="middle">A</text><text x="100" y="174" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#C4A050" text-anchor="middle" letter-spacing="3">AIPHONE</text><text x="100" y="187" font-family="Arial,sans-serif" font-size="8" fill="#D4C4A0" text-anchor="middle" letter-spacing="2">RESIDENCE</text></svg></div><div><h1>Aiphone Residence</h1><p>Visitor Pass Issuance</p></div></header>
-<div class="strip"><div class="icon">👤</div><h2>Visitor Day Pass</h2><p>Digital pass for guests · Valid same day only</p></div>
-<div class="container">
-<div class="notice">⚠️ <strong>Demo Mode:</strong> In production this issues a PassQR visitor pass via API and sends it by SMS.</div>
-<div id="fv"><div class="card"><h3>Guest Details</h3><div class="field"><label>Your Unit No. *</label><input type="text" placeholder="e.g. #12-08" required></div><div class="field"><label>Guest Name *</label><input type="text" placeholder="e.g. Mr. James Wong" required></div><div class="field"><label>Vehicle Plate No.</label><input type="text" placeholder="e.g. SKA1234Z"></div><div class="field"><label>Expected Arrival</label><input type="text" placeholder="e.g. 2:00 PM"></div><button class="btn" onclick="go()">Issue Visitor Pass</button></div><div class="card"><h3>Rules</h3><ul class="rules"><li>Valid same day only — expires at midnight</li><li>Max 2 visitor passes per unit per day</li><li>Visitor must check in at security desk with QR</li><li>Residents responsible for guest conduct</li><li>Overnight stays require management approval</li></ul></div></div>
-<div class="card confirm" id="cv"><div class="check">✅</div><h3>Pass Issued!</h3><p>Share the pass link with your guest via WhatsApp or SMS.</p></div>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Visitor Pass — Aiphone Residence</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link rel="stylesheet" href="../book.css">
+</head>
+<body>
+<header>
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100" fill="#0F1E3A"/><circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="2"/><rect x="82" y="75" width="36" height="82" fill="#C4A050"/><ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/><rect x="88" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="54" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="66" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="122" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="134" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="40" y="157" width="120" height="4" fill="#C4A050"/><text x="100" y="174" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#C4A050" text-anchor="middle" letter-spacing="3">AIPHONE</text><text x="100" y="187" font-family="Arial,sans-serif" font-size="8" fill="#D4C4A0" text-anchor="middle" letter-spacing="2">RESIDENCE</text></svg></div>
+  <div><div class="brand">Aiphone Residence</div><div class="sub">Visitor Pass</div></div>
+</header>
+<div class="strip" style="background:#8B5E3C">
+  <div class="strip-icon">👤</div>
+  <div class="strip-title">Issue Visitor Pass</div>
+  <div class="strip-sub">Day pass for guests &middot; Valid today only &middot; Up to 3 scans</div>
 </div>
-<footer>© 2026 Aiphone Residence · <a href="../" style="color:#8B5E3C">← Back</a></footer>
-<script>function go(){document.getElementById('fv').style.display='none';document.getElementById('cv').style.display='block'}</script>
+<div class="container">
+  <div id="form-view">
+    <div class="card">
+      <div class="card-title">Visitor Details</div>
+      <div class="field"><label>Visitor Name *</label><input id="f-vname" type="text" placeholder="e.g. James Lim" autocomplete="name"></div>
+      <div class="field"><label>Visitor Phone</label><input id="f-vphone" type="tel" placeholder="+65 9123 4567" autocomplete="tel"></div>
+      <div class="field"><label>Your Unit No. (Host) *</label><input id="f-unit" type="text" placeholder="e.g. #12-08"></div>
+      <div class="field"><label>Purpose of Visit</label><input id="f-purpose" type="text" placeholder="e.g. Dinner, delivery, friend"></div>
+      <div class="field"><label>Visit Date *</label><input id="f-date" type="date"></div>
+      <div id="err" class="err"></div>
+      <button class="btn" style="background:#8B5E3C" id="submit-btn" onclick="book()">Issue Visitor Pass 👤</button>
+    </div>
+    <div class="card rules-card">
+      <div class="card-title">Visitor Policy</div>
+      <ul class="rules">
+        <li>Pass valid today only — expires at midnight</li>
+        <li>Resident must be present to receive visitor at lobby</li>
+        <li>Visitor must show pass QR at security checkpoint</li>
+        <li>Pass link can be shared via WhatsApp</li>
+      </ul>
+    </div>
+  </div>
+  <div id="success-view" style="display:none">
+    <div class="success-card">
+      <div class="success-icon">👤</div>
+      <div class="success-title">Visitor Pass Issued!</div>
+      <div class="success-sub" id="s-sub"></div>
+      <div class="pass-code" id="s-code"></div>
+      <div class="qr-wrap"><div id="qr"></div></div>
+      <div class="qr-hint">Share this pass with your visitor via WhatsApp</div>
+      <a class="wallet-btn apple" id="s-apple" href="#" target="_blank"><svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg> Visitor Adds to Apple Wallet</a>
+      <a class="share-btn" id="s-share" href="#">📱 Copy Pass Link to Share</a>
+      <a class="view-link" id="s-view" href="#" target="_blank">View pass details →</a>
+      <div class="expiry-note" id="s-expiry"></div>
+      <button class="btn-secondary" onclick="reset()">Issue Another Pass</button>
+    </div>
+  </div>
+</div>
+<footer>© 2026 <span>Aiphone Residence</span> &middot; <a href="../">← Back to Portal</a></footer>
+<script src="../book.js"></script>
+<script>
+const FACILITY = 'visitor';
+function getPayload() {
+  return { facility: FACILITY, visitor_name: val('f-vname'), visitor_phone: val('f-vphone'), host_unit: val('f-unit'), purpose: val('f-purpose'), date: val('f-date') };
+}
+function validate() {
+  if (!val('f-vname')) return 'Please enter the visitor name.';
+  if (!val('f-unit'))  return 'Please enter your unit number.';
+  if (!val('f-date'))  return 'Please select a visit date.';
+  return null;
+}
+function setSuccess(data) {
+  id('s-sub').textContent = `${data.holder_name} → Unit ${data.data.host_unit} · ${data.data.valid_date}${data.data.purpose ? ' · ' + data.data.purpose : ''}`;
+  id('s-expiry').textContent = 'Expires midnight today · Max 3 gate scans';
+  // Wire up share button
+  const shareBtn = id('s-share');
+  if (shareBtn) {
+    shareBtn.onclick = (e) => {
+      e.preventDefault();
+      navigator.clipboard.writeText(data.public_url).then(() => {
+        shareBtn.textContent = '✅ Link copied!';
+        setTimeout(() => { shareBtn.textContent = '📱 Copy Pass Link to Share'; }, 2500);
+      });
+    };
+  }
+}
+</script>
 </body></html>
