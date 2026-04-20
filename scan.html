@@ -20,11 +20,56 @@ header p{color:#aab8d0;font-size:10px;margin-top:1px}
 .scan-header h2{font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#C4A050}
 .scan-header p{font-size:11px;color:#aab8d0;margin-top:1px}
 
-#reader-wrap{position:relative;background:#000;aspect-ratio:1;overflow:hidden;transition:opacity .3s}
+/* ── Camera viewport ── */
+#reader-wrap{
+  position:relative;
+  background:#000;
+  width:100%;
+  aspect-ratio:1;          /* square crop */
+  overflow:hidden;
+  transition:opacity .3s;
+}
 #reader-wrap.locked{opacity:.35;pointer-events:none}
-#reader{width:100%!important}
-#reader video{width:100%!important;height:100%!important;object-fit:cover}
-.scan-overlay{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
+
+/* Pin html5-qrcode's root div to fill the wrapper exactly */
+#reader{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  overflow:hidden!important;
+}
+
+/* Scan region should also fill */
+#reader__scan_region,
+#reader > div:first-child{
+  width:100%!important;
+  height:100%!important;
+  position:absolute!important;
+  inset:0!important;
+}
+
+/* Video fills and crops to the container */
+#reader video{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  display:block!important;
+}
+
+/* Hide html5-qrcode's injected dashboard / shaded overlay / file-select UI */
+#reader__dashboard,
+#reader__dashboard_section,
+#reader__filescan_input,
+#reader__status_span,
+#reader__header_message{
+  display:none!important;
+}
+
+/* Scan overlay sits on top of the video */
+.scan-overlay{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;z-index:2}
 .scan-frame{width:55%;aspect-ratio:1;border-radius:6px;box-shadow:0 0 0 9999px rgba(0,0,0,0.55)}
 .scan-corners{position:absolute;width:55%;aspect-ratio:1}
 .scan-corners::before,.scan-corners::after,.scan-corners span::before,.scan-corners span::after{
@@ -33,16 +78,15 @@ header p{color:#aab8d0;font-size:10px;margin-top:1px}
 .scan-corners::after{top:0;right:0;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
 .scan-corners span::before{bottom:0;left:0;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
 .scan-corners span::after{bottom:0;right:0;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
-.scan-line{position:absolute;width:55%;height:2px;background:linear-gradient(90deg,transparent,#C4A050,transparent);animation:scanline 2.5s ease-in-out infinite}
+.scan-line{position:absolute;width:55%;height:2px;background:linear-gradient(90deg,transparent,#C4A050,transparent);animation:scanline 2.5s ease-in-out infinite;z-index:3}
 @keyframes scanline{0%,100%{top:22.5%;opacity:0}10%,90%{opacity:1}50%{top:77.5%}}
 
-.lock-banner{display:none;position:absolute;inset:0;background:rgba(0,0,0,.72);flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:2}
+.lock-banner{display:none;position:absolute;inset:0;background:rgba(0,0,0,.72);flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:4}
 .lock-banner.show{display:flex}
 .lock-banner span{font-size:28px}
 .lock-banner p{font-size:13px;color:#aab8d0;letter-spacing:.5px}
 
 .scan-controls{padding:14px 16px;display:flex;gap:8px;align-items:center}
-/* 16px font prevents iOS zoom-on-focus */
 .gate-select{flex:1;background:#1f2937;border:1px solid #374151;border-radius:8px;color:#fff;padding:0 11px;font-size:16px;outline:none;min-height:46px;-webkit-appearance:none;appearance:none}
 .gate-select:focus{border-color:#C4A050}
 .btn-cam{background:#1A2B4A;border:1px solid #C4A050;color:#C4A050;border-radius:8px;padding:0 16px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .2s;min-height:46px}
@@ -52,7 +96,6 @@ header p{color:#aab8d0;font-size:10px;margin-top:1px}
 .manual{padding:0 16px 14px}
 .manual label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px}
 .manual-row{display:flex;gap:8px}
-/* 16px font prevents iOS zoom-on-focus */
 .manual input{flex:1;background:#1f2937;border:1px solid #374151;border-radius:8px;padding:0 12px;font-size:16px;color:#fff;font-family:monospace;outline:none;letter-spacing:1px;text-transform:uppercase;min-height:46px}
 .manual input::placeholder{text-transform:none;font-family:sans-serif;letter-spacing:0;color:#4b5563;font-size:14px}
 .manual input:focus{border-color:#C4A050}
@@ -81,16 +124,12 @@ header p{color:#aab8d0;font-size:10px;margin-top:1px}
 .modal-dismiss{margin:16px 22px 22px;width:calc(100% - 44px);padding:16px;border:none;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:.5px;transition:opacity .2s;min-height:54px}
 .modal-dismiss:hover{opacity:.88}
 
-/* Resident (green) */
 .modal.valid .modal-header{background:#064e3b}.modal.valid .modal-title{color:#6ee7b7}
 .modal.valid .modal-body{background:#071a11}.modal.valid .modal-dismiss{background:#6ee7b7;color:#022c22}
-/* Invalid (red) */
 .modal.invalid .modal-header{background:#450a0a}.modal.invalid .modal-title{color:#fca5a5}
 .modal.invalid .modal-body{background:#1a0808}.modal.invalid .modal-dismiss{background:#fca5a5;color:#450a0a}
-/* Warning (amber) */
 .modal.warn .modal-header{background:#451a03}.modal.warn .modal-title{color:#fdba74}
 .modal.warn .modal-body{background:#1a0e05}.modal.warn .modal-dismiss{background:#fdba74;color:#451a03}
-/* Visitor (blue) */
 .modal.visitor .modal-header{background:#1e3a5f}.modal.visitor .modal-title{color:#93c5fd}
 .modal.visitor .modal-body{background:#0a1929}.modal.visitor .modal-dismiss{background:#93c5fd;color:#0a1929}
 
@@ -194,7 +233,6 @@ let processing = false;
 
 window.addEventListener('DOMContentLoaded', function() {
   startCam();
-  // Enter key on manual input
   document.getElementById('code-input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') { e.preventDefault(); submitCode(); }
   });
@@ -203,9 +241,14 @@ window.addEventListener('DOMContentLoaded', function() {
 async function startCam() {
   try {
     scanner = new Html5Qrcode('reader');
+    // Use a qrbox function so the scan region is relative to the actual rendered size
+    const qrboxFn = function(w, h) {
+      var side = Math.round(Math.min(w, h) * 0.55);
+      return { width: side, height: side };
+    };
     await scanner.start(
       { facingMode: 'environment' },
-      { fps: 10, qrbox: { width: 220, height: 220 }, aspectRatio: 1.0 },
+      { fps: 10, qrbox: qrboxFn, aspectRatio: 1.0 },
       onQRDetected, function() {}
     );
     camRunning = true;
@@ -264,7 +307,6 @@ function fmtDate(d) {
 
 function buildModal(code, data) {
   if (data.success) {
-    // Haptic feedback on valid scan
     if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
 
     const timeParts = (data.last_entry || '').split(' · ');
@@ -343,7 +385,6 @@ function buildModal(code, data) {
       addHistory(code, data.holder_name || 'Unknown', 'ok', data.last_entry, pt);
     }
   } else {
-    // Single short vibrate for deny
     if (navigator.vibrate) navigator.vibrate(300);
     const expired = data.status === 'expired';
     const revoked = data.status === 'revoked';
@@ -381,7 +422,6 @@ function dismissModal() {
   modalOpen = false; showLockBanner(false); lockUI(false);
 }
 document.getElementById('modal-backdrop').addEventListener('click', function(e) { if (e.target === this) dismissModal(); });
-// Keyboard: Escape to dismiss
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && modalOpen) dismissModal(); });
 
 function lockUI(lock) {
