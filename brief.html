@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Discussion Brief — Aiphone × PassQR</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#07101f;color:#e5e7eb;min-height:100vh}
+header{background:#1A2B4A;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(196,160,80,.3)}
+.hdr-left{display:flex;align-items:center;gap:12px}
+.logo{width:34px;height:34px}
+.hdr-title{color:#C4A050;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;font-weight:700}
+.hdr-sub{color:#7a90b0;font-size:10px;margin-top:2px}
+.hdr-actions{display:flex;gap:8px}
+.hdr-btn{padding:7px 14px;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;transition:opacity .2s}
+.hdr-btn.primary{background:#C4A050;color:#0d1a30}
+.hdr-btn.ghost{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:#e5e7eb}
+.hdr-btn:hover{opacity:.82}
+
+.hero{background:linear-gradient(160deg,#1A2B4A 0%,#0d1a30 55%,#07101f 100%);padding:36px 24px 32px;border-bottom:1px solid rgba(196,160,80,.12)}
+.hero-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#C4A050;font-weight:700;margin-bottom:8px}
+.hero-title{font-family:'DM Serif Display',serif;font-size:clamp(20px,4vw,30px);color:#fff;line-height:1.25;margin-bottom:6px}
+.hero-title em{color:#C4A050;font-style:italic}
+.hero-meta{font-size:12px;color:#4b5563}
+
+.container{max-width:780px;margin:0 auto;padding:28px 20px 60px}
+
+/* SECTION */
+.topic{background:#111827;border:1px solid #1f2937;border-radius:14px;margin-bottom:14px;overflow:hidden}
+.topic-header{display:flex;align-items:center;gap:12px;padding:16px 18px 14px}
+.topic-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.topic-icon{font-size:20px;flex-shrink:0}
+.topic-title{font-size:14px;font-weight:700;color:#f1f5f9}
+.topic-sub{font-size:11px;color:#6b7280;margin-top:1px}
+.topic-body{padding:0 18px 16px}
+.point{display:flex;align-items:flex-start;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px;line-height:1.6;color:#9ca3af}
+.point:last-child{border-bottom:none}
+.point-dot{flex-shrink:0;margin-top:4px;font-size:10px}
+.point strong{color:#e5e7eb}
+.point em{color:#C4A050;font-style:normal}
+
+/* TALK TRACK */
+.talk{background:#0d1a30;border-left:3px solid #C4A050;border-radius:0 8px 8px 0;padding:10px 14px;margin:10px 0 4px;font-size:12px;color:#aab8d0;line-height:1.65;font-style:italic}
+.talk strong{color:#C4A050;font-style:normal}
+
+/* CLOSING */
+.closing{background:linear-gradient(135deg,#131e2e,#1a2b4a);border:1.5px solid rgba(196,160,80,.3);border-radius:14px;padding:24px;text-align:center;margin-top:24px}
+.closing-title{font-family:'DM Serif Display',serif;font-size:20px;color:#fff;margin-bottom:8px}
+.closing-sub{font-size:13px;color:#7a90b0;max-width:480px;margin:0 auto 18px;line-height:1.6}
+.closing-links{display:flex;justify-content:center;flex-wrap:wrap;gap:8px}
+.closing-btn{padding:10px 18px;border-radius:9px;font-size:12px;font-weight:700;text-decoration:none;transition:opacity .2s}
+.closing-btn.primary{background:#C4A050;color:#0d1a30}
+.closing-btn.ghost{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:#e5e7eb}
+.closing-btn:hover{opacity:.85}
+
+footer{text-align:center;padding:20px;font-size:11px;color:#374151;border-top:1px solid #111827}
+footer a{color:#C4A050;text-decoration:none}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-left">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100" fill="#0F1E3A"/><circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="2"/><rect x="82" y="75" width="36" height="82" fill="#C4A050"/><ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/><rect x="88" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="54" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="66" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="122" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="134" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="40" y="157" width="120" height="4" fill="#C4A050"/><text x="100" y="174" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#C4A050" text-anchor="middle" letter-spacing="3">AIPHONE</text><text x="100" y="187" font-family="Arial,sans-serif" font-size="8" fill="#D4C4A0" text-anchor="middle" letter-spacing="2">RESIDENCE</text></svg></div>
+    <div><div class="hdr-title">Discussion Brief</div><div class="hdr-sub">Aiphone IXG × PassQR · dasecure.com</div></div>
+  </div>
+  <div class="hdr-actions">
+    <a href="demo.html" class="hdr-btn primary">🎯 Demo</a>
+    <a href="ux-analysis.html" class="hdr-btn ghost">UX Research</a>
+    <a href="architecture.html" class="hdr-btn ghost">Architecture</a>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-eyebrow">Meeting Prep · dasecure × Aiphone</div>
+  <div class="hero-title">Tomorrow's Discussion —<br><em>6 Topics to Cover</em></div>
+  <div class="hero-meta">Keep this page open on your phone as a running guide</div>
+</div>
+
+<div class="container">
+
+  <!-- TOPIC 1 -->
+  <div class="topic">
+    <div class="topic-header">
+      <div class="topic-num" style="background:rgba(59,130,246,.15);color:#60a5fa">1</div>
+      <div class="topic-icon">👛</div>
+      <div>
+        <div class="topic-title">The Case for Apple &amp; Google Wallet</div>
+        <div class="topic-sub">Why Wallet is the right delivery layer for property access</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="point"><span class="point-dot">›</span><span><strong>Already on every phone.</strong> Apple Wallet and Google Wallet are pre-installed on 100% of modern iOS and Android devices. No app download, no account creation, no onboarding friction for residents.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Works offline.</strong> The QR code in Wallet is rendered locally — it never needs an internet connection to display. Ideal for basement car parks, lift lobbies with poor signal, or residents with limited data plans.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Silent OTA updates.</strong> When management updates a pass (changes access level, extends expiry, revokes), the Wallet card updates automatically in the background — no action needed from the resident.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Trusted, familiar UX.</strong> Residents already use Wallet for boarding passes and payment cards. The mental model is identical — show your phone, you're in. No learning curve.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Lock screen accessible.</strong> On iPhone, passes surface from the lock screen automatically when near an NFC reader or at a recognised location. The QR is one swipe away even with a locked phone.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>No vendor lock-in for residents.</strong> If a resident switches from iPhone to Android, their pass moves too. Not tied to any proprietary app ecosystem.</span></div>
+      <div class="talk"><strong>Say:</strong> "Every airline in the world figured out that the best place for a boarding pass is Wallet — not a custom app. Property access is the same problem. Residents don't want another app. They want their phone to open the door."</div>
+    </div>
+  </div>
+
+  <!-- TOPIC 2 -->
+  <div class="topic">
+    <div class="topic-header">
+      <div class="topic-num" style="background:rgba(239,68,68,.15);color:#f87171">2</div>
+      <div class="topic-icon">📱</div>
+      <div>
+        <div class="topic-title">Aiphone IXG App — Honest Shortcomings</div>
+        <div class="topic-sub">What real users are saying (App Store research)</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="point"><span class="point-dot">›</span><span><strong>Notification latency.</strong> Push notifications arrive so late that visitors press the buzzer a second time, causing "unit in use" errors. <em>Delivery drivers walk away.</em></span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>~50% door release failure rate.</strong> The door release depends on a live video call being established. When the stream fails, the door stays closed. One reviewer: "It seems the developers forgot the most important feature is opening the door."</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>App crashes 2–3× per day.</strong> Even residents who rated it 3 stars noted it crashes daily and remains unreliable after months of use.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Complex install &amp; configuration.</strong> Multiple reinstalls, repeated license agreement prompts, and per-device gateway pairing create friction — especially for elderly residents.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>No visitor pass management.</strong> Third-party reviews explicitly flag that Aiphone "lacks Visitor Passes for guest access, delivery codes, and robust property management integrations."</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Root cause:</strong> The app puts the resident <em>in the critical path of every access event</em>. Visitor arrives → notification → resident responds → video connects → door release. Five failure points for a 2-second interaction.</span></div>
+      <div class="talk"><strong>Frame this carefully:</strong> "We're not here to criticise Aiphone's hardware — the IXG door station, camera, and QR scanner are excellent. The friction is in the app layer, and that's where we come in."</div>
+    </div>
+  </div>
+
+  <!-- TOPIC 3 -->
+  <div class="topic">
+    <div class="topic-header">
+      <div class="topic-num" style="background:rgba(110,231,183,.15);color:#6ee7b7">3</div>
+      <div class="topic-icon">🪪</div>
+      <div>
+        <div class="topic-title">PassQR Strengths</div>
+        <div class="topic-sub">What we bring that the IXG ecosystem can't do today</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="point"><span class="point-dot">›</span><span><strong>Pre-authorized access model.</strong> Known people (residents, regular visitors, contractors) arrive with a pass already in Wallet. No notification, no resident action, no video call — IXG scans QR, PassQR validates in &lt;2s, door opens. Zero failure points.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Full pass ecosystem.</strong> 9 template types: Owner, Tenant, Visitor (day pass), Contractor, Tennis, BBQ, KTV, Gym, Pool. Each with branded colours, icons, and expiry logic. All in Wallet.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Visitor pass via WhatsApp.</strong> Resident issues a pass in 10 seconds — visitor receives it directly in WhatsApp, adds to Wallet, shows QR at gate. No intercom call needed. No guard involvement.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Live management dashboard.</strong> Every scan appears in a real-time feed within 4 seconds. Management sees who is active in the building right now, which facilities are in use, and which gates are busiest — on any browser, no software install.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>AI-native management.</strong> Property managers issue passes, query scan history, and manage the entire residence via plain English using Claude + PassQR MCP. "Create a contractor pass for Cool Air Services today" — done in 3 seconds.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Zero new hardware.</strong> Runs on the IXG door station's existing QR scanner and HTTP API client. One configuration change in the IXG Support Tool — no new devices, no wiring, no installation cost.</span></div>
+    </div>
+  </div>
+
+  <!-- TOPIC 4 -->
+  <div class="topic">
+    <div class="topic-header">
+      <div class="topic-num" style="background:rgba(196,160,80,.15);color:#C4A050">4</div>
+      <div class="topic-icon">🤝</div>
+      <div>
+        <div class="topic-title">Collaboration Benefits — Beyond a One-Time Sale</div>
+        <div class="topic-sub">Why this is a recurring relationship, not a hardware transaction</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="point"><span class="point-dot">›</span><span><strong>Capturing resident mindshare.</strong> The IXG hardware is a one-time purchase that sits in the wall. PassQR is the daily touchpoint — residents open their Wallet every time they enter the building, book a facility, or invite a guest. <em>That daily interaction belongs to whoever owns the pass layer.</em></span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Recurring revenue model.</strong> PassQR is a SaaS layer on top of the IXG hardware investment. Aiphone sells the door station once; PassQR generates monthly recurring revenue per property. For Aiphone as a distributor, this means ARR from existing installed base — not just new unit sales.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Differentiated product offering.</strong> "Aiphone IXG + PassQR" is a meaningfully better pitch to property developers than "Aiphone IXG" alone. Competitors lack this layer. It becomes a reason to choose Aiphone over ButterflyMX or similar.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Upsell path at every property.</strong> The base integration is gate access. Natural upsells are: facility booking (tennis, pool, gym), contractor pass management, visitor analytics, AI concierge for management offices. Each is an incremental add-on per property.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Data that improves the product.</strong> Every scan, booking, and visitor issuance generates structured data. Over time this reveals usage patterns (peak gate times, popular facilities, contractor frequency) that are valuable to both property managers and Aiphone's product team.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Stickiness.</strong> Once residents have their Wallet pass and have invited visitors through the system, switching costs are high. This protects Aiphone's installed base from hardware replacement cycles.</span></div>
+      <div class="talk"><strong>Key framing:</strong> "A door intercom is a commodity. The ongoing relationship with the resident — their identity, their bookings, their visitors — is the asset. PassQR is how Aiphone owns that relationship instead of handing it to a competitor."</div>
+    </div>
+  </div>
+
+  <!-- TOPIC 5 -->
+  <div class="topic">
+    <div class="topic-header">
+      <div class="topic-num" style="background:rgba(192,132,252,.15);color:#c084fc">5</div>
+      <div class="topic-icon">🏗️</div>
+      <div>
+        <div class="topic-title">Integration — Practical &amp; Low-Risk</div>
+        <div class="topic-sub">How easy this actually is to deploy</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="point"><span class="point-dot">›</span><span><strong>Single configuration change.</strong> The IXG door station has a built-in "external access control URL" field. Point it at the PassQR validation endpoint. That's the entire integration — no new hardware, no firmware update, no rewiring.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Non-destructive.</strong> The IXG video intercom continues to work exactly as before for unexpected visitors. PassQR adds a new path for known visitors — it doesn't replace the existing one. Rollout risk is near-zero.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Cloud-native, no on-premise.</strong> PassQR and the Supabase backend are fully hosted. No server to manage at the property. Updates deploy silently. The management portal works on any browser — no software installation.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Proven at POC level already.</strong> This demo is running on a real Supabase project with real PassQR passes, a live AI concierge, and a functioning edge function pipeline. It's not a mockup — it's deployable today.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Pilot proposal.</strong> Suggest a single building pilot — one IXG door station, one property manager, ~50 residents. 30-day trial with full scan data and a debrief. Low commitment, high signal.</span></div>
+    </div>
+  </div>
+
+  <!-- TOPIC 6 -->
+  <div class="topic">
+    <div class="topic-header">
+      <div class="topic-num" style="background:rgba(34,197,94,.15);color:#22c55e">6</div>
+      <div class="topic-icon">🧭</div>
+      <div>
+        <div class="topic-title">Things You Might Not Have Considered</div>
+        <div class="topic-sub">Angles worth raising to show depth</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="point"><span class="point-dot">›</span><span><strong>The elderly resident problem.</strong> Aiphone's app creates a digital divide — older residents struggle with it the most. PassQR solves this: management can print a QR code sticker for residents who don't want to use a phone at all. Same backend, zero friction.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Short-term rental &amp; Airbnb risk.</strong> Without a pass management layer, properties with short-stay units have no way to issue and revoke access digitally. PassQR's time-limited passes with WhatsApp delivery solve this directly — and it's a growing compliance concern for Singapore condos.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Contractor &amp; service provider tracking.</strong> Most buildings have no audit trail for who let in the aircon technician or the cleaner. PassQR contractor passes create a timestamped scan log per visit — useful for building management and insurance.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Property developer differentiation.</strong> New condo launches in Singapore compete on smart home features. "Wallet-native access, AI concierge, digital visitor management" is a marketable differentiator at the point of sale — not just an operational tool.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>Management company scalability.</strong> Property management firms managing multiple buildings can run all of them from one PassQR dashboard with one AI interface. The same agent that manages Aiphone Residence manages the next building — zero marginal setup cost.</span></div>
+      <div class="point"><span class="point-dot">›</span><span><strong>The AI angle is early-mover.</strong> No intercom vendor has a working AI pass management layer today. This demo shows one that's live. Whoever gets to market first with "ask the AI to manage building access" owns the narrative for the next 3 years.</span></div>
+    </div>
+  </div>
+
+  <!-- CLOSING -->
+  <div class="closing">
+    <div class="closing-title">The One-Line Pitch</div>
+    <div class="closing-sub">"Aiphone builds the best door stations in the market. PassQR makes sure residents and visitors never have to fight with an app to use them — and gives management a live, AI-powered view of everything happening at their property."</div>
+    <div class="closing-links">
+      <a href="demo.html" class="closing-btn primary">🎯 Run demo during meeting</a>
+      <a href="ux-analysis.html" class="closing-btn ghost">📊 App store research</a>
+      <a href="architecture.html" class="closing-btn ghost">🏗️ Architecture diagram</a>
+      <a href="./" class="closing-btn ghost">🏠 Live portal</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  dasecure.com × PassQR · <a href="./">Portal</a> · <a href="demo.html">Demo</a> · <a href="ux-analysis.html">UX Research</a> · <a href="architecture.html">Architecture</a>
+</footer>
+
+</body>
+</html>
