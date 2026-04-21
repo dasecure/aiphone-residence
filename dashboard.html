@@ -12,9 +12,13 @@ header{background:#1A2B4A;padding:14px 22px;display:flex;align-items:center;just
 .logo{width:36px;height:36px;flex-shrink:0}
 .header-title{color:#C4A050;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;font-weight:700}
 .header-sub{color:#aab8d0;font-size:10px;margin-top:2px}
+.header-right{display:flex;align-items:center;gap:12px}
 .live-badge{display:flex;align-items:center;gap:6px;font-size:11px;color:#6ee7b7;font-weight:600;letter-spacing:.5px}
 .live-dot{width:8px;height:8px;border-radius:50%;background:#6ee7b7;animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(110,231,183,.4)}50%{opacity:.8;box-shadow:0 0 0 6px rgba(110,231,183,0)}}
+.sound-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#aab8d0;font-size:16px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0}
+.sound-btn:hover{background:rgba(255,255,255,.14)}
+.sound-btn.muted{opacity:.4}
 .container{max-width:1200px;margin:0 auto;padding:20px}
 .stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .stat-card{background:#111827;border:1px solid #1f2937;border-radius:14px;padding:16px 18px}
@@ -33,13 +37,10 @@ header{background:#1A2B4A;padding:14px 22px;display:flex;align-items:center;just
 @keyframes slideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
 .feed-item:hover{background:#1a2332}
 .feed-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:5px}
-.feed-dot.valid{background:#22c55e}
-.feed-dot.invalid{background:#ef4444}
+.feed-dot.valid{background:#22c55e}.feed-dot.invalid{background:#ef4444}
 .feed-body{flex:1;min-width:0}
 .feed-name{font-size:13px;font-weight:700;color:#f1f5f9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* Gate shown prominently on second line */
 .feed-gate{font-size:11px;color:#60a5fa;font-weight:600;margin-top:2px;display:flex;align-items:center;gap:4px}
-.feed-gate-icon{font-size:10px;opacity:.7}
 .feed-meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
 .feed-tag{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;white-space:nowrap}
 .feed-time{font-size:11px;color:#4b5563;white-space:nowrap;margin-top:2px;flex-shrink:0;text-align:right}
@@ -59,8 +60,7 @@ header{background:#1A2B4A;padding:14px 22px;display:flex;align-items:center;just
 .facility-bar-fill{height:100%;border-radius:3px;transition:width .6s ease;background:linear-gradient(90deg,#1A2B4A,#C4A050)}
 .gate-list{padding:14px 18px;display:grid;gap:8px}
 .gate-row{display:flex;justify-content:space-between;align-items:center;font-size:12px}
-.gate-name{color:#9ca3af}
-.gate-count{font-weight:700;color:#60a5fa}
+.gate-name{color:#9ca3af}.gate-count{font-weight:700;color:#60a5fa}
 .refresh-bar{height:2px;background:#1f2937;overflow:hidden}
 .refresh-bar-fill{height:100%;background:#C4A050;transition:width linear;width:100%}
 footer{text-align:center;padding:20px;font-size:11px;color:#374151;margin-top:20px}
@@ -80,7 +80,10 @@ footer span{color:#C4A050}
       <div class="header-sub">Management Dashboard · <span id="h-date"></span></div>
     </div>
   </div>
-  <div class="live-badge"><div class="live-dot"></div><span id="live-status">Loading…</span></div>
+  <div class="header-right">
+    <button class="sound-btn" id="sound-btn" onclick="toggleSound()" title="Toggle scan alerts">🔔</button>
+    <div class="live-badge"><div class="live-dot"></div><span id="live-status">Loading…</span></div>
+  </div>
 </header>
 
 <div class="refresh-bar"><div class="refresh-bar-fill" id="rfill"></div></div>
@@ -126,8 +129,55 @@ footer span{color:#C4A050}
 </footer>
 
 <script>
-const STATS_URL = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-stats';
+const STATS_URL  = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-stats';
 const REFRESH_MS = 4000;
+
+// ── Sound ──────────────────────────────────────────────────────────────────
+var _audioCtx   = null;
+var _soundOn    = true;
+var _firstLoad  = true;   // suppress beep on initial page load
+var _lastScanId = null;   // track newest scan to detect new arrivals
+
+function getAudioCtx() {
+  if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (_audioCtx.state === 'suspended') _audioCtx.resume();
+  return _audioCtx;
+}
+
+// Soft two-note alert beep for new scan arrival
+function playNewScanBeep() {
+  if (!_soundOn) return;
+  try {
+    var ctx = getAudioCtx();
+    var now = ctx.currentTime;
+    [[880, 0, 0.07], [1046.5, 0.09, 0.09]].forEach(function(p) {
+      var osc  = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(p[0], now + p[1]);
+      gain.gain.setValueAtTime(0, now + p[1]);
+      gain.gain.linearRampToValueAtTime(0.10, now + p[1] + 0.008);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + p[1] + p[2]);
+      osc.start(now + p[1]); osc.stop(now + p[1] + p[2] + 0.02);
+    });
+  } catch(e) {}
+}
+
+function toggleSound() {
+  _soundOn = !_soundOn;
+  var btn = document.getElementById('sound-btn');
+  btn.textContent = _soundOn ? '🔔' : '🔕';
+  btn.classList.toggle('muted', !_soundOn);
+  // Prime AudioContext on first toggle (requires user gesture)
+  if (_soundOn) getAudioCtx();
+}
+// Prime on any click so first beep works on iOS
+document.addEventListener('click', function primeAudio() {
+  if (_soundOn) getAudioCtx();
+  document.removeEventListener('click', primeAudio);
+}, { once: true });
+// ─────────────────────────────────────────────────────────────────────────────
 
 const FACILITY_ICONS = {
   'Tennis Court':'🎾','BBQ Pit':'🔥','KTV Room':'🎤','Gym':'🏋️',
@@ -145,31 +195,37 @@ function fmtTime(iso) {
   return new Date(iso).toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'Asia/Singapore'});
 }
 function timeSince(iso) {
-  const d = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  var d = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
   if (d < 60) return d + 's ago';
   if (d < 3600) return Math.floor(d/60) + 'm ago';
   return Math.floor(d/3600) + 'h ago';
 }
 
 function renderFeed(feed) {
-  const el = document.getElementById('feed');
+  var el = document.getElementById('feed');
   document.getElementById('feed-count').textContent = feed.length + ' scans';
   if (!feed.length) { el.innerHTML = '<div class="feed-empty">No scan activity yet</div>'; return; }
 
+  // Detect new scan and beep (skip on first load)
+  var newestId = feed[0] && feed[0].id;
+  if (!_firstLoad && newestId && newestId !== _lastScanId) {
+    playNewScanBeep();
+  }
+  if (newestId) _lastScanId = newestId;
+
   el.innerHTML = feed.map(function(s) {
-    const isValid = s.result === 'valid';
-    const gate = s.gate || 'Staff Scanner';
-    const tags = [];
+    var isValid = s.result === 'valid';
+    var gate = s.gate || 'Staff Scanner';
+    var tags = [];
     if (s.unit) tags.push('<span class="feed-tag" style="background:#1A2B4A;color:#C4A050">' + s.unit + '</span>');
     if (s.tier) tags.push('<span class="feed-tag" style="background:#1A2B4A;color:#aab8d0">' + s.tier + '</span>');
-    const fLabel = s.facility || s.template_name;
+    var fLabel = s.facility || s.template_name;
     if (fLabel) tags.push('<span class="feed-tag" style="background:' + s.template_color + '22;color:' + s.template_color + '">' + icon(fLabel) + ' ' + fLabel + '</span>');
-
     return '<div class="feed-item">' +
       '<div class="feed-dot ' + (isValid ? 'valid' : 'invalid') + '"></div>' +
       '<div class="feed-body">' +
         '<div class="feed-name">' + (s.holder_name || s.code || 'Unknown') + '</div>' +
-        '<div class="feed-gate"><span class="feed-gate-icon">📍</span>' + gate + '</div>' +
+        '<div class="feed-gate"><span style="font-size:10px;opacity:.7">📍</span>' + gate + '</div>' +
         (tags.length ? '<div class="feed-meta">' + tags.join('') + '</div>' : '') +
       '</div>' +
       '<div class="feed-time">' + fmtTime(s.scanned_at) + '</div>' +
@@ -178,7 +234,7 @@ function renderFeed(feed) {
 }
 
 function renderActive(active) {
-  const el = document.getElementById('active-list');
+  var el = document.getElementById('active-list');
   document.getElementById('active-count').textContent = active.length;
   document.getElementById('s-active').textContent = active.length;
   if (!active.length) { el.innerHTML = '<div class="feed-empty" style="padding:20px;font-size:12px">No activity in last 2 hours</div>'; return; }
@@ -195,10 +251,10 @@ function renderActive(active) {
 }
 
 function renderFacility(byFacility) {
-  const el = document.getElementById('facility-list');
-  const entries = Object.entries(byFacility).sort(function(a,b){ return b[1]-a[1]; });
+  var el = document.getElementById('facility-list');
+  var entries = Object.entries(byFacility).sort(function(a,b){ return b[1]-a[1]; });
   if (!entries.length) { el.innerHTML = '<div style="color:#4b5563;font-size:12px">No data yet</div>'; return; }
-  const max = entries[0][1] || 1;
+  var max = entries[0][1] || 1;
   el.innerHTML = entries.map(function(e) {
     return '<div class="facility-row">' +
       '<div class="facility-header"><span class="facility-name">' + icon(e[0]) + ' ' + e[0] + '</span><span class="facility-count">' + e[1] + '</span></div>' +
@@ -208,8 +264,8 @@ function renderFacility(byFacility) {
 }
 
 function renderGates(byGate) {
-  const el = document.getElementById('gate-list');
-  const entries = Object.entries(byGate).sort(function(a,b){ return b[1]-a[1]; });
+  var el = document.getElementById('gate-list');
+  var entries = Object.entries(byGate).sort(function(a,b){ return b[1]-a[1]; });
   if (!entries.length) { el.innerHTML = '<div style="color:#4b5563;font-size:12px">No data yet</div>'; return; }
   el.innerHTML = entries.map(function(e) {
     return '<div class="gate-row"><span class="gate-name">📍 ' + e[0] + '</span><span class="gate-count">' + e[1] + '</span></div>';
@@ -218,11 +274,11 @@ function renderGates(byGate) {
 
 async function refresh() {
   try {
-    const res = await fetch(STATS_URL);
-    const data = await res.json();
-    const now = new Date();
+    var res  = await fetch(STATS_URL);
+    var data = await res.json();
+    var now  = new Date();
     document.getElementById('live-status').textContent = 'LIVE · ' + now.toLocaleTimeString('en-SG',{timeZone:'Asia/Singapore'});
-    const s = data.stats || {};
+    var s = data.stats || {};
     document.getElementById('s-today').textContent  = s.scans_today  ?? 0;
     document.getElementById('s-unique').textContent = s.unique_today ?? 0;
     document.getElementById('s-total').textContent  = s.total_passes ?? 0;
@@ -232,13 +288,14 @@ async function refresh() {
     renderFacility(s.by_facility || {});
     renderGates(s.by_gate || {});
     startProgress();
+    _firstLoad = false;  // after first successful load, enable beeping
   } catch(e) {
     document.getElementById('live-status').textContent = 'Error — retrying…';
   }
 }
 
 function startProgress() {
-  const fill = document.getElementById('rfill');
+  var fill = document.getElementById('rfill');
   fill.style.transition = 'none';
   fill.style.width = '100%';
   fill.offsetWidth;

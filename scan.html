@@ -13,86 +13,37 @@ header .logo{width:38px;height:38px;flex-shrink:0}
 header h1{color:#C4A050;font-size:13px;letter-spacing:2px;text-transform:uppercase;font-weight:700}
 header p{color:#aab8d0;font-size:10px;margin-top:1px}
 .container{max-width:480px;margin:0 auto;padding:16px}
-
 .scan-card{background:#111827;border:1px solid #1f2937;border-radius:16px;overflow:hidden;margin-bottom:14px}
 .scan-header{background:#1A2B4A;padding:12px 16px;display:flex;align-items:center;gap:10px}
 .scan-header .icon{font-size:20px}
 .scan-header h2{font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#C4A050}
 .scan-header p{font-size:11px;color:#aab8d0;margin-top:1px}
-
-/* ── Camera viewport ── */
-#reader-wrap{
-  position:relative;
-  background:#000;
-  width:100%;
-  aspect-ratio:1;          /* square crop */
-  overflow:hidden;
-  transition:opacity .3s;
-}
+#reader-wrap{position:relative;background:#000;width:100%;aspect-ratio:1;overflow:hidden;transition:opacity .3s}
 #reader-wrap.locked{opacity:.35;pointer-events:none}
-
-/* Pin html5-qrcode's root div to fill the wrapper exactly */
-#reader{
-  position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  overflow:hidden!important;
-}
-
-/* Scan region should also fill */
-#reader__scan_region,
-#reader > div:first-child{
-  width:100%!important;
-  height:100%!important;
-  position:absolute!important;
-  inset:0!important;
-}
-
-/* Video fills and crops to the container */
-#reader video{
-  position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  object-fit:cover!important;
-  display:block!important;
-}
-
-/* Hide html5-qrcode's injected dashboard / shaded overlay / file-select UI */
-#reader__dashboard,
-#reader__dashboard_section,
-#reader__filescan_input,
-#reader__status_span,
-#reader__header_message{
-  display:none!important;
-}
-
-/* Scan overlay sits on top of the video */
+#reader{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;overflow:hidden!important}
+#reader__scan_region,#reader > div:first-child{width:100%!important;height:100%!important;position:absolute!important;inset:0!important}
+#reader video{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;display:block!important}
+#reader__dashboard,#reader__dashboard_section,#reader__filescan_input,#reader__status_span,#reader__header_message{display:none!important}
 .scan-overlay{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;z-index:2}
 .scan-frame{width:55%;aspect-ratio:1;border-radius:6px;box-shadow:0 0 0 9999px rgba(0,0,0,0.55)}
 .scan-corners{position:absolute;width:55%;aspect-ratio:1}
-.scan-corners::before,.scan-corners::after,.scan-corners span::before,.scan-corners span::after{
-  content:'';position:absolute;width:22px;height:22px;border-color:#C4A050;border-style:solid}
+.scan-corners::before,.scan-corners::after,.scan-corners span::before,.scan-corners span::after{content:'';position:absolute;width:22px;height:22px;border-color:#C4A050;border-style:solid}
 .scan-corners::before{top:0;left:0;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
 .scan-corners::after{top:0;right:0;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
 .scan-corners span::before{bottom:0;left:0;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
 .scan-corners span::after{bottom:0;right:0;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
 .scan-line{position:absolute;width:55%;height:2px;background:linear-gradient(90deg,transparent,#C4A050,transparent);animation:scanline 2.5s ease-in-out infinite;z-index:3}
 @keyframes scanline{0%,100%{top:22.5%;opacity:0}10%,90%{opacity:1}50%{top:77.5%}}
-
 .lock-banner{display:none;position:absolute;inset:0;background:rgba(0,0,0,.72);flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:4}
 .lock-banner.show{display:flex}
 .lock-banner span{font-size:28px}
 .lock-banner p{font-size:13px;color:#aab8d0;letter-spacing:.5px}
-
 .scan-controls{padding:14px 16px;display:flex;gap:8px;align-items:center}
 .gate-select{flex:1;background:#1f2937;border:1px solid #374151;border-radius:8px;color:#fff;padding:0 11px;font-size:16px;outline:none;min-height:46px;-webkit-appearance:none;appearance:none}
 .gate-select:focus{border-color:#C4A050}
 .btn-cam{background:#1A2B4A;border:1px solid #C4A050;color:#C4A050;border-radius:8px;padding:0 16px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .2s;min-height:46px}
 .btn-cam.active{background:#C4A050;color:#0a0f1a}
 .btn-cam:hover{background:#C4A050;color:#0a0f1a}
-
 .manual{padding:0 16px 14px}
 .manual label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px}
 .manual-row{display:flex;gap:8px}
@@ -102,8 +53,6 @@ header p{color:#aab8d0;font-size:10px;margin-top:1px}
 .btn-scan{background:#C4A050;color:#0a0f1a;border:none;border-radius:8px;padding:0 20px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;min-height:46px;white-space:nowrap}
 .btn-scan:hover{opacity:.85}
 .btn-scan:disabled{opacity:.4;cursor:default}
-
-/* ── MODAL ── */
 .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;padding:20px}
 .modal-backdrop.open{display:flex}
 .modal{width:100%;max-width:420px;border-radius:20px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.8);animation:modal-in .22s cubic-bezier(.34,1.56,.64,1)}
@@ -123,7 +72,6 @@ header p{color:#aab8d0;font-size:10px;margin-top:1px}
 .push-none{background:#1f2937;color:#6b7280}
 .modal-dismiss{margin:16px 22px 22px;width:calc(100% - 44px);padding:16px;border:none;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:.5px;transition:opacity .2s;min-height:54px}
 .modal-dismiss:hover{opacity:.88}
-
 .modal.valid .modal-header{background:#064e3b}.modal.valid .modal-title{color:#6ee7b7}
 .modal.valid .modal-body{background:#071a11}.modal.valid .modal-dismiss{background:#6ee7b7;color:#022c22}
 .modal.invalid .modal-header{background:#450a0a}.modal.invalid .modal-title{color:#fca5a5}
@@ -132,7 +80,6 @@ header p{color:#aab8d0;font-size:10px;margin-top:1px}
 .modal.warn .modal-body{background:#1a0e05}.modal.warn .modal-dismiss{background:#fdba74;color:#451a03}
 .modal.visitor .modal-header{background:#1e3a5f}.modal.visitor .modal-title{color:#93c5fd}
 .modal.visitor .modal-body{background:#0a1929}.modal.visitor .modal-dismiss{background:#93c5fd;color:#0a1929}
-
 #history-wrap{margin-top:6px}
 .history-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#4b5563;margin-bottom:8px;padding:0 2px}
 .history-item{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px;font-size:12px}
@@ -141,7 +88,6 @@ header p{color:#aab8d0;font-size:10px;margin-top:1px}
 .hi-name{flex:1;font-weight:600;color:#e5e7eb}
 .hi-code{font-family:monospace;font-size:10px;color:#6b7280}
 .hi-time{font-size:10px;color:#4b5563;white-space:nowrap}
-
 .spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
 footer{text-align:center;padding:20px;font-size:11px;color:#374151}
@@ -231,18 +177,72 @@ let camRunning = false;
 let modalOpen  = false;
 let processing = false;
 
+// ── Web Audio sounds ──────────────────────────────────────────────────────────
+var _audioCtx = null;
+function getAudioCtx() {
+  if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (_audioCtx.state === 'suspended') _audioCtx.resume();
+  return _audioCtx;
+}
+
+// Success chime: two ascending tones (E5 → G#5)
+function playChime() {
+  try {
+    var ctx = getAudioCtx();
+    var now = ctx.currentTime;
+    [[659.25, 0, 0.18], [830.61, 0.19, 0.28]].forEach(function(p) {
+      var osc  = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(p[0], now + p[1]);
+      gain.gain.setValueAtTime(0, now + p[1]);
+      gain.gain.linearRampToValueAtTime(0.22, now + p[1] + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + p[1] + p[2]);
+      osc.start(now + p[1]);
+      osc.stop(now + p[1] + p[2] + 0.02);
+    });
+  } catch(e) {}
+}
+
+// Failure buzz: low descending tone
+function playBuzz() {
+  try {
+    var ctx  = getAudioCtx();
+    var now  = ctx.currentTime;
+    var osc  = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(220, now);
+    osc.frequency.linearRampToValueAtTime(140, now + 0.3);
+    gain.gain.setValueAtTime(0.18, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+    osc.start(now); osc.stop(now + 0.32);
+  } catch(e) {}
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 window.addEventListener('DOMContentLoaded', function() {
   startCam();
   document.getElementById('code-input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') { e.preventDefault(); submitCode(); }
   });
+  // Prime AudioContext on first user gesture so iOS doesn't block it later
+  document.body.addEventListener('touchstart', function primeAudio() {
+    getAudioCtx();
+    document.body.removeEventListener('touchstart', primeAudio);
+  }, { once: true });
+  document.body.addEventListener('click', function primeAudioClick() {
+    getAudioCtx();
+    document.body.removeEventListener('click', primeAudioClick);
+  }, { once: true });
 });
 
 async function startCam() {
   try {
     scanner = new Html5Qrcode('reader');
-    // Use a qrbox function so the scan region is relative to the actual rendered size
-    const qrboxFn = function(w, h) {
+    var qrboxFn = function(w, h) {
       var side = Math.round(Math.min(w, h) * 0.55);
       return { width: side, height: side };
     };
@@ -278,18 +278,20 @@ async function onQRDetected(code) {
 
 async function submitCode(codeOverride) {
   if (modalOpen || processing) return;
-  const code = (codeOverride || document.getElementById('code-input').value).trim().toUpperCase();
+  var code = (codeOverride || document.getElementById('code-input').value).trim().toUpperCase();
   if (!code || !code.startsWith('PASS-')) {
+    playBuzz();
     openModal('warn', '⚠️', 'Invalid Code', '', code || '—', [['Detail', 'Enter a valid pass code (PASS-XXXXXXXX)']]);
     return;
   }
   processing = true; lockUI(true);
-  const gate = document.getElementById('gate-sel').value;
+  var gate = document.getElementById('gate-sel').value;
   try {
-    const res  = await fetch(SCAN_URL, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ code, gate }) });
-    const data = await res.json();
+    var res  = await fetch(SCAN_URL, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ code: code, gate: gate }) });
+    var data = await res.json();
     buildModal(code, data);
   } catch (e) {
+    playBuzz();
     openModal('warn', '⚠️', 'Network Error', '', code, [['Detail', e.message || 'Could not reach scanner']]);
   } finally {
     processing = false;
@@ -299,25 +301,26 @@ async function submitCode(codeOverride) {
 function fmtDate(d) {
   if (!d) return d;
   try {
-    const [y, m, day] = d.split('-');
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    return parseInt(day) + ' ' + months[parseInt(m)-1] + ' ' + y;
-  } catch { return d; }
+    var parts = d.split('-');
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return parseInt(parts[2]) + ' ' + months[parseInt(parts[1])-1] + ' ' + parts[0];
+  } catch(e) { return d; }
 }
 
 function buildModal(code, data) {
   if (data.success) {
+    playChime();  // ← success chime
     if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
 
-    const timeParts = (data.last_entry || '').split(' · ');
-    const gate      = timeParts[0] || '';
-    const time      = timeParts.slice(1).join(' · ');
-    const pushHtml  = data.push && data.push.succeeded > 0
+    var timeParts = (data.last_entry || '').split(' · ');
+    var gate      = timeParts[0] || '';
+    var time      = timeParts.slice(1).join(' · ');
+    var pushHtml  = data.push && data.push.succeeded > 0
       ? '<div class="push-badge push-ok">📱 Wallet updated · ' + data.push.succeeded + ' device' + (data.push.succeeded > 1 ? 's' : '') + '</div>'
       : '<div class="push-badge push-none">📱 No wallet devices</div>';
 
     if (data.is_visitor) {
-      const rows = [];
+      var rows = [];
       if (data.host_unit)     rows.push(['Visiting', data.host_unit]);
       if (data.purpose)       rows.push(['Purpose',  data.purpose]);
       if (data.visitor_phone) rows.push(['Phone',    data.visitor_phone]);
@@ -328,10 +331,10 @@ function buildModal(code, data) {
       openModal('visitor', '👤', data.holder_name || 'Visitor', 'VISITOR PASS', code, rows, pushHtml, true);
       addHistory(code, data.holder_name || 'Visitor', 'visitor', data.last_entry);
     } else {
-      const pt   = data.pass_type || 'resident';
-      const rows = [];
-      let icon     = '✅';
-      let subtitle = '';
+      var pt   = data.pass_type || 'resident';
+      var rows = [];
+      var icon     = '✅';
+      var subtitle = '';
       switch (pt) {
         case 'tennis':
           icon = '🎾'; subtitle = 'Tennis Court Booking';
@@ -385,13 +388,14 @@ function buildModal(code, data) {
       addHistory(code, data.holder_name || 'Unknown', 'ok', data.last_entry, pt);
     }
   } else {
+    playBuzz();  // ← failure buzz
     if (navigator.vibrate) navigator.vibrate(300);
-    const expired = data.status === 'expired';
-    const revoked = data.status === 'revoked';
-    const theme   = (expired || revoked) ? 'invalid' : 'warn';
-    const icon    = expired ? '⏰' : revoked ? '🚫' : data.status === 'used' ? '🔒' : '❌';
-    const heading = expired ? 'Pass Expired' : revoked ? 'Pass Revoked' : data.status === 'used' ? 'Pass Used' : 'Invalid Pass';
-    const rows    = [['Reason', data.error || data.status || 'Unknown']];
+    var expired = data.status === 'expired';
+    var revoked = data.status === 'revoked';
+    var theme   = (expired || revoked) ? 'invalid' : 'warn';
+    var icon    = expired ? '⏰' : revoked ? '🚫' : data.status === 'used' ? '🔒' : '❌';
+    var heading = expired ? 'Pass Expired' : revoked ? 'Pass Revoked' : data.status === 'used' ? 'Pass Used' : 'Invalid Pass';
+    var rows    = [['Reason', data.error || data.status || 'Unknown']];
     if (data.holder_name) rows.push(['Holder', data.holder_name]);
     openModal(theme, icon, heading, '', code, rows, '', false);
     addHistory(code, data.holder_name || 'Unknown', 'fail', null, '');
@@ -399,8 +403,8 @@ function buildModal(code, data) {
 }
 
 function openModal(theme, icon, title, subtitle, code, rows, extraHtml, isVisitor) {
-  if (extraHtml === undefined) extraHtml = '';
-  if (isVisitor === undefined) isVisitor = false;
+  if (extraHtml  === undefined) extraHtml  = '';
+  if (isVisitor  === undefined) isVisitor  = false;
   document.getElementById('modal').className      = 'modal ' + theme;
   document.getElementById('m-icon').textContent   = icon;
   document.getElementById('m-title').textContent  = title;
