@@ -38,6 +38,29 @@ header p{color:#aab8d0;font-size:10px;margin-top:1px}
 .lock-banner.show{display:flex}
 .lock-banner span{font-size:28px}
 .lock-banner p{font-size:13px;color:#aab8d0;letter-spacing:.5px}
+
+/* ── Flip camera button — top-right overlay, like native camera apps ── */
+.btn-flip{
+  position:absolute;
+  top:12px;right:12px;
+  z-index:5;
+  width:44px;height:44px;
+  border-radius:50%;
+  background:rgba(0,0,0,.45);
+  border:1.5px solid rgba(255,255,255,.25);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  transition:background .18s,transform .18s,opacity .2s;
+  pointer-events:auto;
+}
+.btn-flip:hover{background:rgba(0,0,0,.65)}
+.btn-flip:active{transform:scale(.9)}
+.btn-flip.spinning svg{animation:flip-spin .35s ease-in-out}
+@keyframes flip-spin{0%{transform:rotate(0deg)}100%{transform:rotate(180deg)}}
+.btn-flip.hidden{display:none}
+
 .scan-controls{padding:14px 16px;display:flex;gap:8px;align-items:center}
 .gate-select{flex:1;background:#1f2937;border:1px solid #374151;border-radius:8px;color:#fff;padding:0 11px;font-size:16px;outline:none;min-height:46px;-webkit-appearance:none;appearance:none}
 .gate-select:focus{border-color:#C4A050}
@@ -131,6 +154,14 @@ footer span{color:#C4A050}
         <div class="scan-corners"><span></span></div>
         <div class="scan-line"></div>
       </div>
+      <!-- Flip camera button — top-right corner, like native camera app -->
+      <button class="btn-flip hidden" id="flip-btn" onclick="flipCam()" title="Flip camera" aria-label="Flip camera">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 7h-3a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+          <path d="M12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" stroke-width="1.8"/>
+          <path d="M15.5 6.5 17 5l1.5 1.5" stroke-width="1.8"/>
+        </svg>
+      </button>
       <div class="lock-banner" id="lock-banner">
         <span>🔒</span>
         <p>Dismiss result to scan next pass</p>
@@ -176,8 +207,10 @@ let scanner    = null;
 let camRunning = false;
 let modalOpen  = false;
 let processing = false;
+let facingMode = 'environment'; // tracks current camera — 'environment' (rear) or 'user' (front)
+let flipping   = false;         // debounce rapid taps on the flip button
 
-// ── Web Audio sounds ──────────────────────────────────────────────────────────
+// ── Web Audio ─────────────────────────────────────────────────────────────────
 var _audioCtx = null;
 function getAudioCtx() {
   if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -223,43 +256,78 @@ window.addEventListener('DOMContentLoaded', function() {
   document.body.addEventListener('click',      function p(){ getAudioCtx(); }, { once: true });
 });
 
-async function startCam() {
+// ── Camera helpers ────────────────────────────────────────────────────────────
+async function startCam(facing) {
+  facing = facing || facingMode;
   try {
     scanner = new Html5Qrcode('reader');
     await scanner.start(
-      { facingMode: 'environment' },
+      { facingMode: facing },
       { fps: 10, qrbox: function(w,h){ var s=Math.round(Math.min(w,h)*.55); return {width:s,height:s}; }, aspectRatio: 1.0 },
       onQRDetected, function() {}
     );
+    facingMode = facing;
     camRunning = true;
     document.getElementById('cam-btn').textContent = 'Stop Cam';
     document.getElementById('cam-btn').classList.add('active');
+    document.getElementById('flip-btn').classList.remove('hidden');
   } catch(e) {
+    // If requested facing mode failed (e.g. no front camera on this device), try falling back
+    if (facing === 'user') {
+      // Device has no front camera — stay on rear, hide flip button
+      document.getElementById('flip-btn').classList.add('hidden');
+      facingMode = 'environment';
+      await startCam('environment');
+      return;
+    }
     document.getElementById('reader-wrap').innerHTML =
       '<div style="display:flex;align-items:center;justify-content:center;height:200px;color:#4b5563;font-size:13px;text-align:center;padding:20px">Camera not available.<br>Use manual entry below.</div>';
     document.getElementById('cam-btn').style.display = 'none';
+    document.getElementById('flip-btn').classList.add('hidden');
   }
 }
+
 async function stopCam() {
   if (scanner && camRunning) {
-    await scanner.stop(); scanner = null; camRunning = false;
+    try { await scanner.stop(); } catch(e) {}
+    scanner = null; camRunning = false;
     document.getElementById('cam-btn').textContent = 'Start Cam';
     document.getElementById('cam-btn').classList.remove('active');
+    document.getElementById('flip-btn').classList.add('hidden');
   }
 }
-async function toggleCam() { if (camRunning) { await stopCam(); } else { await startCam(); } }
+
+async function toggleCam() {
+  if (camRunning) { await stopCam(); } else { await startCam(); }
+}
+
+// Flip between front and rear camera
+async function flipCam() {
+  if (!camRunning || flipping) return;
+  flipping = true;
+
+  // Spin animation feedback
+  var btn = document.getElementById('flip-btn');
+  btn.classList.add('spinning');
+  setTimeout(function(){ btn.classList.remove('spinning'); }, 400);
+
+  var nextFacing = (facingMode === 'environment') ? 'user' : 'environment';
+  await stopCam();
+  await startCam(nextFacing);
+
+  flipping = false;
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 async function onQRDetected(code) {
   if (modalOpen || processing) return;
   if (!code.startsWith('PASS-')) return;
-  processing = true; // ← lock HERE, before any await, so next camera frame is blocked immediately
+  processing = true; // lock immediately — prevents next camera frame firing a second call
   document.getElementById('code-input').value = code;
   await submitCode(code);
 }
 
 async function submitCode(codeOverride) {
-  // processing already set by onQRDetected for camera scans;
-  // for manual button taps we still need to set it here
   if (modalOpen) return;
   var code = (codeOverride || document.getElementById('code-input').value).trim().toUpperCase();
   if (!code || !code.startsWith('PASS-')) {
@@ -268,8 +336,8 @@ async function submitCode(codeOverride) {
     openModal('warn', '⚠️', 'Invalid Code', '', code || '—', [['Detail', 'Enter a valid pass code (PASS-XXXXXXXX)']]);
     return;
   }
-  if (!processing) { processing = true; lockUI(true); }
-  else { lockUI(true); }
+  if (!processing) { processing = true; }
+  lockUI(true);
   var gate = document.getElementById('gate-sel').value;
   try {
     var res  = await fetch(SCAN_URL, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ code: code, gate: gate }) });
