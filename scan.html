@@ -184,34 +184,25 @@ function getAudioCtx() {
   if (_audioCtx.state === 'suspended') _audioCtx.resume();
   return _audioCtx;
 }
-
-// Success chime: two ascending tones (E5 → G#5)
 function playChime() {
   try {
-    var ctx = getAudioCtx();
-    var now = ctx.currentTime;
+    var ctx = getAudioCtx(), now = ctx.currentTime;
     [[659.25, 0, 0.18], [830.61, 0.19, 0.28]].forEach(function(p) {
-      var osc  = ctx.createOscillator();
-      var gain = ctx.createGain();
+      var osc = ctx.createOscillator(), gain = ctx.createGain();
       osc.connect(gain); gain.connect(ctx.destination);
       osc.type = 'sine';
       osc.frequency.setValueAtTime(p[0], now + p[1]);
       gain.gain.setValueAtTime(0, now + p[1]);
       gain.gain.linearRampToValueAtTime(0.22, now + p[1] + 0.012);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + p[1] + p[2]);
-      osc.start(now + p[1]);
-      osc.stop(now + p[1] + p[2] + 0.02);
+      osc.start(now + p[1]); osc.stop(now + p[1] + p[2] + 0.02);
     });
   } catch(e) {}
 }
-
-// Failure buzz: low descending tone
 function playBuzz() {
   try {
-    var ctx  = getAudioCtx();
-    var now  = ctx.currentTime;
-    var osc  = ctx.createOscillator();
-    var gain = ctx.createGain();
+    var ctx = getAudioCtx(), now = ctx.currentTime;
+    var osc = ctx.createOscillator(), gain = ctx.createGain();
     osc.connect(gain); gain.connect(ctx.destination);
     osc.type = 'sawtooth';
     osc.frequency.setValueAtTime(220, now);
@@ -228,27 +219,16 @@ window.addEventListener('DOMContentLoaded', function() {
   document.getElementById('code-input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') { e.preventDefault(); submitCode(); }
   });
-  // Prime AudioContext on first user gesture so iOS doesn't block it later
-  document.body.addEventListener('touchstart', function primeAudio() {
-    getAudioCtx();
-    document.body.removeEventListener('touchstart', primeAudio);
-  }, { once: true });
-  document.body.addEventListener('click', function primeAudioClick() {
-    getAudioCtx();
-    document.body.removeEventListener('click', primeAudioClick);
-  }, { once: true });
+  document.body.addEventListener('touchstart', function p(){ getAudioCtx(); }, { once: true });
+  document.body.addEventListener('click',      function p(){ getAudioCtx(); }, { once: true });
 });
 
 async function startCam() {
   try {
     scanner = new Html5Qrcode('reader');
-    var qrboxFn = function(w, h) {
-      var side = Math.round(Math.min(w, h) * 0.55);
-      return { width: side, height: side };
-    };
     await scanner.start(
       { facingMode: 'environment' },
-      { fps: 10, qrbox: qrboxFn, aspectRatio: 1.0 },
+      { fps: 10, qrbox: function(w,h){ var s=Math.round(Math.min(w,h)*.55); return {width:s,height:s}; }, aspectRatio: 1.0 },
       onQRDetected, function() {}
     );
     camRunning = true;
@@ -272,19 +252,24 @@ async function toggleCam() { if (camRunning) { await stopCam(); } else { await s
 async function onQRDetected(code) {
   if (modalOpen || processing) return;
   if (!code.startsWith('PASS-')) return;
+  processing = true; // ← lock HERE, before any await, so next camera frame is blocked immediately
   document.getElementById('code-input').value = code;
   await submitCode(code);
 }
 
 async function submitCode(codeOverride) {
-  if (modalOpen || processing) return;
+  // processing already set by onQRDetected for camera scans;
+  // for manual button taps we still need to set it here
+  if (modalOpen) return;
   var code = (codeOverride || document.getElementById('code-input').value).trim().toUpperCase();
   if (!code || !code.startsWith('PASS-')) {
+    processing = false;
     playBuzz();
     openModal('warn', '⚠️', 'Invalid Code', '', code || '—', [['Detail', 'Enter a valid pass code (PASS-XXXXXXXX)']]);
     return;
   }
-  processing = true; lockUI(true);
+  if (!processing) { processing = true; lockUI(true); }
+  else { lockUI(true); }
   var gate = document.getElementById('gate-sel').value;
   try {
     var res  = await fetch(SCAN_URL, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ code: code, gate: gate }) });
@@ -301,24 +286,21 @@ async function submitCode(codeOverride) {
 function fmtDate(d) {
   if (!d) return d;
   try {
-    var parts = d.split('-');
-    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    return parseInt(parts[2]) + ' ' + months[parseInt(parts[1])-1] + ' ' + parts[0];
+    var p = d.split('-'), m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return parseInt(p[2]) + ' ' + m[parseInt(p[1])-1] + ' ' + p[0];
   } catch(e) { return d; }
 }
 
 function buildModal(code, data) {
   if (data.success) {
-    playChime();  // ← success chime
+    playChime();
     if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
-
     var timeParts = (data.last_entry || '').split(' · ');
-    var gate      = timeParts[0] || '';
-    var time      = timeParts.slice(1).join(' · ');
-    var pushHtml  = data.push && data.push.succeeded > 0
+    var gate = timeParts[0] || '';
+    var time = timeParts.slice(1).join(' · ');
+    var pushHtml = data.push && data.push.succeeded > 0
       ? '<div class="push-badge push-ok">📱 Wallet updated · ' + data.push.succeeded + ' device' + (data.push.succeeded > 1 ? 's' : '') + '</div>'
       : '<div class="push-badge push-none">📱 No wallet devices</div>';
-
     if (data.is_visitor) {
       var rows = [];
       if (data.host_unit)     rows.push(['Visiting', data.host_unit]);
@@ -331,53 +313,38 @@ function buildModal(code, data) {
       openModal('visitor', '👤', data.holder_name || 'Visitor', 'VISITOR PASS', code, rows, pushHtml, true);
       addHistory(code, data.holder_name || 'Visitor', 'visitor', data.last_entry);
     } else {
-      var pt   = data.pass_type || 'resident';
-      var rows = [];
-      var icon     = '✅';
-      var subtitle = '';
+      var pt = data.pass_type || 'resident', rows = [], icon = '✅', subtitle = '';
       switch (pt) {
-        case 'tennis':
-          icon = '🎾'; subtitle = 'Tennis Court Booking';
+        case 'tennis': icon='🎾'; subtitle='Tennis Court Booking';
           if (data.court)     rows.push(['Court',   data.court]);
           if (data.date)      rows.push(['Date',    fmtDate(data.date)]);
           if (data.time_slot) rows.push(['Slot',    data.time_slot]);
           if (data.unit)      rows.push(['Unit',    data.unit]);
-          if (data.guests)    rows.push(['Players', String(data.guests)]);
-          break;
-        case 'bbq':
-          icon = '🔥'; subtitle = 'BBQ Pit Booking';
+          if (data.guests)    rows.push(['Players', String(data.guests)]); break;
+        case 'bbq': icon='🔥'; subtitle='BBQ Pit Booking';
           if (data.pit_number) rows.push(['Pit',    data.pit_number]);
           if (data.date)       rows.push(['Date',   fmtDate(data.date)]);
           if (data.time_slot)  rows.push(['Slot',   data.time_slot]);
-          if (data.pax)        rows.push(['Guests', String(data.pax) + ' pax']);
-          break;
-        case 'ktv':
-          icon = '🎤'; subtitle = 'KTV Room Booking';
+          if (data.pax)        rows.push(['Guests', String(data.pax) + ' pax']); break;
+        case 'ktv': icon='🎤'; subtitle='KTV Room Booking';
           if (data.room)      rows.push(['Room',   data.room]);
           if (data.date)      rows.push(['Date',   fmtDate(data.date)]);
           if (data.time_slot) rows.push(['Slot',   data.time_slot]);
-          if (data.pax)       rows.push(['Guests', String(data.pax) + ' pax']);
-          break;
-        case 'gym':
-          icon = '🏋️'; subtitle = 'Gym Access';
-          if (data.unit) rows.push(['Unit', data.unit + (data.block ? ' · ' + data.block : '')]);
+          if (data.pax)       rows.push(['Guests', String(data.pax) + ' pax']); break;
+        case 'gym': icon='🏋️'; subtitle='Gym Access';
+          if (data.unit)            rows.push(['Unit', data.unit + (data.block ? ' · ' + data.block : '')]);
           if (data.membership_type) rows.push(['Membership', data.membership_type]);
-          if (data.gym_hours) rows.push(['Hours', data.gym_hours]);
-          break;
-        case 'pool':
-          icon = '🏊'; subtitle = 'Swimming Pool Access';
-          if (data.unit) rows.push(['Unit', data.unit + (data.block ? ' · ' + data.block : '')]);
-          if (data.pool_hours) rows.push(['Hours', data.pool_hours]);
-          break;
-        case 'contractor':
-          icon = '🔧'; subtitle = 'Contractor / Service Pass';
+          if (data.gym_hours)       rows.push(['Hours', data.gym_hours]); break;
+        case 'pool': icon='🏊'; subtitle='Swimming Pool Access';
+          if (data.unit)       rows.push(['Unit',  data.unit + (data.block ? ' · ' + data.block : '')]);
+          if (data.pool_hours) rows.push(['Hours', data.pool_hours]); break;
+        case 'contractor': icon='🔧'; subtitle='Contractor / Service Pass';
           if (data.company_name)    rows.push(['Company', data.company_name]);
           if (data.authorized_unit) rows.push(['Unit',    data.authorized_unit]);
           if (data.work_scope)      rows.push(['Scope',   data.work_scope]);
-          if (data.valid_until)     rows.push(['Until',   data.valid_until]);
-          break;
+          if (data.valid_until)     rows.push(['Until',   data.valid_until]); break;
         default:
-          icon = '✅'; subtitle = data.tier ? data.tier + ' — Resident Card' : 'Resident Card';
+          subtitle = data.tier ? data.tier + ' — Resident Card' : 'Resident Card';
           if (data.unit) rows.push(['Unit', data.unit + (data.block ? ' · ' + data.block : '')]);
           if (data.tier) rows.push(['Tier', data.tier]);
       }
@@ -388,10 +355,9 @@ function buildModal(code, data) {
       addHistory(code, data.holder_name || 'Unknown', 'ok', data.last_entry, pt);
     }
   } else {
-    playBuzz();  // ← failure buzz
+    playBuzz();
     if (navigator.vibrate) navigator.vibrate(300);
-    var expired = data.status === 'expired';
-    var revoked = data.status === 'revoked';
+    var expired = data.status === 'expired', revoked = data.status === 'revoked';
     var theme   = (expired || revoked) ? 'invalid' : 'warn';
     var icon    = expired ? '⏰' : revoked ? '🚫' : data.status === 'used' ? '🔒' : '❌';
     var heading = expired ? 'Pass Expired' : revoked ? 'Pass Revoked' : data.status === 'used' ? 'Pass Used' : 'Invalid Pass';
@@ -403,30 +369,30 @@ function buildModal(code, data) {
 }
 
 function openModal(theme, icon, title, subtitle, code, rows, extraHtml, isVisitor) {
-  if (extraHtml  === undefined) extraHtml  = '';
-  if (isVisitor  === undefined) isVisitor  = false;
-  document.getElementById('modal').className      = 'modal ' + theme;
-  document.getElementById('m-icon').textContent   = icon;
-  document.getElementById('m-title').textContent  = title;
+  if (extraHtml === undefined) extraHtml = '';
+  if (isVisitor === undefined) isVisitor = false;
+  document.getElementById('modal').className        = 'modal ' + theme;
+  document.getElementById('m-icon').textContent     = icon;
+  document.getElementById('m-title').textContent    = title;
   document.getElementById('m-subtitle').textContent = subtitle;
-  document.getElementById('m-code').textContent   = code;
+  document.getElementById('m-code').textContent     = code;
   document.getElementById('m-visitor-badge').style.display = isVisitor ? 'block' : 'none';
   document.getElementById('m-body').innerHTML =
-    rows.map(function(r) { return '<div class="modal-row"><span class="lbl">' + r[0] + '</span><span class="val">' + r[1] + '</span></div>'; }).join('');
+    rows.map(function(r){ return '<div class="modal-row"><span class="lbl">'+r[0]+'</span><span class="val">'+r[1]+'</span></div>'; }).join('');
   document.getElementById('m-push').innerHTML = extraHtml;
   document.getElementById('modal-backdrop').classList.add('open');
   modalOpen = true;
   showLockBanner(true);
   document.getElementById('code-input').value = '';
-  setTimeout(function() { document.getElementById('m-dismiss').focus(); }, 50);
+  setTimeout(function(){ document.getElementById('m-dismiss').focus(); }, 50);
 }
 
 function dismissModal() {
   document.getElementById('modal-backdrop').classList.remove('open');
   modalOpen = false; showLockBanner(false); lockUI(false);
 }
-document.getElementById('modal-backdrop').addEventListener('click', function(e) { if (e.target === this) dismissModal(); });
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && modalOpen) dismissModal(); });
+document.getElementById('modal-backdrop').addEventListener('click', function(e){ if (e.target === this) dismissModal(); });
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && modalOpen) dismissModal(); });
 
 function lockUI(lock) {
   var btn = document.getElementById('scan-btn');
@@ -442,15 +408,14 @@ function showLockBanner(show) {
 function addHistory(code, name, type, entry, passType) {
   var now = new Date().toLocaleTimeString('en-SG', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Singapore' });
   var icons = { tennis:'🎾', bbq:'🔥', ktv:'🎤', gym:'🏋️', pool:'🏊', contractor:'🔧', visitor:'👤' };
-  var ptIcon = icons[passType] || '';
-  scanHistory.unshift({ code: code, name: name, type: type, entry: entry, time: now, ptIcon: ptIcon });
+  scanHistory.unshift({ code, name, type, entry, time: now, ptIcon: icons[passType] || '' });
   if (scanHistory.length > 20) scanHistory.pop();
   document.getElementById('history').innerHTML = scanHistory.map(function(h) {
-    return '<div class="history-item">' +
-      '<div class="hi-dot ' + h.type + '"></div>' +
-      '<div class="hi-name">' + (h.ptIcon ? h.ptIcon + ' ' : '') + h.name + '</div>' +
-      '<div class="hi-code">' + h.code + '</div>' +
-      '<div class="hi-time">' + h.time + '</div>' +
+    return '<div class="history-item">'+
+      '<div class="hi-dot '+h.type+'"></div>'+
+      '<div class="hi-name">'+(h.ptIcon?h.ptIcon+' ':'')+h.name+'</div>'+
+      '<div class="hi-code">'+h.code+'</div>'+
+      '<div class="hi-time">'+h.time+'</div>'+
     '</div>';
   }).join('');
 }
