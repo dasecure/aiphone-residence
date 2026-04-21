@@ -20,14 +20,15 @@ header{background:#1A2B4A;padding:14px 22px;display:flex;align-items:center;just
 .sound-btn:hover{background:rgba(255,255,255,.14)}
 .sound-btn.muted{opacity:.4}
 .container{max-width:1200px;margin:0 auto;padding:20px}
-.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.stats-row2{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;margin-top:-8px}
 .stat-card{background:#111827;border:1px solid #1f2937;border-radius:14px;padding:16px 18px}
 .stat-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#6b7280;margin-bottom:6px}
 .stat-value{font-size:28px;font-weight:800;line-height:1}
 .stat-sub{font-size:11px;color:#4b5563;margin-top:4px}
-.stat-green{color:#6ee7b7}.stat-gold{color:#C4A050}.stat-blue{color:#60a5fa}.stat-purple{color:#c084fc}
+.stat-green{color:#6ee7b7}.stat-gold{color:#C4A050}.stat-blue{color:#60a5fa}.stat-purple{color:#c084fc}.stat-teal{color:#2dd4bf}.stat-rose{color:#fb7185}
 .main-grid{display:grid;grid-template-columns:1fr 340px;gap:16px}
-@media(max-width:900px){.main-grid{grid-template-columns:1fr}}
+@media(max-width:900px){.main-grid{grid-template-columns:1fr}.stats-bar,.stats-row2{grid-template-columns:repeat(2,1fr)}}
 .panel{background:#111827;border:1px solid #1f2937;border-radius:16px;overflow:hidden}
 .panel-header{background:#1A2B4A;padding:12px 18px;display:flex;align-items:center;justify-content:space-between}
 .panel-title{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#C4A050}
@@ -37,7 +38,7 @@ header{background:#1A2B4A;padding:14px 22px;display:flex;align-items:center;just
 @keyframes slideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
 .feed-item:hover{background:#1a2332}
 .feed-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:5px}
-.feed-dot.valid{background:#22c55e}.feed-dot.invalid{background:#ef4444}
+.feed-dot.valid{background:#22c55e}.feed-dot.invalid{background:#ef4444}.feed-dot.save{background:#2dd4bf}.feed-dot.del{background:#fb7185}
 .feed-body{flex:1;min-width:0}
 .feed-name{font-size:13px;font-weight:700;color:#f1f5f9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .feed-gate{font-size:11px;color:#60a5fa;font-weight:600;margin-top:2px;display:flex;align-items:center;gap:4px}
@@ -63,6 +64,33 @@ header{background:#1A2B4A;padding:14px 22px;display:flex;align-items:center;just
 .gate-name{color:#9ca3af}.gate-count{font-weight:700;color:#60a5fa}
 .refresh-bar{height:2px;background:#1f2937;overflow:hidden}
 .refresh-bar-fill{height:100%;background:#C4A050;transition:width linear;width:100%}
+/* Broadcast panel */
+.bcast-form{padding:14px 16px;display:grid;gap:10px}
+.bcast-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#6b7280;margin-bottom:3px;display:block}
+.bcast-input,.bcast-textarea{width:100%;background:#0a0f1a;border:1px solid #1f2937;border-radius:8px;color:#f1f5f9;font-size:12px;padding:8px 10px;font-family:inherit;transition:border-color .15s;resize:none}
+.bcast-input:focus,.bcast-textarea:focus{outline:none;border-color:#C4A050}
+.bcast-btn{width:100%;background:#C4A050;color:#0a0f1a;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:opacity .15s}
+.bcast-btn:hover{opacity:.88}
+.bcast-btn:disabled{opacity:.4;cursor:not-allowed}
+.bcast-result{font-size:11px;padding:6px 10px;border-radius:6px;text-align:center;display:none}
+.bcast-result.ok{background:#0d2e20;color:#6ee7b7;border:1px solid #1a5c3a}
+.bcast-result.err{background:#2e0d0d;color:#fb7185;border:1px solid #5c1a1a}
+.bcast-history{border-top:1px solid rgba(255,255,255,.05);padding:10px 16px;display:grid;gap:6px}
+.msg-item{background:#0a0f1a;border:1px solid #1f2937;border-radius:8px;padding:8px 10px}
+.msg-header{font-size:12px;font-weight:700;color:#f1f5f9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msg-meta{display:flex;align-items:center;gap:6px;margin-top:3px;font-size:10px;color:#4b5563}
+.msg-badge{padding:1px 6px;border-radius:10px;font-weight:700}
+.msg-badge.sent{background:#0d2e20;color:#6ee7b7}
+.msg-badge.partial{background:#2e2508;color:#f59e0b}
+.msg-badge.failed{background:#2e0d0d;color:#fb7185}
+/* Wallet events */
+.we-item{display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid rgba(255,255,255,.04)}
+.we-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;flex-shrink:0;letter-spacing:.5px}
+.we-badge.SAVE{background:#0a2e20;color:#2dd4bf;border:1px solid #0f4a32}
+.we-badge.DEL{background:#2e0a0f;color:#fb7185;border:1px solid #4a0f18}
+.we-badge.UNKNOWN{background:#1f2937;color:#6b7280}
+.we-code{font-size:11px;color:#aab8d0;font-family:monospace;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.we-time{font-size:10px;color:#374151;flex-shrink:0}
 footer{text-align:center;padding:20px;font-size:11px;color:#374151;margin-top:20px}
 footer a{color:#C4A050;text-decoration:none}
 footer span{color:#C4A050}
@@ -93,7 +121,11 @@ footer span{color:#C4A050}
     <div class="stat-card"><div class="stat-label">Scans Today</div><div class="stat-value stat-green" id="s-today">—</div><div class="stat-sub" id="s-today-sub">Loading…</div></div>
     <div class="stat-card"><div class="stat-label">Unique Passes</div><div class="stat-value stat-gold" id="s-unique">—</div><div class="stat-sub">distinct passes scanned</div></div>
     <div class="stat-card"><div class="stat-label">Active (Last 2h)</div><div class="stat-value stat-blue" id="s-active">—</div><div class="stat-sub">in or around building</div></div>
+  </div>
+  <div class="stats-row2">
     <div class="stat-card"><div class="stat-label">Total Passes</div><div class="stat-value stat-purple" id="s-total">—</div><div class="stat-sub">issued by management</div></div>
+    <div class="stat-card"><div class="stat-label">Wallet Saves</div><div class="stat-value stat-teal" id="s-wsaves">—</div><div class="stat-sub">saved to Google Wallet</div></div>
+    <div class="stat-card"><div class="stat-label">Messages Sent</div><div class="stat-value stat-rose" id="s-msgs">—</div><div class="stat-sub">broadcasts delivered</div></div>
   </div>
 
   <div class="main-grid">
@@ -106,10 +138,44 @@ footer span{color:#C4A050}
     </div>
 
     <div class="right-col">
+      <!-- Active Now -->
       <div class="panel">
         <div class="panel-header"><span class="panel-title">🟢 Active Now</span><span class="panel-count" id="active-count">—</span></div>
         <div id="active-list"><div class="feed-empty" style="padding:20px">No recent activity</div></div>
       </div>
+
+      <!-- Broadcast Notification -->
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">📣 Broadcast Notification</span></div>
+        <div class="bcast-form">
+          <div>
+            <label class="bcast-label">Message header</label>
+            <input class="bcast-input" id="bc-header" placeholder="e.g. Lift maintenance notice" maxlength="60">
+          </div>
+          <div>
+            <label class="bcast-label">Body (140 chars)</label>
+            <textarea class="bcast-textarea" id="bc-body" rows="2" maxlength="140" placeholder="e.g. Lift B will be unavailable 10am–2pm today."></textarea>
+          </div>
+          <div>
+            <label class="bcast-label">Link (optional)</label>
+            <input class="bcast-input" id="bc-link" placeholder="https://…" type="url">
+          </div>
+          <button class="bcast-btn" id="bc-btn" onclick="sendBroadcast()">Send to all active passes →</button>
+          <div class="bcast-result" id="bc-result"></div>
+        </div>
+        <div class="bcast-history" id="msg-history" style="display:none">
+          <div style="font-size:10px;color:#6b7280;letter-spacing:.8px;text-transform:uppercase;margin-bottom:2px">Recent broadcasts</div>
+          <div id="msg-list"></div>
+        </div>
+      </div>
+
+      <!-- Wallet Events -->
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">🪙 Wallet Events</span><span class="panel-count" id="we-count">—</span></div>
+        <div id="we-list"><div class="feed-empty" style="padding:18px;font-size:12px">No wallet events yet</div></div>
+      </div>
+
+      <!-- Facility / Gate -->
       <div class="panel">
         <div class="panel-header"><span class="panel-title">Today by Facility</span></div>
         <div class="facility-list" id="facility-list"><div style="color:#4b5563;font-size:12px">Loading…</div></div>
@@ -129,178 +195,254 @@ footer span{color:#C4A050}
 </footer>
 
 <script>
-const STATS_URL  = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-stats';
-const REFRESH_MS = 4000;
+const STATS_URL   = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-stats';
+const NOTIFY_URL  = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-notify';
+const NOTIFY_KEY  = 'aiphone2026';
+const REFRESH_MS  = 4000;
 
 // ── Sound ──────────────────────────────────────────────────────────────────
-var _audioCtx   = null;
-var _soundOn    = true;
-var _firstLoad  = true;   // suppress beep on initial page load
-var _lastScanId = null;   // track newest scan to detect new arrivals
+var _audioCtx  = null;
+var _soundOn   = true;
+var _firstLoad = true;
+var _lastScanId = null;
 
 function getAudioCtx() {
   if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if (_audioCtx.state === 'suspended') _audioCtx.resume();
   return _audioCtx;
 }
-
-// Soft two-note alert beep for new scan arrival
 function playNewScanBeep() {
   if (!_soundOn) return;
   try {
     var ctx = getAudioCtx();
     var now = ctx.currentTime;
-    [[880, 0, 0.07], [1046.5, 0.09, 0.09]].forEach(function(p) {
-      var osc  = ctx.createOscillator();
-      var gain = ctx.createGain();
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(p[0], now + p[1]);
-      gain.gain.setValueAtTime(0, now + p[1]);
-      gain.gain.linearRampToValueAtTime(0.10, now + p[1] + 0.008);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + p[1] + p[2]);
-      osc.start(now + p[1]); osc.stop(now + p[1] + p[2] + 0.02);
+    [[880,0,0.07],[1046.5,0.09,0.09]].forEach(function(p) {
+      var osc=ctx.createOscillator(),gain=ctx.createGain();
+      osc.connect(gain);gain.connect(ctx.destination);
+      osc.type='sine';osc.frequency.setValueAtTime(p[0],now+p[1]);
+      gain.gain.setValueAtTime(0,now+p[1]);
+      gain.gain.linearRampToValueAtTime(0.10,now+p[1]+0.008);
+      gain.gain.exponentialRampToValueAtTime(0.0001,now+p[1]+p[2]);
+      osc.start(now+p[1]);osc.stop(now+p[1]+p[2]+0.02);
     });
-  } catch(e) {}
+  } catch(e){}
 }
-
 function toggleSound() {
   _soundOn = !_soundOn;
   var btn = document.getElementById('sound-btn');
   btn.textContent = _soundOn ? '🔔' : '🔕';
   btn.classList.toggle('muted', !_soundOn);
-  // Prime AudioContext on first toggle (requires user gesture)
   if (_soundOn) getAudioCtx();
 }
-// Prime on any click so first beep works on iOS
 document.addEventListener('click', function primeAudio() {
   if (_soundOn) getAudioCtx();
   document.removeEventListener('click', primeAudio);
 }, { once: true });
-// ─────────────────────────────────────────────────────────────────────────────
 
+// ── Helpers ───────────────────────────────────────────────────────────────
 const FACILITY_ICONS = {
-  'Tennis Court':'🎾','BBQ Pit':'🔥','KTV Room':'🎤','Gym':'🏋️',
-  'Swimming Pool':'🏊','Visitor Pass':'👤',
+  'Tennis Court':'🎾','BBQ Pit':'🔥','KTV Room':'🎤','Gym':'🏋️','Swimming Pool':'🏊','Visitor Pass':'👤',
   'Resident Card — Owner':'🏠','Resident Card — Tenant':'🏠',
 };
 function icon(f) {
   if (!f) return '📋';
-  for (const [k,v] of Object.entries(FACILITY_ICONS)) {
-    if (f.includes(k) || k.includes(f)) return v;
-  }
+  for (const [k,v] of Object.entries(FACILITY_ICONS)) if (f.includes(k)||k.includes(f)) return v;
   return '📋';
 }
 function fmtTime(iso) {
   return new Date(iso).toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'Asia/Singapore'});
 }
 function timeSince(iso) {
-  var d = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
-  if (d < 60) return d + 's ago';
-  if (d < 3600) return Math.floor(d/60) + 'm ago';
-  return Math.floor(d/3600) + 'h ago';
+  var d = Math.floor((Date.now()-new Date(iso).getTime())/1000);
+  if (d<60) return d+'s ago';
+  if (d<3600) return Math.floor(d/60)+'m ago';
+  return Math.floor(d/3600)+'h ago';
+}
+function fmtDate(iso) {
+  return new Date(iso).toLocaleString('en-SG',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Singapore'});
 }
 
+// ── Renderers ─────────────────────────────────────────────────────────────
 function renderFeed(feed) {
   var el = document.getElementById('feed');
-  document.getElementById('feed-count').textContent = feed.length + ' scans';
-  if (!feed.length) { el.innerHTML = '<div class="feed-empty">No scan activity yet</div>'; return; }
-
-  // Detect new scan and beep (skip on first load)
-  var newestId = feed[0] && feed[0].id;
-  if (!_firstLoad && newestId && newestId !== _lastScanId) {
-    playNewScanBeep();
-  }
+  document.getElementById('feed-count').textContent = feed.length+' scans';
+  if (!feed.length) { el.innerHTML='<div class="feed-empty">No scan activity yet</div>'; return; }
+  var newestId = feed[0]&&feed[0].id;
+  if (!_firstLoad && newestId && newestId !== _lastScanId) playNewScanBeep();
   if (newestId) _lastScanId = newestId;
-
   el.innerHTML = feed.map(function(s) {
-    var isValid = s.result === 'valid';
-    var gate = s.gate || 'Staff Scanner';
+    var isValid = s.result==='valid';
+    var gate = s.gate||'Staff Scanner';
     var tags = [];
-    if (s.unit) tags.push('<span class="feed-tag" style="background:#1A2B4A;color:#C4A050">' + s.unit + '</span>');
-    if (s.tier) tags.push('<span class="feed-tag" style="background:#1A2B4A;color:#aab8d0">' + s.tier + '</span>');
-    var fLabel = s.facility || s.template_name;
-    if (fLabel) tags.push('<span class="feed-tag" style="background:' + s.template_color + '22;color:' + s.template_color + '">' + icon(fLabel) + ' ' + fLabel + '</span>');
-    return '<div class="feed-item">' +
-      '<div class="feed-dot ' + (isValid ? 'valid' : 'invalid') + '"></div>' +
-      '<div class="feed-body">' +
-        '<div class="feed-name">' + (s.holder_name || s.code || 'Unknown') + '</div>' +
-        '<div class="feed-gate"><span style="font-size:10px;opacity:.7">📍</span>' + gate + '</div>' +
-        (tags.length ? '<div class="feed-meta">' + tags.join('') + '</div>' : '') +
-      '</div>' +
-      '<div class="feed-time">' + fmtTime(s.scanned_at) + '</div>' +
+    if (s.unit) tags.push('<span class="feed-tag" style="background:#1A2B4A;color:#C4A050">'+s.unit+'</span>');
+    if (s.tier) tags.push('<span class="feed-tag" style="background:#1A2B4A;color:#aab8d0">'+s.tier+'</span>');
+    var fLabel = s.facility||s.template_name;
+    if (fLabel) tags.push('<span class="feed-tag" style="background:'+s.template_color+'22;color:'+s.template_color+'">'+icon(fLabel)+' '+fLabel+'</span>');
+    return '<div class="feed-item">'+
+      '<div class="feed-dot '+(isValid?'valid':'invalid')+'"></div>'+
+      '<div class="feed-body">'+
+        '<div class="feed-name">'+(s.holder_name||s.code||'Unknown')+'</div>'+
+        '<div class="feed-gate"><span style="font-size:10px;opacity:.7">📍</span>'+gate+'</div>'+
+        (tags.length?'<div class="feed-meta">'+tags.join('')+'</div>':'')+
+      '</div>'+
+      '<div class="feed-time">'+fmtTime(s.scanned_at)+'</div>'+
     '</div>';
   }).join('');
 }
 
 function renderActive(active) {
-  var el = document.getElementById('active-list');
-  document.getElementById('active-count').textContent = active.length;
-  document.getElementById('s-active').textContent = active.length;
-  if (!active.length) { el.innerHTML = '<div class="feed-empty" style="padding:20px;font-size:12px">No activity in last 2 hours</div>'; return; }
-  el.innerHTML = active.map(function(a) {
-    return '<div class="active-item">' +
-      '<div class="active-dot"></div>' +
-      '<div style="flex:1;min-width:0">' +
-        '<div class="active-name">' + (a.holder_name || a.code) + '</div>' +
-        '<div class="active-info">' + [a.unit, a.gate].filter(Boolean).join(' · ') + '</div>' +
-      '</div>' +
-      '<div class="active-time">' + timeSince(a.last_seen) + '</div>' +
+  var el=document.getElementById('active-list');
+  document.getElementById('active-count').textContent=active.length;
+  document.getElementById('s-active').textContent=active.length;
+  if (!active.length) { el.innerHTML='<div class="feed-empty" style="padding:20px;font-size:12px">No activity in last 2 hours</div>'; return; }
+  el.innerHTML=active.map(function(a) {
+    return '<div class="active-item">'+
+      '<div class="active-dot"></div>'+
+      '<div style="flex:1;min-width:0">'+
+        '<div class="active-name">'+(a.holder_name||a.code)+'</div>'+
+        '<div class="active-info">'+[a.unit,a.gate].filter(Boolean).join(' · ')+'</div>'+
+      '</div>'+
+      '<div class="active-time">'+timeSince(a.last_seen)+'</div>'+
     '</div>';
   }).join('');
 }
 
 function renderFacility(byFacility) {
-  var el = document.getElementById('facility-list');
-  var entries = Object.entries(byFacility).sort(function(a,b){ return b[1]-a[1]; });
-  if (!entries.length) { el.innerHTML = '<div style="color:#4b5563;font-size:12px">No data yet</div>'; return; }
-  var max = entries[0][1] || 1;
-  el.innerHTML = entries.map(function(e) {
-    return '<div class="facility-row">' +
-      '<div class="facility-header"><span class="facility-name">' + icon(e[0]) + ' ' + e[0] + '</span><span class="facility-count">' + e[1] + '</span></div>' +
-      '<div class="facility-bar-bg"><div class="facility-bar-fill" style="width:' + Math.round(e[1]/max*100) + '%"></div></div>' +
+  var el=document.getElementById('facility-list');
+  var entries=Object.entries(byFacility).sort(function(a,b){return b[1]-a[1];});
+  if (!entries.length) { el.innerHTML='<div style="color:#4b5563;font-size:12px">No data yet</div>'; return; }
+  var max=entries[0][1]||1;
+  el.innerHTML=entries.map(function(e) {
+    return '<div class="facility-row">'+
+      '<div class="facility-header"><span class="facility-name">'+icon(e[0])+' '+e[0]+'</span><span class="facility-count">'+e[1]+'</span></div>'+
+      '<div class="facility-bar-bg"><div class="facility-bar-fill" style="width:'+Math.round(e[1]/max*100)+'%"></div></div>'+
     '</div>';
   }).join('');
 }
 
 function renderGates(byGate) {
-  var el = document.getElementById('gate-list');
-  var entries = Object.entries(byGate).sort(function(a,b){ return b[1]-a[1]; });
-  if (!entries.length) { el.innerHTML = '<div style="color:#4b5563;font-size:12px">No data yet</div>'; return; }
-  el.innerHTML = entries.map(function(e) {
-    return '<div class="gate-row"><span class="gate-name">📍 ' + e[0] + '</span><span class="gate-count">' + e[1] + '</span></div>';
+  var el=document.getElementById('gate-list');
+  var entries=Object.entries(byGate).sort(function(a,b){return b[1]-a[1];});
+  if (!entries.length) { el.innerHTML='<div style="color:#4b5563;font-size:12px">No data yet</div>'; return; }
+  el.innerHTML=entries.map(function(e) {
+    return '<div class="gate-row"><span class="gate-name">📍 '+e[0]+'</span><span class="gate-count">'+e[1]+'</span></div>';
   }).join('');
 }
 
+function renderWalletEvents(events) {
+  var el=document.getElementById('we-list');
+  document.getElementById('we-count').textContent=(events||[]).length;
+  if (!events||!events.length) { el.innerHTML='<div class="feed-empty" style="padding:18px;font-size:12px">No wallet events yet</div>'; return; }
+  el.innerHTML=events.map(function(e) {
+    var cls = e.event_type==='SAVE'?'SAVE':e.event_type==='DEL'?'DEL':'UNKNOWN';
+    var label = e.event_type==='SAVE'?'SAVED':e.event_type==='DEL'?'REMOVED':'EVENT';
+    return '<div class="we-item">'+
+      '<span class="we-badge '+cls+'">'+label+'</span>'+
+      '<span class="we-code">'+(e.pass_code||'—')+'</span>'+
+      '<span class="we-time">'+timeSince(e.created_at)+'</span>'+
+    '</div>';
+  }).join('');
+}
+
+function renderMessages(msgs) {
+  var histEl=document.getElementById('msg-history');
+  var listEl=document.getElementById('msg-list');
+  if (!msgs||!msgs.length) { histEl.style.display='none'; return; }
+  histEl.style.display='block';
+  listEl.innerHTML=msgs.map(function(m) {
+    var badge='sent';
+    if (m.status==='partial') badge='partial';
+    if (m.status==='failed')  badge='failed';
+    return '<div class="msg-item">'+
+      '<div class="msg-header">'+m.header+'</div>'+
+      '<div class="msg-meta">'+
+        '<span class="msg-badge '+badge+'">'+m.status+'</span>'+
+        '<span>'+m.success_count+'/'+m.target_count+' delivered</span>'+
+        '<span style="margin-left:auto">'+fmtDate(m.created_at)+'</span>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+// ── Broadcast ─────────────────────────────────────────────────────────────
+async function sendBroadcast() {
+  var header  = document.getElementById('bc-header').value.trim();
+  var body    = document.getElementById('bc-body').value.trim();
+  var link    = document.getElementById('bc-link').value.trim();
+  var resultEl= document.getElementById('bc-result');
+  var btn     = document.getElementById('bc-btn');
+
+  if (!header||!body) { showResult('Header and body are required.','err'); return; }
+
+  btn.disabled=true;
+  btn.textContent='Sending…';
+  resultEl.style.display='none';
+
+  try {
+    var payload = { header, body };
+    if (link) payload.link_url = link;
+    var res = await fetch(NOTIFY_URL, {
+      method: 'POST',
+      headers: { 'content-type':'application/json', 'x-notify-key': NOTIFY_KEY },
+      body: JSON.stringify(payload),
+    });
+    var data = await res.json();
+    if (!res.ok) throw new Error(data.error||'Server error '+res.status);
+    showResult('Sent '+data.sent+' / '+data.total+' passes. Message ID: '+data.message_id,'ok');
+    document.getElementById('bc-header').value='';
+    document.getElementById('bc-body').value='';
+    document.getElementById('bc-link').value='';
+    // Refresh stats to show new message
+    setTimeout(refresh, 1500);
+  } catch(e) {
+    showResult('Error: '+e.message,'err');
+  }
+  btn.disabled=false;
+  btn.textContent='Send to all active passes →';
+}
+
+function showResult(msg,type) {
+  var el=document.getElementById('bc-result');
+  el.textContent=msg;
+  el.className='bcast-result '+type;
+  el.style.display='block';
+  if (type==='ok') setTimeout(function(){el.style.display='none';},8000);
+}
+
+// ── Main refresh ──────────────────────────────────────────────────────────
 async function refresh() {
   try {
     var res  = await fetch(STATS_URL);
     var data = await res.json();
     var now  = new Date();
-    document.getElementById('live-status').textContent = 'LIVE · ' + now.toLocaleTimeString('en-SG',{timeZone:'Asia/Singapore'});
-    var s = data.stats || {};
-    document.getElementById('s-today').textContent  = s.scans_today  ?? 0;
-    document.getElementById('s-unique').textContent = s.unique_today ?? 0;
-    document.getElementById('s-total').textContent  = s.total_passes ?? 0;
-    document.getElementById('s-today-sub').textContent = (s.scans_today ?? 0) + ' validated entries';
-    renderFeed(data.feed || []);
-    renderActive(data.active_passes || []);
-    renderFacility(s.by_facility || {});
-    renderGates(s.by_gate || {});
+    document.getElementById('live-status').textContent = 'LIVE · '+now.toLocaleTimeString('en-SG',{timeZone:'Asia/Singapore'});
+    var s = data.stats||{};
+    document.getElementById('s-today').textContent  = s.scans_today ??0;
+    document.getElementById('s-unique').textContent = s.unique_today??0;
+    document.getElementById('s-total').textContent  = s.total_passes??0;
+    document.getElementById('s-today-sub').textContent = (s.scans_today??0)+' validated entries';
+    document.getElementById('s-wsaves').textContent = data.wallet?.saves??0;
+    document.getElementById('s-msgs').textContent   = (data.messages||[]).length > 0 ? (data.messages||[]).length+'+ recent' : '0';
+    renderFeed(data.feed||[]);
+    renderActive(data.active_passes||[]);
+    renderFacility(s.by_facility||{});
+    renderGates(s.by_gate||{});
+    renderWalletEvents((data.wallet||{}).recent_events||[]);
+    renderMessages(data.messages||[]);
     startProgress();
-    _firstLoad = false;  // after first successful load, enable beeping
+    _firstLoad = false;
   } catch(e) {
     document.getElementById('live-status').textContent = 'Error — retrying…';
   }
 }
 
 function startProgress() {
-  var fill = document.getElementById('rfill');
-  fill.style.transition = 'none';
-  fill.style.width = '100%';
+  var fill=document.getElementById('rfill');
+  fill.style.transition='none';
+  fill.style.width='100%';
   fill.offsetWidth;
-  fill.style.transition = 'width ' + REFRESH_MS + 'ms linear';
-  fill.style.width = '0%';
+  fill.style.transition='width '+REFRESH_MS+'ms linear';
+  fill.style.width='0%';
 }
 
 document.getElementById('h-date').textContent = new Date().toLocaleDateString('en-SG',{
