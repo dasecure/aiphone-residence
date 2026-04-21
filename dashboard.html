@@ -78,20 +78,26 @@ header{background:#1A2B4A;padding:14px 22px;display:flex;align-items:center;just
 .bcast-target-clear:hover{background:rgba(255,255,255,.15);color:#f1f5f9}
 .bcast-scope{display:flex;align-items:center;gap:6px;font-size:10px;color:#4b5563;padding:2px 0}
 .bcast-scope-dot{width:6px;height:6px;border-radius:50%;background:#C4A050;flex-shrink:0}
+.bcast-platforms{display:flex;gap:6px}
+.bcast-platform{flex:1;background:#0a0f1a;border:1px solid #1f2937;border-radius:8px;padding:7px 4px;font-size:10px;font-weight:600;letter-spacing:.5px;color:#6b7280;text-transform:uppercase;cursor:pointer;transition:all .15s;text-align:center}
+.bcast-platform:hover{border-color:#374151;color:#9ca3af}
+.bcast-platform.active{background:#1A2B4A;border-color:#C4A050;color:#C4A050}
 .bcast-btn{width:100%;background:#C4A050;color:#0a0f1a;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:opacity .15s}
 .bcast-btn:hover{opacity:.88}
 .bcast-btn:disabled{opacity:.4;cursor:not-allowed}
-.bcast-result{font-size:11px;padding:6px 10px;border-radius:6px;text-align:center;display:none}
+.bcast-result{font-size:11px;padding:6px 10px;border-radius:6px;text-align:center;display:none;line-height:1.5}
 .bcast-result.ok{background:#0d2e20;color:#6ee7b7;border:1px solid #1a5c3a}
 .bcast-result.err{background:#2e0d0d;color:#fb7185;border:1px solid #5c1a1a}
+.bcast-result .pf-chip{display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:700;margin:0 3px;background:rgba(255,255,255,.07)}
 .bcast-history{border-top:1px solid rgba(255,255,255,.05);padding:10px 16px;display:grid;gap:6px}
 .msg-item{background:#0a0f1a;border:1px solid #1f2937;border-radius:8px;padding:8px 10px}
 .msg-header{font-size:12px;font-weight:700;color:#f1f5f9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.msg-meta{display:flex;align-items:center;gap:6px;margin-top:3px;font-size:10px;color:#4b5563}
+.msg-meta{display:flex;align-items:center;gap:6px;margin-top:3px;font-size:10px;color:#4b5563;flex-wrap:wrap}
 .msg-badge{padding:1px 6px;border-radius:10px;font-weight:700}
 .msg-badge.sent{background:#0d2e20;color:#6ee7b7}
 .msg-badge.partial{background:#2e2508;color:#f59e0b}
 .msg-badge.failed{background:#2e0d0d;color:#fb7185}
+.msg-pf{padding:1px 5px;border-radius:8px;font-weight:600;background:rgba(255,255,255,.04);color:#9ca3af}
 /* Wallet events */
 .we-item{display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid rgba(255,255,255,.04)}
 .we-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;flex-shrink:0;letter-spacing:.5px}
@@ -178,6 +184,14 @@ footer span{color:#C4A050}
               <button class="bcast-target-clear" id="bc-target-clear" onclick="clearTarget()">✕ clear</button>
             </div>
           </div>
+          <div>
+            <label class="bcast-label">Deliver to</label>
+            <div class="bcast-platforms">
+              <div class="bcast-platform active" data-pf="both" onclick="setPlatform('both')">Both</div>
+              <div class="bcast-platform" data-pf="apple" onclick="setPlatform('apple')">🍎 iOS only</div>
+              <div class="bcast-platform" data-pf="google" onclick="setPlatform('google')">📱 Android only</div>
+            </div>
+          </div>
           <div class="bcast-scope"><div class="bcast-scope-dot" id="bc-scope-dot"></div><span id="bc-scope-label">Will send to all active passes</span></div>
           <button class="bcast-btn" id="bc-btn" onclick="sendBroadcast()">Send to all active passes →</button>
           <div class="bcast-result" id="bc-result"></div>
@@ -219,12 +233,12 @@ const NOTIFY_URL  = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aipho
 const NOTIFY_KEY  = 'aiphone2026';
 const REFRESH_MS  = 4000;
 
-// Cache of known passes from scan feed — used for live holder name lookup
 var _passList  = [];
 var _audioCtx  = null;
 var _soundOn   = true;
 var _firstLoad = true;
 var _lastScanId = null;
+var _platform  = 'both';   // 'both' | 'apple' | 'google'
 
 // ── Sound ──────────────────────────────────────────────────────────────────
 function getAudioCtx() {
@@ -373,16 +387,28 @@ function renderMessages(msgs) {
   listEl.innerHTML=msgs.map(function(m) {
     var badge = m.status==='partial'?'partial':m.status==='failed'?'failed':'sent';
     var scope = (m.pass_codes&&m.pass_codes.length===1) ? m.pass_codes[0] : m.target_count+' passes';
+    var pfChips = '';
+    if (typeof m.google_sent === 'number') pfChips += '<span class="msg-pf">📱 '+m.google_sent+'</span>';
+    if (typeof m.apple_sent  === 'number') pfChips += '<span class="msg-pf">🍎 '+m.apple_sent+'</span>';
     return '<div class="msg-item">'+
       '<div class="msg-header">'+m.header+'</div>'+
       '<div class="msg-meta">'+
         '<span class="msg-badge '+badge+'">'+m.status+'</span>'+
         '<span>'+m.success_count+'/'+m.target_count+'</span>'+
+        pfChips+
         '<span style="color:#6b7280">→ '+scope+'</span>'+
         '<span style="margin-left:auto">'+fmtDate(m.created_at)+'</span>'+
       '</div>'+
     '</div>';
   }).join('');
+}
+
+// ── Platform selector ──────────────────────────────────────────────────────
+function setPlatform(pf) {
+  _platform = pf;
+  document.querySelectorAll('.bcast-platform').forEach(function(el) {
+    el.classList.toggle('active', el.dataset.pf === pf);
+  });
 }
 
 // ── Target pass field ──────────────────────────────────────────────────────
@@ -411,7 +437,6 @@ function updateTargetUI(val) {
 
   clearEl.style.display = 'block';
 
-  // Look up holder name from feed cache
   var match = _passList.find(function(p){ return p.code === val; });
   if (match && match.holder_name) {
     nameEl.textContent = match.holder_name;
@@ -432,13 +457,11 @@ function clearTarget() {
   updateTargetUI('');
 }
 
-// Clicking a feed item or wallet event pre-fills the target field
 function prefillTarget(code) {
   if (!code || code === '—') return;
   var inp = document.getElementById('bc-target');
   inp.value = code.toUpperCase();
   updateTargetUI(code.toUpperCase());
-  // Scroll to broadcast form
   inp.closest('.panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   inp.focus();
 }
@@ -449,7 +472,6 @@ async function sendBroadcast() {
   var body    = document.getElementById('bc-body').value.trim();
   var link    = document.getElementById('bc-link').value.trim();
   var target  = document.getElementById('bc-target').value.trim().toUpperCase();
-  var resultEl= document.getElementById('bc-result');
   var btn     = document.getElementById('bc-btn');
 
   if (!header||!body) { showResult('Header and body are required.','err'); return; }
@@ -457,10 +479,10 @@ async function sendBroadcast() {
   var isSingle = target.length > 0;
   btn.disabled = true;
   btn.textContent = 'Sending…';
-  resultEl.style.display = 'none';
+  document.getElementById('bc-result').style.display = 'none';
 
   try {
-    var payload = { header, body };
+    var payload = { header, body, platforms: _platform };
     if (link)     payload.link_url   = link;
     if (isSingle) payload.pass_codes = [target];
 
@@ -472,9 +494,21 @@ async function sendBroadcast() {
     var data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Server error ' + res.status);
 
-    var resultMsg = isSingle
-      ? (data.sent ? 'Message delivered to ' + target : 'Pass not found or not yet saved to Wallet: ' + target)
-      : 'Sent ' + data.sent + ' / ' + data.total + ' passes';
+    // Build platform breakdown chips
+    var chips = '';
+    if (data.google) chips += '<span class="pf-chip">📱 ' + data.google.sent + '/' + data.google.total + '</span>';
+    if (data.apple)  chips += '<span class="pf-chip">🍎 ' + data.apple.sent  + '/' + data.apple.total  + '</span>';
+
+    var resultMsg;
+    if (data.sent === 0) {
+      resultMsg = isSingle
+        ? 'Pass not found or not saved to any wallet: ' + target
+        : 'No passes reached on any platform';
+    } else {
+      resultMsg = isSingle
+        ? 'Delivered to ' + target + ' ' + chips
+        : 'Sent to ' + data.sent + ' / ' + data.total + ' passes ' + chips;
+    }
     showResult(resultMsg, data.sent > 0 ? 'ok' : 'err');
 
     if (data.sent > 0) {
@@ -493,10 +527,10 @@ async function sendBroadcast() {
 
 function showResult(msg, type) {
   var el = document.getElementById('bc-result');
-  el.textContent = msg;
+  el.innerHTML = msg;
   el.className = 'bcast-result ' + type;
   el.style.display = 'block';
-  if (type === 'ok') setTimeout(function(){ el.style.display='none'; }, 8000);
+  if (type === 'ok') setTimeout(function(){ el.style.display='none'; }, 10000);
 }
 
 // ── Main refresh ──────────────────────────────────────────────────────────
@@ -514,7 +548,6 @@ async function refresh() {
     document.getElementById('s-wsaves').textContent = data.wallet?.saves ?? 0;
     document.getElementById('s-msgs').textContent   = (data.messages || []).length > 0 ? (data.messages||[]).length + '+ recent' : '0';
 
-    // Rebuild pass cache from feed + active
     var seen = new Set();
     _passList = [];
     (data.feed || []).forEach(function(f) {
@@ -530,7 +563,6 @@ async function refresh() {
       }
     });
 
-    // Re-evaluate any in-progress target input against fresh cache
     var curTarget = document.getElementById('bc-target').value.trim().toUpperCase();
     if (curTarget) updateTargetUI(curTarget);
 
