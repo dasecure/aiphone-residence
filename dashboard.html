@@ -69,6 +69,15 @@ header{background:#1A2B4A;padding:14px 22px;display:flex;align-items:center;just
 .bcast-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#6b7280;margin-bottom:3px;display:block}
 .bcast-input,.bcast-textarea{width:100%;background:#0a0f1a;border:1px solid #1f2937;border-radius:8px;color:#f1f5f9;font-size:12px;padding:8px 10px;font-family:inherit;transition:border-color .15s;resize:none}
 .bcast-input:focus,.bcast-textarea:focus{outline:none;border-color:#C4A050}
+.bcast-target-wrap{position:relative}
+.bcast-target-wrap input{padding-right:110px;text-transform:uppercase;font-family:monospace;letter-spacing:.5px}
+.bcast-target-name{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:10px;white-space:nowrap;pointer-events:none;transition:color .2s}
+.bcast-target-name.found{color:#6ee7b7}
+.bcast-target-name.notfound{color:#6b7280}
+.bcast-target-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.08);border:none;border-radius:4px;color:#9ca3af;font-size:10px;padding:2px 6px;cursor:pointer;display:none}
+.bcast-target-clear:hover{background:rgba(255,255,255,.15);color:#f1f5f9}
+.bcast-scope{display:flex;align-items:center;gap:6px;font-size:10px;color:#4b5563;padding:2px 0}
+.bcast-scope-dot{width:6px;height:6px;border-radius:50%;background:#C4A050;flex-shrink:0}
 .bcast-btn{width:100%;background:#C4A050;color:#0a0f1a;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:opacity .15s}
 .bcast-btn:hover{opacity:.88}
 .bcast-btn:disabled{opacity:.4;cursor:not-allowed}
@@ -144,9 +153,9 @@ footer span{color:#C4A050}
         <div id="active-list"><div class="feed-empty" style="padding:20px">No recent activity</div></div>
       </div>
 
-      <!-- Broadcast Notification -->
+      <!-- Broadcast / Targeted Notification -->
       <div class="panel">
-        <div class="panel-header"><span class="panel-title">📣 Broadcast Notification</span></div>
+        <div class="panel-header"><span class="panel-title">📣 Send Notification</span></div>
         <div class="bcast-form">
           <div>
             <label class="bcast-label">Message header</label>
@@ -160,11 +169,21 @@ footer span{color:#C4A050}
             <label class="bcast-label">Link (optional)</label>
             <input class="bcast-input" id="bc-link" placeholder="https://…" type="url">
           </div>
+          <div>
+            <label class="bcast-label">Target pass <span style="color:#374151;font-weight:400;letter-spacing:0;text-transform:none">(leave blank to broadcast to all)</span></label>
+            <div class="bcast-target-wrap">
+              <input class="bcast-input" id="bc-target" placeholder="PASS-XXXXXXXX" maxlength="20"
+                     oninput="onTargetInput(this.value)" autocomplete="off">
+              <span class="bcast-target-name" id="bc-target-name"></span>
+              <button class="bcast-target-clear" id="bc-target-clear" onclick="clearTarget()">✕ clear</button>
+            </div>
+          </div>
+          <div class="bcast-scope"><div class="bcast-scope-dot" id="bc-scope-dot"></div><span id="bc-scope-label">Will send to all active passes</span></div>
           <button class="bcast-btn" id="bc-btn" onclick="sendBroadcast()">Send to all active passes →</button>
           <div class="bcast-result" id="bc-result"></div>
         </div>
         <div class="bcast-history" id="msg-history" style="display:none">
-          <div style="font-size:10px;color:#6b7280;letter-spacing:.8px;text-transform:uppercase;margin-bottom:2px">Recent broadcasts</div>
+          <div style="font-size:10px;color:#6b7280;letter-spacing:.8px;text-transform:uppercase;margin-bottom:2px">Recent messages</div>
           <div id="msg-list"></div>
         </div>
       </div>
@@ -200,12 +219,14 @@ const NOTIFY_URL  = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aipho
 const NOTIFY_KEY  = 'aiphone2026';
 const REFRESH_MS  = 4000;
 
-// ── Sound ──────────────────────────────────────────────────────────────────
+// Cache of known passes from scan feed — used for live holder name lookup
+var _passList  = [];
 var _audioCtx  = null;
 var _soundOn   = true;
 var _firstLoad = true;
 var _lastScanId = null;
 
+// ── Sound ──────────────────────────────────────────────────────────────────
 function getAudioCtx() {
   if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if (_audioCtx.state === 'suspended') _audioCtx.resume();
@@ -214,8 +235,7 @@ function getAudioCtx() {
 function playNewScanBeep() {
   if (!_soundOn) return;
   try {
-    var ctx = getAudioCtx();
-    var now = ctx.currentTime;
+    var ctx = getAudioCtx(), now = ctx.currentTime;
     [[880,0,0.07],[1046.5,0.09,0.09]].forEach(function(p) {
       var osc=ctx.createOscillator(),gain=ctx.createGain();
       osc.connect(gain);gain.connect(ctx.destination);
@@ -278,7 +298,7 @@ function renderFeed(feed) {
     if (s.tier) tags.push('<span class="feed-tag" style="background:#1A2B4A;color:#aab8d0">'+s.tier+'</span>');
     var fLabel = s.facility||s.template_name;
     if (fLabel) tags.push('<span class="feed-tag" style="background:'+s.template_color+'22;color:'+s.template_color+'">'+icon(fLabel)+' '+fLabel+'</span>');
-    return '<div class="feed-item">'+
+    return '<div class="feed-item" onclick="prefillTarget(\''+s.code+'\')">'+
       '<div class="feed-dot '+(isValid?'valid':'invalid')+'"></div>'+
       '<div class="feed-body">'+
         '<div class="feed-name">'+(s.holder_name||s.code||'Unknown')+'</div>'+
@@ -296,7 +316,7 @@ function renderActive(active) {
   document.getElementById('s-active').textContent=active.length;
   if (!active.length) { el.innerHTML='<div class="feed-empty" style="padding:20px;font-size:12px">No activity in last 2 hours</div>'; return; }
   el.innerHTML=active.map(function(a) {
-    return '<div class="active-item">'+
+    return '<div class="active-item" onclick="prefillTarget(\''+a.code+'\')" style="cursor:pointer" title="Click to message this pass">'+
       '<div class="active-dot"></div>'+
       '<div style="flex:1;min-width:0">'+
         '<div class="active-name">'+(a.holder_name||a.code)+'</div>'+
@@ -336,9 +356,10 @@ function renderWalletEvents(events) {
   el.innerHTML=events.map(function(e) {
     var cls = e.event_type==='SAVE'?'SAVE':e.event_type==='DEL'?'DEL':'UNKNOWN';
     var label = e.event_type==='SAVE'?'SAVED':e.event_type==='DEL'?'REMOVED':'EVENT';
-    return '<div class="we-item">'+
+    var code = e.pass_code||'—';
+    return '<div class="we-item" onclick="prefillTarget(\''+code+'\')" style="cursor:pointer" title="Click to message this pass">'+
       '<span class="we-badge '+cls+'">'+label+'</span>'+
-      '<span class="we-code">'+(e.pass_code||'—')+'</span>'+
+      '<span class="we-code">'+code+'</span>'+
       '<span class="we-time">'+timeSince(e.created_at)+'</span>'+
     '</div>';
   }).join('');
@@ -350,18 +371,76 @@ function renderMessages(msgs) {
   if (!msgs||!msgs.length) { histEl.style.display='none'; return; }
   histEl.style.display='block';
   listEl.innerHTML=msgs.map(function(m) {
-    var badge='sent';
-    if (m.status==='partial') badge='partial';
-    if (m.status==='failed')  badge='failed';
+    var badge = m.status==='partial'?'partial':m.status==='failed'?'failed':'sent';
+    var scope = (m.pass_codes&&m.pass_codes.length===1) ? m.pass_codes[0] : m.target_count+' passes';
     return '<div class="msg-item">'+
       '<div class="msg-header">'+m.header+'</div>'+
       '<div class="msg-meta">'+
         '<span class="msg-badge '+badge+'">'+m.status+'</span>'+
-        '<span>'+m.success_count+'/'+m.target_count+' delivered</span>'+
+        '<span>'+m.success_count+'/'+m.target_count+'</span>'+
+        '<span style="color:#6b7280">→ '+scope+'</span>'+
         '<span style="margin-left:auto">'+fmtDate(m.created_at)+'</span>'+
       '</div>'+
     '</div>';
   }).join('');
+}
+
+// ── Target pass field ──────────────────────────────────────────────────────
+function onTargetInput(val) {
+  val = val.toUpperCase().replace(/[^A-Z0-9\-]/g,'');
+  var inp = document.getElementById('bc-target');
+  inp.value = val;
+  updateTargetUI(val);
+}
+
+function updateTargetUI(val) {
+  var nameEl  = document.getElementById('bc-target-name');
+  var clearEl = document.getElementById('bc-target-clear');
+  var scopeEl = document.getElementById('bc-scope-label');
+  var dotEl   = document.getElementById('bc-scope-dot');
+  var btnEl   = document.getElementById('bc-btn');
+
+  if (!val) {
+    nameEl.textContent = '';
+    clearEl.style.display = 'none';
+    scopeEl.textContent = 'Will send to all active passes';
+    dotEl.style.background = '#C4A050';
+    btnEl.textContent = 'Send to all active passes →';
+    return;
+  }
+
+  clearEl.style.display = 'block';
+
+  // Look up holder name from feed cache
+  var match = _passList.find(function(p){ return p.code === val; });
+  if (match && match.holder_name) {
+    nameEl.textContent = match.holder_name;
+    nameEl.className = 'bcast-target-name found';
+    scopeEl.textContent = 'Targeting ' + match.holder_name;
+    dotEl.style.background = '#6ee7b7';
+  } else {
+    nameEl.textContent = val.length >= 12 ? 'unknown pass' : '';
+    nameEl.className = 'bcast-target-name notfound';
+    scopeEl.textContent = 'Targeting ' + val;
+    dotEl.style.background = '#6b7280';
+  }
+  btnEl.textContent = 'Send to ' + val + ' →';
+}
+
+function clearTarget() {
+  document.getElementById('bc-target').value = '';
+  updateTargetUI('');
+}
+
+// Clicking a feed item or wallet event pre-fills the target field
+function prefillTarget(code) {
+  if (!code || code === '—') return;
+  var inp = document.getElementById('bc-target');
+  inp.value = code.toUpperCase();
+  updateTargetUI(code.toUpperCase());
+  // Scroll to broadcast form
+  inp.closest('.panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  inp.focus();
 }
 
 // ── Broadcast ─────────────────────────────────────────────────────────────
@@ -369,44 +448,55 @@ async function sendBroadcast() {
   var header  = document.getElementById('bc-header').value.trim();
   var body    = document.getElementById('bc-body').value.trim();
   var link    = document.getElementById('bc-link').value.trim();
+  var target  = document.getElementById('bc-target').value.trim().toUpperCase();
   var resultEl= document.getElementById('bc-result');
   var btn     = document.getElementById('bc-btn');
 
   if (!header||!body) { showResult('Header and body are required.','err'); return; }
 
-  btn.disabled=true;
-  btn.textContent='Sending…';
-  resultEl.style.display='none';
+  var isSingle = target.length > 0;
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  resultEl.style.display = 'none';
 
   try {
     var payload = { header, body };
-    if (link) payload.link_url = link;
+    if (link)     payload.link_url   = link;
+    if (isSingle) payload.pass_codes = [target];
+
     var res = await fetch(NOTIFY_URL, {
       method: 'POST',
-      headers: { 'content-type':'application/json', 'x-notify-key': NOTIFY_KEY },
+      headers: { 'content-type': 'application/json', 'x-notify-key': NOTIFY_KEY },
       body: JSON.stringify(payload),
     });
     var data = await res.json();
-    if (!res.ok) throw new Error(data.error||'Server error '+res.status);
-    showResult('Sent '+data.sent+' / '+data.total+' passes. Message ID: '+data.message_id,'ok');
-    document.getElementById('bc-header').value='';
-    document.getElementById('bc-body').value='';
-    document.getElementById('bc-link').value='';
-    // Refresh stats to show new message
-    setTimeout(refresh, 1500);
+    if (!res.ok) throw new Error(data.error || 'Server error ' + res.status);
+
+    var resultMsg = isSingle
+      ? (data.sent ? 'Message delivered to ' + target : 'Pass not found or not yet saved to Wallet: ' + target)
+      : 'Sent ' + data.sent + ' / ' + data.total + ' passes';
+    showResult(resultMsg, data.sent > 0 ? 'ok' : 'err');
+
+    if (data.sent > 0) {
+      document.getElementById('bc-header').value = '';
+      document.getElementById('bc-body').value   = '';
+      document.getElementById('bc-link').value   = '';
+      clearTarget();
+      setTimeout(refresh, 1500);
+    }
   } catch(e) {
-    showResult('Error: '+e.message,'err');
+    showResult('Error: ' + e.message, 'err');
   }
-  btn.disabled=false;
-  btn.textContent='Send to all active passes →';
+  btn.disabled = false;
+  btn.textContent = target ? 'Send to ' + target + ' →' : 'Send to all active passes →';
 }
 
-function showResult(msg,type) {
-  var el=document.getElementById('bc-result');
-  el.textContent=msg;
-  el.className='bcast-result '+type;
-  el.style.display='block';
-  if (type==='ok') setTimeout(function(){el.style.display='none';},8000);
+function showResult(msg, type) {
+  var el = document.getElementById('bc-result');
+  el.textContent = msg;
+  el.className = 'bcast-result ' + type;
+  el.style.display = 'block';
+  if (type === 'ok') setTimeout(function(){ el.style.display='none'; }, 8000);
 }
 
 // ── Main refresh ──────────────────────────────────────────────────────────
@@ -415,20 +505,41 @@ async function refresh() {
     var res  = await fetch(STATS_URL);
     var data = await res.json();
     var now  = new Date();
-    document.getElementById('live-status').textContent = 'LIVE · '+now.toLocaleTimeString('en-SG',{timeZone:'Asia/Singapore'});
-    var s = data.stats||{};
-    document.getElementById('s-today').textContent  = s.scans_today ??0;
-    document.getElementById('s-unique').textContent = s.unique_today??0;
-    document.getElementById('s-total').textContent  = s.total_passes??0;
-    document.getElementById('s-today-sub').textContent = (s.scans_today??0)+' validated entries';
-    document.getElementById('s-wsaves').textContent = data.wallet?.saves??0;
-    document.getElementById('s-msgs').textContent   = (data.messages||[]).length > 0 ? (data.messages||[]).length+'+ recent' : '0';
-    renderFeed(data.feed||[]);
-    renderActive(data.active_passes||[]);
-    renderFacility(s.by_facility||{});
-    renderGates(s.by_gate||{});
-    renderWalletEvents((data.wallet||{}).recent_events||[]);
-    renderMessages(data.messages||[]);
+    document.getElementById('live-status').textContent = 'LIVE · ' + now.toLocaleTimeString('en-SG',{timeZone:'Asia/Singapore'});
+    var s = data.stats || {};
+    document.getElementById('s-today').textContent  = s.scans_today  ?? 0;
+    document.getElementById('s-unique').textContent = s.unique_today ?? 0;
+    document.getElementById('s-total').textContent  = s.total_passes ?? 0;
+    document.getElementById('s-today-sub').textContent = (s.scans_today ?? 0) + ' validated entries';
+    document.getElementById('s-wsaves').textContent = data.wallet?.saves ?? 0;
+    document.getElementById('s-msgs').textContent   = (data.messages || []).length > 0 ? (data.messages||[]).length + '+ recent' : '0';
+
+    // Rebuild pass cache from feed + active
+    var seen = new Set();
+    _passList = [];
+    (data.feed || []).forEach(function(f) {
+      if (f.code && !seen.has(f.code)) {
+        seen.add(f.code);
+        _passList.push({ code: f.code, holder_name: f.holder_name });
+      }
+    });
+    (data.active_passes || []).forEach(function(a) {
+      if (a.code && !seen.has(a.code)) {
+        seen.add(a.code);
+        _passList.push({ code: a.code, holder_name: a.holder_name });
+      }
+    });
+
+    // Re-evaluate any in-progress target input against fresh cache
+    var curTarget = document.getElementById('bc-target').value.trim().toUpperCase();
+    if (curTarget) updateTargetUI(curTarget);
+
+    renderFeed(data.feed || []);
+    renderActive(data.active_passes || []);
+    renderFacility(s.by_facility || {});
+    renderGates(s.by_gate || {});
+    renderWalletEvents((data.wallet || {}).recent_events || []);
+    renderMessages(data.messages || []);
     startProgress();
     _firstLoad = false;
   } catch(e) {
@@ -437,16 +548,16 @@ async function refresh() {
 }
 
 function startProgress() {
-  var fill=document.getElementById('rfill');
-  fill.style.transition='none';
-  fill.style.width='100%';
+  var fill = document.getElementById('rfill');
+  fill.style.transition = 'none';
+  fill.style.width = '100%';
   fill.offsetWidth;
-  fill.style.transition='width '+REFRESH_MS+'ms linear';
-  fill.style.width='0%';
+  fill.style.transition = 'width ' + REFRESH_MS + 'ms linear';
+  fill.style.width = '0%';
 }
 
 document.getElementById('h-date').textContent = new Date().toLocaleDateString('en-SG',{
-  weekday:'short',day:'numeric',month:'short',year:'numeric',timeZone:'Asia/Singapore'
+  weekday:'short', day:'numeric', month:'short', year:'numeric', timeZone:'Asia/Singapore'
 });
 
 refresh();
