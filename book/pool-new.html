@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Swimming Pool (NEW API TEST) — Aiphone Residence</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link rel="stylesheet" href="../book.css">
+</head>
+<body>
+<header>
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100" fill="#0F1E3A"/><circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="2"/><rect x="82" y="75" width="36" height="82" fill="#C4A050"/><ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/><rect x="88" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="54" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="66" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="122" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="134" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="40" y="157" width="120" height="4" fill="#C4A050"/><text x="100" y="174" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#C4A050" text-anchor="middle" letter-spacing="3">AIPHONE</text><text x="100" y="187" font-family="Arial,sans-serif" font-size="8" fill="#D4C4A0" text-anchor="middle" letter-spacing="2">RESIDENCE</text></svg></div>
+  <div><div class="brand">Aiphone Residence</div><div class="sub">Facility Booking</div></div>
+</header>
+<div class="strip" style="background:#1B8FC4">
+  <div class="strip-icon">🏊</div>
+  <div class="strip-title">Swimming Pool Pass <span style="font-size:12px;background:#0F1E3A;color:#C4A050;padding:2px 8px;border-radius:4px;margin-left:8px;vertical-align:middle">NEW API</span></div>
+  <div class="strip-sub">Lap &amp; leisure pool &middot; 7AM–10PM daily</div>
+</div>
+<div class="container">
+  <div id="form-view">
+    <div class="card">
+      <div class="card-title">Get Your Day Pass</div>
+      <div class="field"><label>Your Name *</label><input id="f-name" type="text" placeholder="e.g. Tan Wei Ming" autocomplete="name"></div>
+      <div class="field"><label>Unit No. *</label><input id="f-unit" type="text" placeholder="e.g. #12-08"></div>
+      <div class="field"><label>Date *</label><input id="f-date" type="date"></div>
+      <div id="err" class="err"></div>
+      <button class="btn" style="background:#1B8FC4" id="submit-btn" onclick="book()">Get Pool Pass 🏊</button>
+    </div>
+    <div class="card rules-card">
+      <div class="card-title">Pool Rules</div>
+      <ul class="rules">
+        <li>Shower before entering the pool</li>
+        <li>No running on pool deck</li>
+        <li>Children under 12 must be accompanied</li>
+        <li>No food or drinks on pool deck</li>
+        <li>Show pass QR at pool gate</li>
+      </ul>
+    </div>
+  </div>
+  <div id="success-view" style="display:none">
+    <div class="success-card">
+      <div class="success-icon">🏊</div>
+      <div class="success-title">Pool Pass Ready!</div>
+      <div class="success-sub" id="s-sub"></div>
+      <div class="pass-code" id="s-code"></div>
+      <div class="qr-wrap"><div id="qr"></div></div>
+      <div class="qr-hint">Show QR at pool gate · Valid all day</div>
+      <a class="wallet-btn apple" id="s-apple" href="#" target="_blank"><svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg> Add to Apple Wallet</a>
+      <a class="wallet-btn google" id="s-google" href="#" target="_blank"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M21.56 10.74l-9.56-.01v2.92h5.49c-.54 2.67-2.86 4.35-5.49 4.35-3.35 0-6-2.69-6-6s2.65-6 6-6c1.48 0 2.82.54 3.86 1.42l2.12-2.12C16.55 3.6 14.38 2.75 12 2.75 6.9 2.75 2.75 6.9 2.75 12S6.9 21.25 12 21.25c5.61 0 9.25-3.95 9.25-9.5 0-.68-.07-1.35-.19-2.01h-1.5v1z"/></svg> Save to Google Wallet</a>
+      <a class="view-link" id="s-view" href="#" target="_blank">View pass landing page →</a>
+      <div class="expiry-note" id="s-expiry"></div>
+      <button class="btn-secondary" onclick="reset()">Get Another Pass</button>
+    </div>
+  </div>
+</div>
+<footer>© 2026 <span>Aiphone Residence</span> &middot; <a href="../">← Back to Portal</a> &middot; <a href="pool.html">← Old (live) version</a></footer>
+<script src="../book-new.js"></script>
+<script>
+var TEMPLATE_ID = '4cd2fcfc-5511-4568-978a-a791c962f360';
+
+var DEMO_VALUES = {
+  'f-name': 'Tan Wei Ming',
+  'f-unit': '#12-08',
+};
+
+function getPayload() {
+  return {
+    facility:     'pool',
+    holder_name:  val('f-name'),
+    unit:         val('f-unit'),
+    date:         val('f-date'),
+  };
+}
+
+function validate() {
+  if (!val('f-name')) return 'Please enter your name.';
+  if (!val('f-unit')) return 'Please enter your unit number.';
+  if (!val('f-date')) return 'Please select a date.';
+  return null;
+}
+
+function setSuccess(data) {
+  var d = data.data || {};
+  id('s-sub').textContent = ['Pool', d.date].filter(Boolean).join(' · ');
+  id('s-expiry').textContent = data.expiresAt
+    ? 'Expires ' + new Date(data.expiresAt).toLocaleDateString()
+    : 'Valid today · Up to 10 entries';
+}
+</script>
+</body></html>

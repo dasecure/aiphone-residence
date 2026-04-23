@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Visitor Pass (NEW API TEST) — Aiphone Residence</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link rel="stylesheet" href="../book.css">
+<style>
+/* Visitor-specific overrides (copied from book/visitor.html) */
+.share-section{margin:14px 0 6px}
+.share-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#9ca3af;margin-bottom:8px;text-align:center}
+.share-row{display:flex;gap:8px}
+@media(max-width:380px){.share-row{flex-direction:column}}
+.share-wa{display:flex;align-items:center;justify-content:center;gap:8px;flex:1;padding:13px 10px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;background:#25D366;color:white;transition:opacity .2s;min-height:48px}
+.share-wa:hover{opacity:.88}
+.share-copy{display:flex;align-items:center;justify-content:center;gap:6px;flex:1;padding:13px 10px;border-radius:10px;font-size:14px;font-weight:700;background:#1f2937;color:#e5e7eb;border:1.5px solid #374151;cursor:pointer;transition:border-color .2s;min-height:48px}
+.share-copy:hover{border-color:#C8A951;color:#C8A951}
+.expiry-banner{background:#78350f;border:1px solid #92400e;border-radius:10px;padding:10px 14px;text-align:center;margin:12px 0;font-size:12px;color:#fcd34d;font-weight:600}
+.field input,.field select{min-height:48px;font-size:16px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100" fill="#0F1E3A"/><circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="2"/><rect x="82" y="75" width="36" height="82" fill="#C4A050"/><ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/><rect x="88" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="54" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="66" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="122" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="134" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="40" y="157" width="120" height="4" fill="#C4A050"/><text x="100" y="174" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#C4A050" text-anchor="middle" letter-spacing="3">AIPHONE</text><text x="100" y="187" font-family="Arial,sans-serif" font-size="8" fill="#D4C4A0" text-anchor="middle" letter-spacing="2">RESIDENCE</text></svg></div>
+  <div><div class="brand">Aiphone Residence</div><div class="sub">Visitor Pass</div></div>
+</header>
+<div class="strip" style="background:#8B5E3C">
+  <div class="strip-icon">👤</div>
+  <div class="strip-title">Issue Visitor Pass <span style="font-size:12px;background:#0F1E3A;color:#C4A050;padding:2px 8px;border-radius:4px;margin-left:8px;vertical-align:middle">NEW API</span></div>
+  <div class="strip-sub">Day pass for guests · Valid today only · Max 3 gate scans</div>
+</div>
+<div class="container">
+  <div id="form-view">
+    <div class="card">
+      <div class="card-title">Visitor Details</div>
+      <div class="field">
+        <label>Visitor Name *</label>
+        <input id="f-vname" type="text" placeholder="e.g. James Lim" autocomplete="name" autocapitalize="words" autocorrect="off">
+      </div>
+      <div class="field">
+        <label>Visitor Phone <span style="font-weight:400;color:#aaa">(for WhatsApp)</span></label>
+        <input id="f-vphone" type="tel" placeholder="+65 9123 4567" autocomplete="tel" inputmode="tel">
+      </div>
+      <div class="field">
+        <label>Your Unit No. (Host) *</label>
+        <input id="f-unit" type="text" placeholder="e.g. #12-08" autocomplete="off" autocapitalize="characters" autocorrect="off">
+      </div>
+      <div class="field">
+        <label>Purpose of Visit</label>
+        <input id="f-purpose" type="text" placeholder="e.g. Dinner, delivery, friend" autocomplete="off" autocapitalize="sentences">
+      </div>
+      <div class="field">
+        <label>Visit Date *</label>
+        <input id="f-date" type="date">
+      </div>
+      <div id="err" class="err"></div>
+      <button class="btn" style="background:#8B5E3C;min-height:52px;font-size:15px" id="submit-btn" onclick="book()">Issue Visitor Pass 👤</button>
+    </div>
+    <div class="card rules-card">
+      <div class="card-title">Visitor Policy</div>
+      <ul class="rules">
+        <li>Pass valid today only — expires at midnight</li>
+        <li>Visitor shows QR code at Visitor Checkpoint</li>
+        <li>Resident must be present to receive visitor at lobby</li>
+        <li>Max 3 gate scans per pass (entry, exit, re-entry)</li>
+        <li>Forward pass link via WhatsApp before visitor arrives</li>
+      </ul>
+    </div>
+  </div>
+  <div id="success-view" style="display:none">
+    <div class="success-card">
+      <div class="success-icon">👤</div>
+      <div class="success-title">Visitor Pass Issued!</div>
+      <div class="success-sub" id="s-sub"></div>
+
+      <div class="expiry-banner">⏰ Valid today only &middot; Expires midnight &middot; Max 3 gate scans</div>
+
+      <div class="pass-code" id="s-code"></div>
+      <div class="qr-wrap"><div id="qr"></div></div>
+      <div class="qr-hint">Scan at Visitor Checkpoint &middot; Or share link below</div>
+
+      <div class="share-section">
+        <div class="share-label">Send pass to visitor</div>
+        <div class="share-row">
+          <a class="share-wa" id="s-whatsapp" href="#" target="_blank">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            WhatsApp
+          </a>
+          <button class="share-copy" id="s-copy">🔗 Copy Link</button>
+        </div>
+      </div>
+
+      <a class="wallet-btn apple" id="s-apple" href="#" target="_blank" style="margin-top:14px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        Visitor: Add to Apple Wallet
+      </a>
+      <a class="wallet-btn google" id="s-google" href="#" target="_blank">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M21.56 10.74l-9.56-.01v2.92h5.49c-.54 2.67-2.86 4.35-5.49 4.35-3.35 0-6-2.69-6-6s2.65-6 6-6c1.48 0 2.82.54 3.86 1.42l2.12-2.12C16.55 3.6 14.38 2.75 12 2.75 6.9 2.75 2.75 6.9 2.75 12S6.9 21.25 12 21.25c5.61 0 9.25-3.95 9.25-9.5 0-.68-.07-1.35-.19-2.01h-1.5v1z"/></svg>
+        Visitor: Save to Google Wallet
+      </a>
+
+      <a class="view-link" id="s-view" href="#" target="_blank">View pass page →</a>
+      <button class="btn-secondary" onclick="reset()">Issue Another Pass</button>
+    </div>
+  </div>
+</div>
+<footer>© 2026 <span>Aiphone Residence</span> &middot; <a href="../">← Back to Portal</a> &middot; <a href="visitor.html">← Old (live) version</a></footer>
+<script src="../book-new.js"></script>
+<script>
+var TEMPLATE_ID = 'f56e5942-6037-4959-b46d-c178f382e47f';
+
+var DEMO_VALUES = {
+  'f-vname':   'James Lim',
+  'f-vphone':  '+65 9123 4567',
+  'f-unit':    '#12-08',
+  'f-purpose': 'Dinner party',
+};
+
+// Visitor pass uses passType 'visitor' — different from facility_booking.
+// book-new.js defaults to facility_booking; override via getPassType().
+function getPassType() { return 'visitor'; }
+
+// holderName for a visitor pass is the VISITOR's name, not the host's.
+// book-new.js passes holder_name through from getPayload() by default; this
+// hook lets us pick a different field.
+function getHolderName() { return val('f-vname'); }
+
+function getPayload() {
+  return {
+    facility:      'visitor',
+    holder_name:   val('f-vname'),
+    visitor_name:  val('f-vname'),
+    visitor_phone: val('f-vphone'),
+    host_unit:     val('f-unit'),
+    purpose:       val('f-purpose'),
+    date:          val('f-date'),
+  };
+}
+
+function validate() {
+  if (!val('f-vname')) return 'Please enter the visitor name.';
+  if (!val('f-unit'))  return 'Please enter your unit number.';
+  if (!val('f-date'))  return 'Please select a visit date.';
+  return null;
+}
+
+function setSuccess(data) {
+  var d = data.data || {};
+  var landing = (data.walletUrls && data.walletUrls.landing) || '';
+  var purpose = d.purpose ? ' · ' + d.purpose : '';
+  id('s-sub').textContent = data.holderName + ' → Unit ' + d.host_unit + ' · ' + d.date + purpose;
+
+  // Visitor-specific WhatsApp share message
+  var phoneRaw = val('f-vphone').replace(/[^+\d]/g, '');
+  var phoneForWa = phoneRaw.replace(/^\+/, '').replace(/^0/, '65');
+  var waMsg = encodeURIComponent(
+    'Hi ' + data.holderName + '! 🏠\n\n' +
+    'You have been issued a visitor pass for Aiphone Residence.\n\n' +
+    '📅 Date: ' + d.date + '\n' +
+    '🏠 Visiting: Unit ' + d.host_unit + '\n' +
+    (d.purpose ? '📝 Purpose: ' + d.purpose + '\n' : '') +
+    (landing ? '\nTap the link below for the pass + QR:\n' + landing + '\n' : '') +
+    '\nShow the QR at the Visitor Checkpoint on arrival. Valid today only.'
+  );
+  var waUrl = phoneForWa
+    ? 'https://wa.me/' + phoneForWa + '?text=' + waMsg
+    : 'https://wa.me/?text=' + waMsg;
+  var waEl = id('s-whatsapp');
+  if (waEl) waEl.href = waUrl;
+
+  var copyEl = id('s-copy');
+  if (copyEl && landing) {
+    copyEl.onclick = function() {
+      navigator.clipboard.writeText(landing).then(function() {
+        copyEl.textContent = '✅ Copied!';
+        setTimeout(function() { copyEl.textContent = '🔗 Copy Link'; }, 2500);
+      }).catch(function() {
+        copyEl.textContent = landing;
+      });
+    };
+  }
+}
+</script>
+</body></html>

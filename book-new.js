@@ -1,6 +1,9 @@
 // Aiphone Residence — NEW booking logic (talks to api.dasecure.com)
 // Parallel to book.js but uses the new Dasecure API with publishable-key auth.
-// Each page defines: FACILITY, TEMPLATE_ID, DEMO_VALUES (optional), getPayload(), validate(), setSuccess(data)
+// Each page defines: TEMPLATE_ID, DEMO_VALUES (optional), getPayload(), validate(), setSuccess(data)
+// Optional hooks:
+//   getPassType() — override the default 'facility_booking' (visitor forms use 'visitor')
+//   getHolderName() — override holder_name from payload (visitor forms use visitor_name)
 
 const API_URL = 'https://api.dasecure.com/v1/passes';
 
@@ -33,7 +36,6 @@ window.addEventListener('DOMContentLoaded', () => {
     el.min = today;
   });
 
-  // Banner to signal this is the test page + check if key is present
   _injectTestBanner();
 
   const pk = getPublishableKey();
@@ -46,7 +48,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Demo mode: ?demo also pre-fills form (can combine with ?pk=)
+  // Demo mode: ?demo pre-fills form (can combine with ?pk=)
   if (new URLSearchParams(window.location.search).has('demo') &&
       typeof DEMO_VALUES !== 'undefined' && DEMO_VALUES) {
     _fillDemoValues();
@@ -58,7 +60,10 @@ function _injectTestBanner() {
   banner.className = 'demo-banner';
   banner.style.background = '#0F1E3A';
   banner.style.color = '#C4A050';
-  banner.innerHTML = '<span class="demo-dot" style="background:#C4A050"></span><strong>NEW API Test</strong>&ensp;&mdash;&ensp;Pass created via api.dasecure.com · Wallet URLs disabled (signing-service not yet deployed)';
+  banner.innerHTML =
+    '<span class="demo-dot" style="background:#C4A050"></span>' +
+    '<strong>NEW API Test</strong>&ensp;&mdash;&ensp;Pass created via api.dasecure.com · ' +
+    'Wallet URLs live in preview mode (PKCS#7 wrapping pending — .pkpass downloads but won\u2019t yet import into Apple Wallet).';
   const formView = id('form-view');
   if (formView) formView.insertAdjacentElement('afterbegin', banner);
 }
@@ -109,19 +114,17 @@ async function book() {
   btnEl.innerHTML = '<span class="spin"></span>Creating pass…';
   btnEl.dataset.origLabel = origLabel;
 
-  // Build the new-API payload shape.
-  // Old edge function expected: { facility, holder_name, unit, ... }
-  // New API expects: { templateId, passType, holderName, data: { ... } }
   const formPayload = getPayload();
+
+  // passType and holderName can be overridden per page (visitor pages do this)
+  const passType = (typeof getPassType === 'function') ? getPassType() : 'facility_booking';
+  const holderName = (typeof getHolderName === 'function') ? getHolderName() : formPayload.holder_name;
+
   const apiPayload = {
     templateId: TEMPLATE_ID,
-    passType: 'facility_booking',
-    holderName: formPayload.holder_name,
-    data: {
-      // Everything else goes into data \u2014 the new pass-engine is schema-agnostic
-      // on the data field, so vertical-specific fields flow through transparently.
-      ...formPayload,
-    },
+    passType: passType,
+    holderName: holderName,
+    data: { ...formPayload },
   };
 
   try {
@@ -143,7 +146,7 @@ async function book() {
 
     showSuccess(data);
   } catch (e) {
-    errEl.textContent = e.message || 'Network error \u2014 please try again.';
+    errEl.textContent = e.message || 'Network error — please try again.';
     errEl.style.display = 'block';
     btnEl.disabled = false;
     btnEl.textContent = btnEl.dataset.origLabel || 'Confirm & Get Pass';
@@ -157,21 +160,39 @@ function showSuccess(data) {
 
   id('s-code').textContent = data.code;
 
-  // Wallet links \u2014 new API returns walletUrls.{apple,google,landing}
-  // Apple + Google are null until signing-service is live.
+  // Wallet links. Post-Phase-E, data.walletUrls.apple is populated for Apple
+  // templates. data.walletMeta.apple.importable tells us whether the
+  // .pkpass file will actually import into Apple Wallet — currently false
+  // until PKCS#7 wrapping lands. We still show the button but label it
+  // clearly as a preview so the demo doesn't mislead.
   const appleEl  = id('s-apple');
   const googleEl = id('s-google');
   const viewEl   = id('s-view');
 
   if (appleEl) {
-    if (data.walletUrls && data.walletUrls.apple) {
-      appleEl.href = data.walletUrls.apple;
+    const appleUrl = data.walletUrls && data.walletUrls.apple;
+    const appleMeta = data.walletMeta && data.walletMeta.apple;
+    if (appleUrl && appleMeta && appleMeta.importable) {
+      appleEl.href = appleUrl;
       appleEl.style.display = '';
+    } else if (appleUrl) {
+      // URL exists but not importable — preview mode.
+      appleEl.href = appleUrl;
+      appleEl.style.display = '';
+      appleEl.innerHTML = appleEl.innerHTML.replace(
+        /Add to Apple Wallet|Visitor: Add to Apple Wallet/,
+        'Download .pkpass preview'
+      );
+      appleEl.title = appleMeta && appleMeta.reason === 'pkcs7_wrapping_pending'
+        ? 'Preview: .pkpass downloads but won\u2019t import into Apple Wallet until PKCS#7 signing is added.'
+        : 'Preview artifact';
     } else {
-      // Visually signal that wallet isn't available yet
       appleEl.style.opacity = '0.4';
       appleEl.style.pointerEvents = 'none';
-      appleEl.innerHTML = appleEl.innerHTML.replace(/Add to Apple Wallet/, 'Apple Wallet (coming soon)');
+      appleEl.innerHTML = appleEl.innerHTML.replace(
+        /Add to Apple Wallet|Visitor: Add to Apple Wallet/,
+        'Apple Wallet (coming soon)'
+      );
     }
   }
   if (googleEl) {
@@ -181,7 +202,10 @@ function showSuccess(data) {
     } else {
       googleEl.style.opacity = '0.4';
       googleEl.style.pointerEvents = 'none';
-      googleEl.innerHTML = googleEl.innerHTML.replace(/Save to Google Wallet/, 'Google Wallet (coming soon)');
+      googleEl.innerHTML = googleEl.innerHTML.replace(
+        /Save to Google Wallet|Visitor: Save to Google Wallet/,
+        'Google Wallet (coming soon)'
+      );
     }
   }
   if (viewEl) {
@@ -200,9 +224,6 @@ function showSuccess(data) {
     });
   }
 
-  // setSuccess is defined per-page; it fills facility-specific details.
-  // Note: data shape is different from old API \u2014 pass the whole response + the original form payload
-  // so per-page code can read from either.
   if (typeof setSuccess === 'function') {
     setSuccess(data);
   }
