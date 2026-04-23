@@ -89,6 +89,8 @@ header{background:#1A2B4A;padding:14px 18px;display:flex;align-items:center;just
 .ai-bubble{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.6;color:#e5e7eb;flex:1;min-width:0}
 .ai-bubble.user-bubble{background:rgba(196,160,80,.08);border-color:rgba(196,160,80,.2);color:#e5e7eb}
 .ai-bubble.thinking{color:#4b5563;font-style:italic}
+.ai-bubble strong{color:#C4A050}
+.ai-bubble code{background:rgba(196,160,80,.1);border-radius:3px;padding:1px 5px;font-family:monospace;font-size:11px;color:#C4A050;font-weight:700}
 .ai-input-row{display:flex;gap:8px}
 .ai-input{flex:1;background:#111827;border:1.5px solid #1f2937;border-radius:10px;padding:10px 12px;font-size:13px;color:#e5e7eb;outline:none;font-family:inherit;transition:border-color .2s}
 .ai-input:focus{border-color:rgba(110,231,183,.4)}
@@ -259,14 +261,14 @@ footer span{color:#C4A050}
       <div class="step-chevron">›</div>
     </div>
     <div class="step-body">
-      <div class="talk-track"><strong>Say:</strong> "This is where it gets interesting. Management can ask the AI anything about the building — who is currently active, look up a specific pass, get a summary of today's activity. The AI has live access to the system and responds in natural language. No spreadsheets, no queries."</div>
+      <div class="talk-track"><strong>Say:</strong> "This is where it gets interesting. Management can ask the AI anything about the building — who is currently active, look up a specific pass, get a summary of today's activity. The AI has live access to the system via real MCP tool calls and responds in natural language. No spreadsheets, no queries."</div>
 
       <div class="ai-section">
         <div class="ai-header">
           <div class="ai-dot"></div>
           <div>
             <div class="ai-title">AI Building Concierge</div>
-            <div class="ai-sub">Live access to passes, scans &amp; residents</div>
+            <div class="ai-sub">Live MCP access to passes, scans &amp; residents</div>
           </div>
         </div>
         <div class="ai-suggestions" id="ai-suggestions">
@@ -378,17 +380,53 @@ window.addEventListener('DOMContentLoaded', function() {
   document.getElementById('step1').classList.add('open','active');
 });
 
-// ── AI CONCIERGE ──
-var aiHistory = [];
-var AI_SYSTEM = 'You are the AI concierge for Aiphone Residence, a luxury residential building in Singapore. You have live access to the building\'s pass management system via the Aiphone PassQR MCP tools. Use these tools to look up real pass data, scan history, and resident information to answer questions accurately. Always be concise, professional, and helpful. Format responses clearly with key facts highlighted. Refer to residents by name when you have the data.';
+/* -------------------------------------------------------------------------
+   AI CONCIERGE
 
-function appendMsg(role, text) {
+   Routes every user message through the aiphone-ai Supabase edge function.
+   That function calls Anthropic's API server-side with:
+     - the ANTHROPIC_API_KEY secret (never exposed to the browser)
+     - the aiphone-mcp edge function registered as an MCP server so Claude
+       can invoke real PassQR tools (lookup passes, book facilities,
+       issue visitors, etc.)
+     - system prompt tailored to the Aiphone concierge role
+
+   Protocol:
+     REQUEST:  { message: string, history: [{role,content}] }
+     RESPONSE: { text: string, history: [{role,content}] } on success
+               { error: string } on failure (we render with a warning icon)
+
+   History handling:
+     We do NOT push the user message to aiHistory before the fetch —
+     the edge function appends it server-side and returns the full updated
+     history. We just replace aiHistory with data.history on success.
+     This keeps both sides in sync without duplicate-user-message bugs.
+
+   Prior bug (fixed here):
+     Earlier version posted directly to api.anthropic.com from the browser,
+     which would 401 immediately (no API key + CORS block). Now correctly
+     proxies through the Supabase edge function like index.html does.
+   ------------------------------------------------------------------------- */
+var AI_URL = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-ai';
+var aiHistory = [];
+
+// Light markdown-lite rendering so the AI's **bold** and `code` spans look
+// intentional rather than like raw source. Escapes HTML first to be safe.
+function renderAiText(raw) {
+  return (raw || '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/`([^`\n]+)`/g, '<code>$1</code>')
+    .replace(/\n/g, '<br>');
+}
+
+function appendMsg(role, html) {
   var chat = document.getElementById('ai-chat');
   var div = document.createElement('div');
   div.className = 'ai-msg';
   var isUser = role === 'user';
   div.innerHTML = '<div class="ai-avatar ' + (isUser ? 'user' : 'bot') + '">' + (isUser ? '👤' : '🤖') + '</div>' +
-    '<div class="ai-bubble' + (isUser ? ' user-bubble' : '') + '">' + text.replace(/\n/g,'<br>') + '</div>';
+    '<div class="ai-bubble' + (isUser ? ' user-bubble' : '') + '">' + html + '</div>';
   chat.appendChild(div);
   chat.scrollTop = chat.scrollHeight;
   return div;
@@ -404,7 +442,7 @@ function setThinking(show) {
   }
 }
 
-async function askAI(text) {
+function askAI(text) {
   document.getElementById('ai-input').value = text;
   sendAI();
 }
@@ -418,48 +456,34 @@ async function sendAI() {
   var sendBtn = document.getElementById('ai-send');
   sendBtn.disabled = true;
 
-  appendMsg('user', text);
-  aiHistory.push({ role: 'user', content: text });
-
+  appendMsg('user', renderAiText(text));
   setThinking(true);
 
   try {
-    var res = await fetch('https://api.anthropic.com/v1/messages', {
+    var res = await fetch(AI_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: AI_SYSTEM,
-        messages: aiHistory,
-        mcp_servers: [{
-          type: 'url',
-          url: 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-mcp',
-          name: 'aiphone-passqr'
-        }]
-      })
+      body: JSON.stringify({ message: text, history: aiHistory })
     });
-
     var data = await res.json();
     setThinking(false);
 
-    // Extract final text from response (may contain tool use blocks)
-    var reply = '';
-    if (data.content && Array.isArray(data.content)) {
-      data.content.forEach(function(block) {
-        if (block.type === 'text') reply += block.text;
-      });
+    if (data.error) {
+      // Common case: ANTHROPIC_API_KEY not set as Supabase secret → 503.
+      // Surface the message directly so an admin knows exactly what to fix.
+      appendMsg('bot', '⚠️ ' + renderAiText(data.error));
+    } else {
+      // Replace (don't append to) local history with server-returned history
+      // so we stay synced even on retry. Server bounds length to ~8 turns.
+      aiHistory = data.history || aiHistory;
+      appendMsg('bot', renderAiText(data.text || 'No response returned.'));
     }
-    if (!reply) reply = 'I wasn\'t able to retrieve that information right now. Please try again.';
-
-    aiHistory.push({ role: 'assistant', content: data.content || reply });
-    appendMsg('bot', reply);
-  } catch(e) {
+  } catch (e) {
     setThinking(false);
     appendMsg('bot', '⚠️ Connection issue — please check your internet and try again.');
+  } finally {
+    sendBtn.disabled = false;
   }
-
-  sendBtn.disabled = false;
 }
 </script>
 </body>
