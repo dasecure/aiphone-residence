@@ -1,7 +1,29 @@
-// Aiphone Residence — shared booking logic
-// Each page defines: FACILITY, DEMO_VALUES (optional), getPayload(), validate(), setSuccess(data)
+// Aiphone Residence — shared booking logic (multi-tenant migration v2)
+//
+// Each facility page (book/<facility>.html) defines:
+//   FACILITY        — string, must match a template_alias in business config
+//   DEMO_VALUES     — optional, pre-fill values for ?demo mode
+//   getPayload()    — returns { facility, holder_name, ...facility-specific fields }
+//   validate()      — returns error message or null
+//   setSuccess(data) — reads data.data.* and data.max_uses to render success view
+//
+// This file POSTs to the multi-tenant pass-create endpoint and reconstructs
+// the legacy aiphone-book response shape so per-page setSuccess() functions
+// keep working without modification.
 
-const BOOK_URL = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-book';
+const CREATE_URL      = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/pass-create';
+const AIPHONE_API_KEY = 'pqr_aiphone_f3adacc23c13cc1ee566cd8d29f86028';
+
+// Per-facility defaults. Aliases match template_alias entries set in
+// business.config.templates for the Aiphone Residence business.
+const FACILITY_CONFIG = {
+  visitor: { max_uses: 4,  expires_hours: 24 },
+  bbq:     { max_uses: 10, expires_hours: 12 },
+  gym:     { max_uses: 2,  expires_hours: 12 },
+  tennis:  { max_uses: 2,  expires_hours: 12 },
+  pool:    { max_uses: 2,  expires_hours: 12 },
+  ktv:     { max_uses: 4,  expires_hours: 12 },
+};
 
 function val(elementId) {
   const el = document.getElementById(elementId);
@@ -12,15 +34,12 @@ function id(elementId) {
   return document.getElementById(elementId);
 }
 
-// Set today as default date on all date inputs + handle demo mode
 window.addEventListener('DOMContentLoaded', () => {
-  const today = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
+  const today = new Date().toLocaleDateString('en-CA');
   document.querySelectorAll('input[type="date"]').forEach(el => {
     el.value = today;
     el.min = today;
   });
-
-  // Demo mode: append ?demo to any booking URL to pre-fill the form
   if (new URLSearchParams(window.location.search).has('demo') &&
       typeof DEMO_VALUES !== 'undefined' && DEMO_VALUES) {
     _injectDemoBanner();
@@ -52,6 +71,36 @@ function _fillDemoValues() {
   }, 800);
 }
 
+// Wrap legacy payload shape into pass-create's expected shape.
+// Adds common field aliases so per-page setSuccess() functions keep working.
+function _buildPassCreateBody(rawPayload) {
+  const { facility, holder_name, holder_email, ...rest } = rawPayload;
+  const cfg = FACILITY_CONFIG[facility] || { max_uses: 10, expires_hours: 24 };
+
+  const expires = new Date();
+  expires.setHours(expires.getHours() + cfg.expires_hours);
+
+  // Build the data object with all original keys + sensible aliases
+  // so per-page setSuccess functions can use either name convention.
+  const data = { facility, ...rest };
+  if (rest.slot && !data.time_slot)        data.time_slot    = rest.slot;
+  if (rest.date && !data.booking_date)     data.booking_date = rest.date;
+  if (rest.unit && !data.unit_no)          data.unit_no      = rest.unit;
+  if (rest.guests && !data.guest_count)    data.guest_count  = rest.guests;
+
+  const body = {
+    template_alias: facility,
+    holder_name,
+    expires_at:     expires.toISOString(),
+    max_uses:       cfg.max_uses,
+    data,
+  };
+  if (holder_email)  body.holder_email = holder_email;
+  if (rest.email)    body.holder_email = body.holder_email || rest.email;
+
+  return { body, max_uses: cfg.max_uses, dataReturned: data };
+}
+
 async function book() {
   const errEl  = id('err');
   const btnEl  = id('submit-btn');
@@ -71,18 +120,33 @@ async function book() {
   btnEl.dataset.origLabel = origLabel;
 
   try {
-    const res = await fetch(BOOK_URL, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(getPayload()),
-    });
-    const data = await res.json();
+    const raw = getPayload();
+    const { body, max_uses, dataReturned } = _buildPassCreateBody(raw);
 
-    if (!res.ok || !data.success) {
-      throw new Error(data.error || data.detail?.error || 'Failed to create pass. Please try again.');
+    const res = await fetch(CREATE_URL, {
+      method: 'POST',
+      headers: {
+        'content-type':  'application/json',
+        'Authorization': `Bearer ${AIPHONE_API_KEY}`,
+      },
+      body: JSON.stringify(body),
+    });
+    const result = await res.json();
+
+    if (!res.ok || !result.success) {
+      throw new Error(result.error || result.detail?.error || 'Failed to create pass. Please try again.');
     }
 
-    showSuccess(data);
+    // Reconstruct the legacy aiphone-book response shape so per-page
+    // setSuccess(data) functions keep working without modification:
+    //   - data.code, data.holder_name, data.apple_url, data.google_url, data.public_url
+    //   - data.data.{facility,unit,pit,date,slot,time_slot,...}
+    //   - data.max_uses
+    showSuccess({
+      ...result,
+      max_uses,
+      data: dataReturned,
+    });
   } catch (e) {
     errEl.textContent = e.message || 'Network error — please try again.';
     errEl.style.display = 'block';
@@ -98,7 +162,6 @@ function showSuccess(data) {
 
   id('s-code').textContent = data.code;
 
-  // Wallet + view links — null-guarded (visitor form omits s-google by design but setSuccess sets it)
   const appleEl  = id('s-apple');
   const googleEl = id('s-google');
   const viewEl   = id('s-view');
@@ -118,7 +181,6 @@ function showSuccess(data) {
     });
   }
 
-  // Generic WhatsApp share — injected if page doesn’t already have s-whatsapp
   const facilityTitle = document.querySelector('.strip-title')?.textContent?.trim() || 'Facility Booking';
   const details       = id('s-sub')?.textContent?.trim() || '';
   const holderLine    = data.holder_name ? `For: ${data.holder_name}\n` : '';
@@ -155,6 +217,6 @@ function reset() {
   const btn = id('submit-btn');
   btn.disabled = false;
   btn.textContent = btn.dataset.origLabel || 'Confirm & Get Pass';
-  id('qr').innerHTML = '';
+  if (id('qr')) id('qr').innerHTML = '';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
