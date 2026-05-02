@@ -72,8 +72,6 @@ header{background:#1A2B4A;padding:14px 18px;display:flex;align-items:center;just
 .tip-title{font-size:11px;font-weight:700;color:#C4A050;letter-spacing:.5px;margin-bottom:6px;text-transform:uppercase}
 .tip-body{font-size:12px;color:#9ca3af;line-height:1.65}
 .tip-body li{margin-left:16px;margin-top:4px}
-
-/* AI CONCIERGE */
 .ai-section{background:#0d1a30;border:1.5px solid rgba(110,231,183,.25);border-radius:18px;padding:18px;margin-top:4px;margin-bottom:12px}
 .ai-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .ai-dot{width:10px;height:10px;border-radius:50%;background:#6ee7b7;animation:aipulse 2s ease-in-out infinite;flex-shrink:0}
@@ -101,14 +99,12 @@ header{background:#1A2B4A;padding:14px 18px;display:flex;align-items:center;just
 .ai-suggestions{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .ai-chip{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:5px 11px;font-size:11px;color:#9ca3af;cursor:pointer;transition:border-color .2s,color .2s;white-space:nowrap}
 .ai-chip:hover{border-color:rgba(110,231,183,.4);color:#6ee7b7}
-
 footer{text-align:center;padding:24px;font-size:11px;color:#374151;border-top:1px solid #111827}
 footer a{color:#C4A050;text-decoration:none}
 footer span{color:#C4A050}
 </style>
 </head>
 <body>
-
 <header>
   <div class="hdr-left">
     <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100" fill="#0F1E3A"/><circle cx="100" cy="100" r="94" fill="none" stroke="#C4A050" stroke-width="2"/><rect x="82" y="75" width="36" height="82" fill="#C4A050"/><ellipse cx="100" cy="75" rx="18" ry="18" fill="#C4A050"/><rect x="88" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="85" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="102" width="8" height="10" fill="#0F1E3A"/><rect x="88" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="104" y="119" width="8" height="10" fill="#0F1E3A"/><rect x="54" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="66" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="122" y="105" width="24" height="52" fill="#C8D4E0"/><ellipse cx="134" cy="105" rx="12" ry="12" fill="#C8D4E0"/><rect x="40" y="157" width="120" height="4" fill="#C4A050"/><text x="100" y="174" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#C4A050" text-anchor="middle" letter-spacing="3">AIPHONE</text><text x="100" y="187" font-family="Arial,sans-serif" font-size="8" fill="#D4C4A0" text-anchor="middle" letter-spacing="2">RESIDENCE</text></svg></div>
@@ -381,37 +377,21 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 
 /* -------------------------------------------------------------------------
-   AI CONCIERGE
+   AI CONCIERGE — multi-tenant edge function
 
-   Routes every user message through the aiphone-ai Supabase edge function.
-   That function calls Anthropic's API server-side with:
+   Routes every user message through the concierge/<businessId> Supabase
+   edge function. That function calls Anthropic's API server-side with:
      - the ANTHROPIC_API_KEY secret (never exposed to the browser)
-     - the aiphone-mcp edge function registered as an MCP server so Claude
-       can invoke real PassQR tools (lookup passes, book facilities,
-       issue visitors, etc.)
-     - system prompt tailored to the Aiphone concierge role
+     - the mcp-proxy/<businessId> edge function registered as an MCP server
+     - per-business system prompt + demo passes from business.config.concierge
 
-   Protocol:
-     REQUEST:  { message: string, history: [{role,content}] }
-     RESPONSE: { text: string, history: [{role,content}] } on success
-               { error: string } on failure (we render with a warning icon)
-
-   History handling:
-     We do NOT push the user message to aiHistory before the fetch —
-     the edge function appends it server-side and returns the full updated
-     history. We just replace aiHistory with data.history on success.
-     This keeps both sides in sync without duplicate-user-message bugs.
-
-   Prior bug (fixed here):
-     Earlier version posted directly to api.anthropic.com from the browser,
-     which would 401 immediately (no API key + CORS block). Now correctly
-     proxies through the Supabase edge function like index.html does.
+   Path includes the Aiphone business UUID so the same edge function serves
+   all tenants. No API key needed on the client (concierge is public).
    ------------------------------------------------------------------------- */
-var AI_URL = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-ai';
+var AIPHONE_BIZ = '61d295a1-b94d-4679-afe7-1acbf6549ea0';
+var AI_URL      = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/concierge/' + AIPHONE_BIZ;
 var aiHistory = [];
 
-// Light markdown-lite rendering so the AI's **bold** and `code` spans look
-// intentional rather than like raw source. Escapes HTML first to be safe.
 function renderAiText(raw) {
   return (raw || '')
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -469,12 +449,8 @@ async function sendAI() {
     setThinking(false);
 
     if (data.error) {
-      // Common case: ANTHROPIC_API_KEY not set as Supabase secret → 503.
-      // Surface the message directly so an admin knows exactly what to fix.
       appendMsg('bot', '⚠️ ' + renderAiText(data.error));
     } else {
-      // Replace (don't append to) local history with server-returned history
-      // so we stay synced even on retry. Server bounds length to ~8 turns.
       aiHistory = data.history || aiHistory;
       appendMsg('bot', renderAiText(data.text || 'No response returned.'));
     }
