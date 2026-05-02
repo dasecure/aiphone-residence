@@ -236,7 +236,7 @@ footer{background:#080f1e;padding:24px 20px 80px;margin-top:48px}
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
           Add to Apple Wallet
         </a>
-        <a class="w-btn google" id="btn-google" href="https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-wallet?code=PASS-2MM95YKC" target="_blank">
+        <a class="w-btn google" id="btn-google" href="https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/wallet-google?code=PASS-2MM95YKC" target="_blank">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21.56 10.74l-9.56-.01v2.92h5.49c-.54 2.67-2.86 4.35-5.49 4.35-3.35 0-6-2.69-6-6s2.65-6 6-6c1.48 0 2.82.54 3.86 1.42l2.12-2.12C16.55 3.6 14.38 2.75 12 2.75 6.9 2.75 2.75 6.9 2.75 12S6.9 21.25 12 21.25c5.61 0 9.25-3.95 9.25-9.5 0-.68-.07-1.35-.19-2.01h-1.5v1z"/></svg>
           Save to Google Wallet
         </a>
@@ -325,7 +325,7 @@ footer{background:#080f1e;padding:24px 20px 80px;margin-top:48px}
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
       Apple Wallet
     </a>
-    <a class="w-btn google" id="sticky-google" href="https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-wallet?code=PASS-2MM95YKC" target="_blank">
+    <a class="w-btn google" id="sticky-google" href="https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/wallet-google?code=PASS-2MM95YKC" target="_blank">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21.56 10.74l-9.56-.01v2.92h5.49c-.54 2.67-2.86 4.35-5.49 4.35-3.35 0-6-2.69-6-6s2.65-6 6-6c1.48 0 2.82.54 3.86 1.42l2.12-2.12C16.55 3.6 14.38 2.75 12 2.75 6.9 2.75 2.75 6.9 2.75 12S6.9 21.25 12 21.25c5.61 0 9.25-3.95 9.25-9.5 0-.68-.07-1.35-.19-2.01h-1.5v1z"/></svg>
       Google Wallet
     </a>
@@ -352,7 +352,9 @@ footer{background:#080f1e;padding:24px 20px 80px;margin-top:48px}
 const PASS_CODE  = 'PASS-2MM95YKC';
 const SUPABASE   = 'https://gyllfnsnniuqaarsulsk.supabase.co';
 const ANON_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd5bGxmbnNubml1cWFhcnN1bHNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUwMTk1MzAsImV4cCI6MjA2MDU5NTUzMH0.v-Rcc9UNJRD7rWfFMvOAIhF6_zFnlEcD6f33KiCuwpM';
-const AI_URL     = SUPABASE + '/functions/v1/aiphone-ai';
+// Multi-tenant concierge endpoint. Path includes the Aiphone business UUID.
+const AIPHONE_BIZ = '61d295a1-b94d-4679-afe7-1acbf6549ea0';
+const AI_URL      = SUPABASE + '/functions/v1/concierge/' + AIPHONE_BIZ;
 
 async function refreshScanCount() {
   try {
