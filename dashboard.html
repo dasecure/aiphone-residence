@@ -64,7 +64,6 @@ header{background:#1A2B4A;padding:14px 22px;display:flex;align-items:center;just
 .gate-name{color:#9ca3af}.gate-count{font-weight:700;color:#60a5fa}
 .refresh-bar{height:2px;background:#1f2937;overflow:hidden}
 .refresh-bar-fill{height:100%;background:#C4A050;transition:width linear;width:100%}
-/* Broadcast panel */
 .bcast-form{padding:14px 16px;display:grid;gap:10px}
 .bcast-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#6b7280;margin-bottom:3px;display:block}
 .bcast-input,.bcast-textarea{width:100%;background:#0a0f1a;border:1px solid #1f2937;border-radius:8px;color:#f1f5f9;font-size:12px;padding:8px 10px;font-family:inherit;transition:border-color .15s;resize:none}
@@ -98,7 +97,6 @@ header{background:#1A2B4A;padding:14px 22px;display:flex;align-items:center;just
 .msg-badge.partial{background:#2e2508;color:#f59e0b}
 .msg-badge.failed{background:#2e0d0d;color:#fb7185}
 .msg-pf{padding:1px 5px;border-radius:8px;font-weight:600;background:rgba(255,255,255,.04);color:#9ca3af}
-/* Wallet events */
 .we-item{display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid rgba(255,255,255,.04)}
 .we-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;flex-shrink:0;letter-spacing:.5px}
 .we-badge.SAVE{background:#0a2e20;color:#2dd4bf;border:1px solid #0f4a32}
@@ -135,7 +133,7 @@ footer span{color:#C4A050}
   <div class="stats-bar">
     <div class="stat-card"><div class="stat-label">Scans Today</div><div class="stat-value stat-green" id="s-today">—</div><div class="stat-sub" id="s-today-sub">Loading…</div></div>
     <div class="stat-card"><div class="stat-label">Unique Passes</div><div class="stat-value stat-gold" id="s-unique">—</div><div class="stat-sub">distinct passes scanned</div></div>
-    <div class="stat-card"><div class="stat-label">Active (Last 2h)</div><div class="stat-value stat-blue" id="s-active">—</div><div class="stat-sub">in or around building</div></div>
+    <div class="stat-card"><div class="stat-label">Active (Last 4h)</div><div class="stat-value stat-blue" id="s-active">—</div><div class="stat-sub">in or around building</div></div>
   </div>
   <div class="stats-row2">
     <div class="stat-card"><div class="stat-label">Total Passes</div><div class="stat-value stat-purple" id="s-total">—</div><div class="stat-sub">issued by management</div></div>
@@ -153,13 +151,11 @@ footer span{color:#C4A050}
     </div>
 
     <div class="right-col">
-      <!-- Active Now -->
       <div class="panel">
         <div class="panel-header"><span class="panel-title">🟢 Active Now</span><span class="panel-count" id="active-count">—</span></div>
         <div id="active-list"><div class="feed-empty" style="padding:20px">No recent activity</div></div>
       </div>
 
-      <!-- Broadcast / Targeted Notification -->
       <div class="panel">
         <div class="panel-header"><span class="panel-title">📣 Send Notification</span></div>
         <div class="bcast-form">
@@ -202,13 +198,11 @@ footer span{color:#C4A050}
         </div>
       </div>
 
-      <!-- Wallet Events -->
       <div class="panel">
         <div class="panel-header"><span class="panel-title">🪙 Wallet Events</span><span class="panel-count" id="we-count">—</span></div>
         <div id="we-list"><div class="feed-empty" style="padding:18px;font-size:12px">No wallet events yet</div></div>
       </div>
 
-      <!-- Facility / Gate -->
       <div class="panel">
         <div class="panel-header"><span class="panel-title">Today by Facility</span></div>
         <div class="facility-list" id="facility-list"><div style="color:#4b5563;font-size:12px">Loading…</div></div>
@@ -228,10 +222,14 @@ footer span{color:#C4A050}
 </footer>
 
 <script>
-const STATS_URL   = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-stats';
-const NOTIFY_URL  = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/aiphone-notify';
-const NOTIFY_KEY  = 'aiphone2026';
-const REFRESH_MS  = 4000;
+// Multi-tenant edge functions. pass-stats with ?include=wallet,messages
+// surfaces all the Aiphone-specific extras (active_passes, wallet events,
+// broadcast log) the dashboard needs. pass-message replaces aiphone-notify
+// — same payload + response shape, just Bearer auth instead of x-notify-key.
+const STATS_URL       = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/pass-stats?include=wallet,messages';
+const NOTIFY_URL      = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/pass-message';
+const AIPHONE_API_KEY = 'pqr_aiphone_f3adacc23c13cc1ee566cd8d29f86028';
+const REFRESH_MS      = 4000;
 
 var _passList  = [];
 var _audioCtx  = null;
@@ -240,7 +238,6 @@ var _firstLoad = true;
 var _lastScanId = null;
 var _platform  = 'both';   // 'both' | 'apple' | 'google'
 
-// ── Sound ──────────────────────────────────────────────────────────────────
 function getAudioCtx() {
   if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if (_audioCtx.state === 'suspended') _audioCtx.resume();
@@ -273,7 +270,6 @@ document.addEventListener('click', function primeAudio() {
   document.removeEventListener('click', primeAudio);
 }, { once: true });
 
-// ── Helpers ───────────────────────────────────────────────────────────────
 const FACILITY_ICONS = {
   'Tennis Court':'🎾','BBQ Pit':'🔥','KTV Room':'🎤','Gym':'🏋️','Swimming Pool':'🏊','Visitor Pass':'👤',
   'Resident Card — Owner':'🏠','Resident Card — Tenant':'🏠',
@@ -296,7 +292,6 @@ function fmtDate(iso) {
   return new Date(iso).toLocaleString('en-SG',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Singapore'});
 }
 
-// ── Renderers ─────────────────────────────────────────────────────────────
 function renderFeed(feed) {
   var el = document.getElementById('feed');
   document.getElementById('feed-count').textContent = feed.length+' scans';
@@ -328,7 +323,7 @@ function renderActive(active) {
   var el=document.getElementById('active-list');
   document.getElementById('active-count').textContent=active.length;
   document.getElementById('s-active').textContent=active.length;
-  if (!active.length) { el.innerHTML='<div class="feed-empty" style="padding:20px;font-size:12px">No activity in last 2 hours</div>'; return; }
+  if (!active.length) { el.innerHTML='<div class="feed-empty" style="padding:20px;font-size:12px">No activity in last 4 hours</div>'; return; }
   el.innerHTML=active.map(function(a) {
     return '<div class="active-item" onclick="prefillTarget(\''+a.code+'\')" style="cursor:pointer" title="Click to message this pass">'+
       '<div class="active-dot"></div>'+
@@ -403,7 +398,6 @@ function renderMessages(msgs) {
   }).join('');
 }
 
-// ── Platform selector ──────────────────────────────────────────────────────
 function setPlatform(pf) {
   _platform = pf;
   document.querySelectorAll('.bcast-platform').forEach(function(el) {
@@ -411,7 +405,6 @@ function setPlatform(pf) {
   });
 }
 
-// ── Target pass field ──────────────────────────────────────────────────────
 function onTargetInput(val) {
   val = val.toUpperCase().replace(/[^A-Z0-9\-]/g,'');
   var inp = document.getElementById('bc-target');
@@ -466,7 +459,6 @@ function prefillTarget(code) {
   inp.focus();
 }
 
-// ── Broadcast ─────────────────────────────────────────────────────────────
 async function sendBroadcast() {
   var header  = document.getElementById('bc-header').value.trim();
   var body    = document.getElementById('bc-body').value.trim();
@@ -482,19 +474,22 @@ async function sendBroadcast() {
   document.getElementById('bc-result').style.display = 'none';
 
   try {
-    var payload = { header, body, platforms: _platform };
+    var payload = { header: header, body: body, platforms: _platform };
     if (link)     payload.link_url   = link;
     if (isSingle) payload.pass_codes = [target];
+    // Omitting pass_codes broadcasts to all active passes for the business
 
     var res = await fetch(NOTIFY_URL, {
       method: 'POST',
-      headers: { 'content-type': 'application/json', 'x-notify-key': NOTIFY_KEY },
+      headers: {
+        'content-type':  'application/json',
+        'Authorization': 'Bearer ' + AIPHONE_API_KEY,
+      },
       body: JSON.stringify(payload),
     });
     var data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Server error ' + res.status);
 
-    // Build platform breakdown chips
     var chips = '';
     if (data.google) chips += '<span class="pf-chip">📱 ' + data.google.sent + '/' + data.google.total + '</span>';
     if (data.apple)  chips += '<span class="pf-chip">🍎 ' + data.apple.sent  + '/' + data.apple.total  + '</span>';
@@ -533,10 +528,11 @@ function showResult(msg, type) {
   if (type === 'ok') setTimeout(function(){ el.style.display='none'; }, 10000);
 }
 
-// ── Main refresh ──────────────────────────────────────────────────────────
 async function refresh() {
   try {
-    var res  = await fetch(STATS_URL);
+    var res  = await fetch(STATS_URL, {
+      headers: { 'Authorization': 'Bearer ' + AIPHONE_API_KEY },
+    });
     var data = await res.json();
     var now  = new Date();
     document.getElementById('live-status').textContent = 'LIVE · ' + now.toLocaleTimeString('en-SG',{timeZone:'Asia/Singapore'});
