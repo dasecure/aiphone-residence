@@ -7,7 +7,7 @@
 //   validate()      — returns error message or null
 //   setSuccess(data) — reads data.data.* and data.max_uses to render success view
 
-const BUSINESS_ID = '61d295a1-b94d-4679-afe7-1acbf6549ae0';
+const BUSINESS_ID = '61d295a1-b94d-4679-afe7-1acbf6549ea0';
 const CREATE_URL  = `https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/pass-book/${BUSINESS_ID}`;
 
 const FACILITY_CONFIG = {
