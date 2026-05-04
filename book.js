@@ -1,4 +1,4 @@
-// Aiphone Residence — shared booking logic (multi-tenant migration v2)
+// Aiphone Residence — shared booking logic
 //
 // Each facility page (book/<facility>.html) defines:
 //   FACILITY        — string, must match a template_alias in business config
@@ -6,16 +6,10 @@
 //   getPayload()    — returns { facility, holder_name, ...facility-specific fields }
 //   validate()      — returns error message or null
 //   setSuccess(data) — reads data.data.* and data.max_uses to render success view
-//
-// This file POSTs to the multi-tenant pass-create endpoint and reconstructs
-// the legacy aiphone-book response shape so per-page setSuccess() functions
-// keep working without modification.
 
-const CREATE_URL      = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/pass-create';
-const AIPHONE_API_KEY = 'pqr_aiphone_f3adacc23c13cc1ee566cd8d29f86028';
+const BUSINESS_ID = '61d295a1-b94d-4679-afe7-1acbf6549ae0';
+const CREATE_URL  = `https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/pass-book/${BUSINESS_ID}`;
 
-// Per-facility defaults. Aliases match template_alias entries set in
-// business.config.templates for the Aiphone Residence business.
 const FACILITY_CONFIG = {
   visitor: { max_uses: 4,  expires_hours: 24 },
   bbq:     { max_uses: 10, expires_hours: 12 },
@@ -71,39 +65,35 @@ function _fillDemoValues() {
   }, 800);
 }
 
-// Wrap legacy payload shape into pass-create's expected shape.
-// Adds common field aliases so per-page setSuccess() functions keep working.
-function _buildPassCreateBody(rawPayload) {
+function _buildPassBookBody(rawPayload) {
   const { facility, holder_name, holder_email, ...rest } = rawPayload;
   const cfg = FACILITY_CONFIG[facility] || { max_uses: 10, expires_hours: 24 };
 
   const expires = new Date();
   expires.setHours(expires.getHours() + cfg.expires_hours);
 
-  // Build the data object with all original keys + sensible aliases
-  // so per-page setSuccess functions can use either name convention.
   const data = { facility, ...rest };
-  if (rest.slot && !data.time_slot)        data.time_slot    = rest.slot;
-  if (rest.date && !data.booking_date)     data.booking_date = rest.date;
-  if (rest.unit && !data.unit_no)          data.unit_no      = rest.unit;
-  if (rest.guests && !data.guest_count)    data.guest_count  = rest.guests;
+  if (rest.slot && !data.time_slot)     data.time_slot    = rest.slot;
+  if (rest.date && !data.booking_date)  data.booking_date = rest.date;
+  if (rest.unit && !data.unit_no)       data.unit_no      = rest.unit;
+  if (rest.guests && !data.guest_count) data.guest_count  = rest.guests;
 
   const body = {
     template_alias: facility,
     holder_name,
-    expires_at:     expires.toISOString(),
-    max_uses:       cfg.max_uses,
+    expires_at: expires.toISOString(),
+    max_uses:   cfg.max_uses,
     data,
   };
-  if (holder_email)  body.holder_email = holder_email;
-  if (rest.email)    body.holder_email = body.holder_email || rest.email;
+  if (holder_email) body.holder_email = holder_email;
+  if (rest.email)   body.holder_email = body.holder_email || rest.email;
 
   return { body, max_uses: cfg.max_uses, dataReturned: data };
 }
 
 async function book() {
-  const errEl  = id('err');
-  const btnEl  = id('submit-btn');
+  const errEl = id('err');
+  const btnEl = id('submit-btn');
   const origLabel = btnEl.textContent.trim();
 
   const validationError = validate();
@@ -121,14 +111,11 @@ async function book() {
 
   try {
     const raw = getPayload();
-    const { body, max_uses, dataReturned } = _buildPassCreateBody(raw);
+    const { body, max_uses, dataReturned } = _buildPassBookBody(raw);
 
     const res = await fetch(CREATE_URL, {
       method: 'POST',
-      headers: {
-        'content-type':  'application/json',
-        'Authorization': `Bearer ${AIPHONE_API_KEY}`,
-      },
+      headers: { 'content-type': 'application/json' },
       body: JSON.stringify(body),
     });
     const result = await res.json();
@@ -137,16 +124,7 @@ async function book() {
       throw new Error(result.error || result.detail?.error || 'Failed to create pass. Please try again.');
     }
 
-    // Reconstruct the legacy aiphone-book response shape so per-page
-    // setSuccess(data) functions keep working without modification:
-    //   - data.code, data.holder_name, data.apple_url, data.google_url, data.public_url
-    //   - data.data.{facility,unit,pit,date,slot,time_slot,...}
-    //   - data.max_uses
-    showSuccess({
-      ...result,
-      max_uses,
-      data: dataReturned,
-    });
+    showSuccess({ ...result, max_uses, data: dataReturned });
   } catch (e) {
     errEl.textContent = e.message || 'Network error — please try again.';
     errEl.style.display = 'block';
@@ -172,11 +150,8 @@ function showSuccess(data) {
   if (window.QRCode && id('qr')) {
     id('qr').innerHTML = '';
     new QRCode(id('qr'), {
-      text:   data.code,
-      width:  180,
-      height: 180,
-      colorDark:  '#1A2B4A',
-      colorLight: '#ffffff',
+      text: data.code, width: 180, height: 180,
+      colorDark: '#1A2B4A', colorLight: '#ffffff',
       correctLevel: QRCode.CorrectLevel.M,
     });
   }
@@ -185,12 +160,11 @@ function showSuccess(data) {
   const details       = id('s-sub')?.textContent?.trim() || '';
   const holderLine    = data.holder_name ? `For: ${data.holder_name}\n` : '';
   const waText = [
-    `*${facilityTitle} \u2014 Aiphone Residence*`,
+    `*${facilityTitle} — Aiphone Residence*`,
     `${holderLine}Pass: ${data.code}`,
-    details,
-    '',
-    `\uD83C\uDF4E Apple Wallet:\n${data.apple_url}`,
-    `\uD83E\uDD16 Google Wallet:\n${data.google_url}`,
+    details, '',
+    `🍎 Apple Wallet:\n${data.apple_url}`,
+    `🤖 Google Wallet:\n${data.google_url}`,
   ].filter(Boolean).join('\n');
   const waHref = 'https://wa.me/?text=' + encodeURIComponent(waText);
 
