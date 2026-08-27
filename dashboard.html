@@ -84,6 +84,14 @@ header{background:#1A2B4A;padding:14px 22px;display:flex;align-items:center;just
 .bcast-btn{width:100%;background:#C4A050;color:#0a0f1a;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:opacity .15s}
 .bcast-btn:hover{opacity:.88}
 .bcast-btn:disabled{opacity:.4;cursor:not-allowed}
+.bcast-lock{display:grid;gap:6px}
+.bcast-lock-row{display:flex;gap:6px}
+.bcast-lock-row input{flex:1}
+.bcast-lock-btn{background:#1A2B4A;border:1px solid #C4A050;border-radius:8px;color:#C4A050;font-size:11px;font-weight:700;padding:0 12px;cursor:pointer;white-space:nowrap}
+.bcast-lock-btn:hover{background:#24395f}
+.bcast-lock-note{font-size:10px;color:#4b5563;line-height:1.4}
+.bcast-unlocked{font-size:10px;color:#6ee7b7}
+.bcast-unlocked a{color:#6b7280}
 .bcast-result{font-size:11px;padding:6px 10px;border-radius:6px;text-align:center;display:none;line-height:1.5}
 .bcast-result.ok{background:#0d2e20;color:#6ee7b7;border:1px solid #1a5c3a}
 .bcast-result.err{background:#2e0d0d;color:#fb7185;border:1px solid #5c1a1a}
@@ -189,6 +197,14 @@ footer span{color:#C4A050}
             </div>
           </div>
           <div class="bcast-scope"><div class="bcast-scope-dot" id="bc-scope-dot"></div><span id="bc-scope-label">Will send to all active passes</span></div>
+          <div class="bcast-lock" id="bc-lock">
+            <div class="bcast-lock-row">
+              <input class="bcast-input" id="bc-key" type="password" placeholder="Paste PassQR API key to enable sending" autocomplete="off">
+              <button class="bcast-lock-btn" onclick="unlockBroadcast()">Unlock</button>
+            </div>
+            <div class="bcast-lock-note">🔒 Read-only mode — stats are public, sending needs a key. Stored in this browser only.</div>
+          </div>
+          <div class="bcast-unlocked" id="bc-relock" style="display:none">🔓 Sending enabled · <a href="#" onclick="lockBroadcast();return false;">lock</a></div>
           <button class="bcast-btn" id="bc-btn" onclick="sendBroadcast()">Send to all active passes →</button>
           <div class="bcast-result" id="bc-result"></div>
         </div>
@@ -226,10 +242,22 @@ footer span{color:#C4A050}
 // surfaces all the Aiphone-specific extras (active_passes, wallet events,
 // broadcast log) the dashboard needs. pass-message replaces aiphone-notify
 // — same payload + response shape, just Bearer auth instead of x-notify-key.
-const STATS_URL       = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/pass-stats?include=wallet,messages';
-const NOTIFY_URL      = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/pass-message';
-const AIPHONE_API_KEY = 'pqr_aiphone_f3adacc23c13cc1ee566cd8d29f86028';
-const REFRESH_MS      = 4000;
+const BUSINESS_ID = '61d295a1-b94d-4679-afe7-1acbf6549ea0';
+const STATS_URL   = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/pass-stats/' + BUSINESS_ID + '?include=wallet,messages';
+const NOTIFY_URL  = 'https://gyllfnsnniuqaarsulsk.supabase.co/functions/v1/pass-message';
+const REFRESH_MS  = 4000;
+
+// NO API KEY IN THIS FILE — the repo is public.
+// Stats come from the path-scoped public read-only mode of pass-stats;
+// pass codes arrive masked (PASS-****XXXX) because a code is a credential.
+// Broadcasting mutates state, so it still needs a Bearer key: paste one into
+// the panel and it is kept in this browser's localStorage only, never here.
+function getApiKey() {
+  try { return localStorage.getItem('passqr_key') || ''; } catch (e) { return ''; }
+}
+function setApiKey(k) {
+  try { k ? localStorage.setItem('passqr_key', k) : localStorage.removeItem('passqr_key'); } catch (e) {}
+}
 
 var _passList  = [];
 var _audioCtx  = null;
@@ -452,6 +480,8 @@ function clearTarget() {
 
 function prefillTarget(code) {
   if (!code || code === '—') return;
+  // Public read-only mode returns masked codes (PASS-****XXXX) — not targetable.
+  if (code.indexOf('•') !== -1) { showResult('Unlock with an API key to target individual passes.','err'); return; }
   var inp = document.getElementById('bc-target');
   inp.value = code.toUpperCase();
   updateTargetUI(code.toUpperCase());
@@ -466,6 +496,7 @@ async function sendBroadcast() {
   var target  = document.getElementById('bc-target').value.trim().toUpperCase();
   var btn     = document.getElementById('bc-btn');
 
+  if (!getApiKey()) { showResult('Broadcast is locked. Paste an API key above to enable sending.','err'); return; }
   if (!header||!body) { showResult('Header and body are required.','err'); return; }
 
   var isSingle = target.length > 0;
@@ -483,7 +514,7 @@ async function sendBroadcast() {
       method: 'POST',
       headers: {
         'content-type':  'application/json',
-        'Authorization': 'Bearer ' + AIPHONE_API_KEY,
+        'Authorization': 'Bearer ' + getApiKey(),
       },
       body: JSON.stringify(payload),
     });
@@ -520,6 +551,28 @@ async function sendBroadcast() {
   btn.textContent = target ? 'Send to ' + target + ' →' : 'Send to all active passes →';
 }
 
+function unlockBroadcast() {
+  var v = document.getElementById('bc-key').value.trim();
+  if (!v) return;
+  setApiKey(v);
+  document.getElementById('bc-key').value = '';
+  applyLockState();
+  refresh();
+}
+
+function lockBroadcast() {
+  setApiKey('');
+  applyLockState();
+  refresh();
+}
+
+function applyLockState() {
+  var locked = !getApiKey();
+  document.getElementById('bc-lock').style.display    = locked ? 'grid'  : 'none';
+  document.getElementById('bc-relock').style.display  = locked ? 'none'  : 'block';
+  document.getElementById('bc-btn').disabled          = locked;
+}
+
 function showResult(msg, type) {
   var el = document.getElementById('bc-result');
   el.innerHTML = msg;
@@ -530,9 +583,8 @@ function showResult(msg, type) {
 
 async function refresh() {
   try {
-    var res  = await fetch(STATS_URL, {
-      headers: { 'Authorization': 'Bearer ' + AIPHONE_API_KEY },
-    });
+    var _k   = getApiKey();
+    var res  = await fetch(STATS_URL, _k ? { headers: { 'Authorization': 'Bearer ' + _k } } : undefined);
     var data = await res.json();
     var now  = new Date();
     document.getElementById('live-status').textContent = 'LIVE · ' + now.toLocaleTimeString('en-SG',{timeZone:'Asia/Singapore'});
@@ -588,6 +640,7 @@ document.getElementById('h-date').textContent = new Date().toLocaleDateString('e
   weekday:'short', day:'numeric', month:'short', year:'numeric', timeZone:'Asia/Singapore'
 });
 
+applyLockState();
 refresh();
 setInterval(refresh, REFRESH_MS);
 </script>
